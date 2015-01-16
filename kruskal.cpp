@@ -17,7 +17,7 @@ struct edge{
 static int kruskal_tree(int ncount, int ecount, vector<edge>& elist,
 			vector<int>& tlist)
 {
-  int i;
+  int i, j = 0;
   vector<node*> block;
   block.reserve(ncount);
   for (i = 0; i < ncount; i++){
@@ -26,14 +26,14 @@ static int kruskal_tree(int ncount, int ecount, vector<edge>& elist,
   }
 
   tlist.reserve(ncount - 1);
-  for (i = 0; i < ncount - 1; i++) tlist[i] = 0;
+  for (i = 0; i < ncount - 1; i++) tlist[i] = -1;
 
   sort(elist.begin(), elist.end());
 
   for (i = 0; i < ecount; i++){
     if (find(block[elist[i].end[0]]) != find(block[elist[i].end[1]])){
       link(find(block[elist[i].end[0]]), find(block[elist[i].end[1]]));
-      tlist[i] = 1;
+      tlist[j++] = i;
     }
   }
 
@@ -52,7 +52,7 @@ int main(){
   int e0, e1, cost;
 
   ifstream fin;
-  fin.open("g100.1012.txt");
+  fin.open("g1000000.1694628.txt");
 
   if (fin >> ncount >> ecount){
     while(fin >> e0 >> e1 >> cost){
@@ -66,11 +66,9 @@ int main(){
   kruskal_tree(ncount, ecount, edgelist, tlist);
 
 
-  int weight = 0;
-  for (i = 0; i < ecount - 1; i++){
-    if (tlist[i]){
-      weight += edgelist[i].len;
-    }
+  unsigned long weight = 0;
+  for (i = 0; i < ncount - 1; i++){
+    weight += edgelist[tlist[i]].len;
   }
   cout << "mst has weight " << weight << endl;
   
