@@ -3,6 +3,7 @@
 #include<fstream>
 
 #include "nodeset.h"
+#include "util.h"
 
 using namespace std;
 
@@ -52,7 +53,7 @@ int main(){
   int e0, e1, cost;
 
   ifstream fin;
-  fin.open("g1000000.1694628.txt");
+  fin.open("g10000000.29999959.txt");
 
   if (fin >> ncount >> ecount){
     while(fin >> e0 >> e1 >> cost){
@@ -62,9 +63,10 @@ int main(){
     }
   }
   fin.close();
-  
-  kruskal_tree(ncount, ecount, edgelist, tlist);
 
+  double szeit = CO759_zeit();
+  kruskal_tree(ncount, ecount, edgelist, tlist);
+  cout << "Running time " << CO759_zeit() - szeit << endl;
 
   unsigned long weight = 0;
   for (i = 0; i < ncount - 1; i++){
