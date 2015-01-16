@@ -4,11 +4,18 @@ void makeset(node* x){
   x->parent = x; x->rank = 0;
 }
 
+/*
 node* find(node* x){
   node* p;
   for (p = x; p->parent != p; p = p->parent)
     ;
   return p;
+}
+*/
+node* find(node* x){
+  if (x != x->parent)
+    x->parent = find(x->parent);
+  return x->parent;
 }
 
 void swap(node*& x, node*& y){
