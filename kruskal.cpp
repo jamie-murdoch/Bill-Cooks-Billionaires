@@ -43,7 +43,7 @@ static int kruskal_tree(int ncount, int ecount, vector<edge>& elist,
 
 
 
-int main(){
+int main(int argc, char **argv){
   int ncount; int ecount;
   vector<int> tlist;
   vector<edge> edgelist;
@@ -53,7 +53,14 @@ int main(){
   int e0, e1, cost;
 
   ifstream fin;
-  fin.open("g10000000.29999959.txt");
+
+  if(argc > 1) {
+    fin.open(argv[1]);
+  }
+  else {
+    cerr << "Pass input file as first argument." << endl;
+    return 1;
+  }
 
   if (fin >> ncount >> ecount){
     while(fin >> e0 >> e1 >> cost){
