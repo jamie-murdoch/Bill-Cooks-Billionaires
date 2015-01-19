@@ -38,6 +38,8 @@ static int kruskal_tree(int ncount, int ecount, vector<edge>& elist,
     }
   }
 
+  for (i = 0; i < ncount; i++)
+    del block[i];
   return 0;
 }
 
