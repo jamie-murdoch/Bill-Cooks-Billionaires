@@ -31,7 +31,7 @@ static int kruskal_tree(int ncount, int ecount, vector<edge>& elist,
 
   sort(elist.begin(), elist.end());
   node* p1, *p2;
-  for (i = 0; i < ecount; i++){
+  for (i = 0; j < ncount - 1; i++){
     p1 = find(block[elist[i].end[0]]); p2 = find(block[elist[i].end[1]]);
     if (p1 != p2){
       link(p1, p2);
