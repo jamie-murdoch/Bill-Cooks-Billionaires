@@ -2,39 +2,30 @@
 #include <vector>
 #include <fstream>
 #include <algorithm>
-#include "nodeset.h"
+
 #include "util.h"
+#include "Graph.h"
 
 using namespace std;
 
-struct edge{
-  int end[2];
-  int len;
-  bool operator<(const edge& val) const {
-    return len < val.len;
-  }
-};
-
-static int kruskal_tree(int ncount, int ecount, vector<edge>& elist,
-			vector<int>& tlist)
+static int kruskal_tree(int ncount, int ecount, vector<Edge>& elist, vector<int>& tlist)
 {
   int i, j = 0;
-  vector<node*> block;
+  vector<Node*> block;
   block.reserve(ncount);
   for (i = 0; i < ncount; i++){
-    block[i] = new node;
-    makeset(block[i]);
+    block[i] = new Node();
   }
 
   tlist.reserve(ncount - 1);
   for (i = 0; i < ncount - 1; i++) tlist[i] = -1;
 
   sort(elist.begin(), elist.end());
-  node* p1, *p2;
+  Node* p1, *p2;
   for (i = 0; j < ncount - 1; i++){
-    p1 = find(block[elist[i].end[0]]); p2 = find(block[elist[i].end[1]]);
+    p1 = block[elist[i].end[0]]->find_canonical(); p2 = block[elist[i].end[1]]->find_canonical();
     if (p1 != p2){
-      link(p1, p2);
+      Node::link(p1, p2);
       tlist[j++] = i;
     }
   }
@@ -47,10 +38,25 @@ static int kruskal_tree(int ncount, int ecount, vector<edge>& elist,
 
 
 int main(int argc, char **argv){
+
+  // char *problem_filename;
+  // if (argc < 2) {
+  //     cerr << "Usage: " << argv[0] << " edge_file" << endl;
+  //     return 1;
+  // } else {
+  //     problem_filename = argv[1]; 
+  // }
+
+
+  // Graph base_graph(problem_filename);
+  // base_graph.print_edges();   
+  
+  // return 0;
+
   int ncount; int ecount;
   vector<int> tlist;
-  vector<edge> edgelist;
-  edge myedge; 
+  vector<Edge> edgelist;
+  Edge myedge; 
 
   int i;
   int e0, e1, cost;

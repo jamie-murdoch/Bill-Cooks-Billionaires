@@ -11,12 +11,12 @@ node* find(node* x){
     ;
   return p;
 }
-/*
-node* find(node* x){
-  if (x != x->parent)
-    x->parent = find(x->parent);
-  return x->parent;
-  }*/
+
+// node* find(node* x){
+//   if (x != x->parent)
+//     x->parent = find(x->parent);
+//   return x->parent;
+// }
 
 void swap(node*& x, node*& y){
   node* temp = x;
