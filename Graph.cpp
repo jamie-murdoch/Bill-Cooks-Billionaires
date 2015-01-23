@@ -57,8 +57,9 @@ Node* Node::link(Node* x, Node* y){
     }
     else if (x->rank == y->rank) {
         y->rank += 1;  
-        x->parent = y;
     }
+
+    x->parent = y;
 
     return y;
 }
