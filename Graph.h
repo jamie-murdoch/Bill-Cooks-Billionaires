@@ -1,21 +1,33 @@
+#ifndef GRAPH_H
+#define GRAPH_H
+
 #include <vector>
 
 using namespace std;
 
 struct Edge {
-  int end[2];
-  int len;
+    Edge() {}
+    Edge(int e0, int e1, int _len);
 
-  bool operator<(const Edge& val) const {
+    int end[2];
+    int len;
+
+    bool operator<(const Edge& val) const {
     return len < val.len;
-  }
+    }
+
+    static bool ptr_compare(Edge *e0, Edge *e1);
 };
 
 struct Graph {
+    Graph() : node_count(0), edge_count(0) {}
     Graph (const char *filename);
+
+    unsigned long sum_edge_weights(vector<int> &edge_indices);
     void print_edges();
 
     int node_count;
+    int edge_count;
     vector<Edge> edges;
 };
 
@@ -47,3 +59,5 @@ struct Node {
     int rank;
     Node *parent;
 };
+
+#endif
