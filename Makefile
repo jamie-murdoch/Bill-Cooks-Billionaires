@@ -2,7 +2,7 @@ TARGET = prog
 INCLUDES = 
 LIBS = -lm 
 CC = g++
-CFLAGS = -g -Wall -O3
+CFLAGS = -g -Wall -O3 -flto
 
 .PHONY: default all clean
 
