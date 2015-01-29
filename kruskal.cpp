@@ -1,3 +1,15 @@
+/* * * * * * * * * * * * * * * * * * * * * * * * * *
+ * CO 759 - Computational Discrete Optimization    *
+ * Assignment 1                                    *
+ *                                                 *
+ * Date: Winter 2015                               *
+ *                                                 *
+ * Authors:                                        *
+ *  Christos Stratopoulos                          *
+ *  Jamie Murdoch                                  *
+ *  Lawson Fulton                                  *
+ * * * * * * * * * * * * * * * * * * * * * * * * * */
+
 #include <iostream>
 #include <vector>
 #include <fstream>
