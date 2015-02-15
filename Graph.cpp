@@ -16,18 +16,52 @@ bool Edge::ptr_compare(Edge *e0, Edge *e1) {
 
 //Load a graph from a file
 Graph::Graph(const char *filename) {
-    fstream fin;
-    fin.open(filename);
+    // fstream fin;
+    // fin.open(filename);
 
-    fin >> node_count >> edge_count;
+    // fin >> node_count >> edge_count;
 
-    edges.reserve(edge_count);
+    // edges.reserve(edge_count);
 
-    Edge edge;
-    for(int i = 0; i < edge_count; i++) {
-        fin >> edge.end[0] >> edge.end[1] >> edge.len;
-        edges.push_back(edge);
+    // Edge edge;
+    // for(int i = 0; i < edge_count; i++) {
+    //     fin >> edge.end[0] >> edge.end[1] >> edge.len;
+    //     edges.push_back(edge);
+    // }
+
+
+    //-------------------
+    FILE *f = (FILE *) NULL;
+    int i, end1, end2, w, rval = 0, ncount, ecount;
+
+    if ((f = fopen (filename, "r")) == NULL) {
+    fprintf (stderr, "Unable to open %s for input\n",filename);
+        rval = 1;  goto CLEANUP;
     }
+
+    if (fscanf (f, "%d %d", &ncount, &ecount) != 2) {
+    fprintf (stderr, "Input file %s has invalid format\n",filename);
+        rval = 1;  goto CLEANUP;
+    }
+
+    printf ("Nodes: %d  Edges: %d\n", ncount, ecount);
+    fflush (stdout);
+
+    edge_count = ecount;
+    node_count = ncount;
+    edges.resize(ecount);
+    for (i = 0; i < ecount; i++) {
+    if (fscanf(f,"%d %d %d",&end1, &end2, &w) != 3) {
+        fprintf (stderr, "%s has invalid input format\n",filename);
+            rval = 1;  goto CLEANUP;
+    }
+    edges[i].end[0] = end1;
+    edges[i].end[1] = end2;
+    edges[i].len = w;
+    }
+
+CLEANUP:
+    if (f) fclose (f);
 }
 
 unsigned long Graph::sum_edge_weights(vector<int> &edge_indices) {
