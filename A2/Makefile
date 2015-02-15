@@ -1,17 +1,25 @@
-SUBTOUROBJS= subtour_hw.o lp.o util.o
-CPLEX_LIB = /software/cplex/distribution/cplex/lib/x86-64_linux/static_pic/libcplex.a
-CPLEX_INCLUDE = /software/cplex/distribution/cplex/include/ilcplex
+TARGET = subtour
+INCLUDES = -I /Users/lawson/Applications/IBM/ILOG/CPLEX_Studio1261/cplex/include/ilcplex/
+LIBS = /Users/lawson/Applications/IBM/ILOG/CPLEX_Studio1261/cplex/lib/x86-64_osx/static_pic/libcplex.a
+CC = gcc
+CFLAGS = -O3 -g -Wall -pedantic -Wno-long-long
 
-CC= gcc
-CFLAGS=  -O3 -g -Wall -pedantic -Wno-long-long -I$(CPLEX_INCLUDE)
+.PHONY: default all clean
 
+default: $(TARGET)
+all: default
 
-subtour: $(SUBTOUROBJS)
-	  $(CC) $(CFLAGS) -o subtour $(SUBTOUROBJS) $(CPLEX_LIB) -lm -lpthread
+OBJECTS = $(patsubst %.c, %.o, $(wildcard *.c))
+HEADERS = $(wildcard *.h)
+
+%.o: %.c $(HEADERS)
+	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
+
+.PRECIOUS: $(TARGET) $(OBJECTS)
+
+$(TARGET): $(OBJECTS)
+	$(CC) $(OBJECTS) -Wall $(LIBS) -o $@
 
 clean:
-	rm -f *.o subtour
-
-subtour_hw.o: subtour_hw.c util.h
-lp.o: lp.c lp.h
-util.o: util.c util.h
+	-rm -f *.o
+	-rm -f $(TARGET)
