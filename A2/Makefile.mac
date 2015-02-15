@@ -1,0 +1,16 @@
+SUBTOUROBJS= subtour_hw.o lp.o util.o
+CPLEX_LIB = /Users/bico/CPLEX/cplex/lib/x86-64_darwin/static_pic/libcplex.a
+CPLEX_INCLUDE = /Users/bico/CPLEX/cplex/include/ilcplex
+
+CC= gcc
+CFLAGS=  -O3 -g -Wall -pedantic -Wno-long-long -I$(CPLEX_INCLUDE)
+
+subtour: $(SUBTOUROBJS)
+	  $(CC) $(CFLAGS) -Wl,-no_compact_unwind -o subtour $(SUBTOUROBJS) $(CPLEX_LIB) -lm -lpthread
+
+clean:
+	rm -f *.o subtour
+
+subtour_hw.o: subtour_hw.c util.h
+lp.o: lp.c lp.h
+util.o: util.c util.h
