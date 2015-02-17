@@ -34,13 +34,12 @@ typedef struct graph {
 } graph;
 
 static void usage (char *f);
-static int getprob (char *fname, int *p_ncount, int *p_ecount, int **p_elist,
+static int getprob(char *fname, int *p_ncount, int *p_ecount, int **p_elist,
     int **p_elen);
 static int parseargs (int ac, char **av);
-static int subtour (int ncount, int ecount, int *elist, int *elen, int *tlist);
-static int euclid_edgelen (int i, int j, double *x, double *y);
-static int add_all_subtours (int ncount, int ecount, int *elist, CO759lp *lp);
-static void next_set (int sz, int *Set);
+static int subtour_init (int ncount, int ecount, int *elist, int *elen, int *tlist);
+static int subtour (CO759lp *lp, int ecount, int ncount, int *elist, int *elen, int *tlist);
+  static int euclid_edgelen (int i, int j, double *x, double *y);
 static void get_delta (int nsize, int *nlist, int ecount, int *elist,
    int *deltacount, int *delta, int *marks);
 static int add_subtour (CO759lp *lp, int deltacount, int *delta);
@@ -53,14 +52,16 @@ static void dfs (int n, graph *G, double *x, int *icount, int *island);
 
 static char *fname = (char *) NULL;
 static int seed = 0;
-static int geometric_data = 0;
+static int geometric_data = 1;
 static int ncount_rand = 0;
 static int gridsize_rand = 100;
 static int use_all_subtours = 0;
+double min_tour_value = INFINITY;
+int *min_tour = (int *) NULL;
 
 int main (int ac, char **av)
 {
-    int rval  = 0, ncount = 0, ecount = 0;
+  int rval  = 0, ncount = 0, ecount = 0, j;
     int *elist = (int *) NULL, *elen = (int *) NULL, *tlist = (int *) NULL;
     double szeit;
 
@@ -90,6 +91,7 @@ int main (int ac, char **av)
         fprintf (stderr, "Too many nodes to add all subtours\n"); goto CLEANUP;
     }
 
+    min_tour = (int *) malloc((ncount-1) * sizeof(int));
     tlist = (int *) malloc ((ncount)*sizeof (int));
     if (!tlist) {
         fprintf (stderr, "out of memory for tlist\n");
@@ -97,11 +99,19 @@ int main (int ac, char **av)
     }
 
     szeit = CO759_zeit ();
-    rval = subtour (ncount, ecount, elist, elen, tlist);
+    rval = subtour_init (ncount, ecount, elist, elen, tlist);
     if (rval) {
         fprintf (stderr, "subtour failed\n");
         goto CLEANUP;
     }
+
+    printf("Optimal tour:\n");
+    for (j = 0; j < ncount; j++) {
+      printf ("%d %d %f\n", elist[2*min_tour[j]], elist[2*min_tour[j]+1], 1.0);
+    }
+    printf("Optimal tour value: %f\n",min_tour_value);
+    fflush (stdout);
+    
     printf ("Running Time: %.2f seconds\n", CO759_zeit() - szeit);
     fflush (stdout);
 
@@ -115,10 +125,10 @@ CLEANUP:
 
 #define LP_EPSILON 0.000001
 
-static int subtour (int ncount, int ecount, int *elist, int *elen, int *tlist)
+static int subtour_init (int ncount, int ecount, int *elist, int *elen, int *tlist)
 {
     int rval = 0, i, j, infeasible = 0;
-    double  obj[1], lb[1], ub[1], objval, *x = (double *) NULL;
+    double  obj[1], lb[1], ub[1], objval;
     int     cmatbeg[1], cmatind[2];
     double  cmatval[2];
     CO759lp lp;
@@ -177,14 +187,32 @@ static int subtour (int ncount, int ecount, int *elist, int *elen, int *tlist)
 
     printf ("Degree-Equation LP Value: %f\n", objval);
     fflush (stdout);
+    rval = subtour(&lp, ecount, ncount, elist, elen, tlist);
+CLEANUP:
+    CO759lp_free (&lp);
+    return rval;
 
+}
+
+static int subtour (CO759lp *lp, int ecount, int ncount, int *elist, int *elen, int *tlist){
+    int rval = 0, i, j, infeasible = 0;
+    double objval, *x = (double *) NULL, mindist = 0;
     x = (double *) malloc (ecount * sizeof (double));
     if (!x) {
         fprintf (stderr, "out of memory for x\n");
         rval = 1; goto CLEANUP;
     }
 
-    rval = CO759lp_x (&lp, x);
+    rval = CO759lp_opt (lp, &infeasible);
+    if (rval) {
+        fprintf (stderr, "CO759lp_opt failed\n"); goto CLEANUP;
+    }
+    if (infeasible) {
+        fprintf (stderr, "LP is infeasible\n"); 
+        rval = 1; goto CLEANUP;
+    }
+    
+    rval = CO759lp_x (lp, x);
     if (rval) {
         fprintf (stderr, "CO759lp_x failed\n"); goto CLEANUP;
     }
@@ -201,19 +229,12 @@ static int subtour (int ncount, int ecount, int *elist, int *elen, int *tlist)
     }
     fflush (stdout);
 
-    if (use_all_subtours) {
-        rval = add_all_subtours (ncount, ecount, elist, &lp);
-        if (rval) {
-            fprintf (stderr, "add_all_subtours failed\n"); goto CLEANUP;
-        }
-    } else {
-        rval = add_connect (ncount, ecount, elist, &lp);
-        if (rval) {
-            fprintf (stderr, "add_connect failed\n"); goto CLEANUP;
-        }
+    rval = add_connect (ncount, ecount, elist, lp);
+    if (rval) {
+        fprintf (stderr, "add_connect failed\n"); goto CLEANUP;
     }
 
-    rval = CO759lp_opt (&lp, &infeasible);
+    rval = CO759lp_opt (lp, &infeasible);
     if (rval) {
         fprintf (stderr, "CO759lp_opt failed\n"); goto CLEANUP;
     }
@@ -222,7 +243,7 @@ static int subtour (int ncount, int ecount, int *elist, int *elen, int *tlist)
         rval = 1; goto CLEANUP;
     }
 
-    rval = CO759lp_objval (&lp, &objval);
+    rval = CO759lp_objval (lp, &objval);
     if (rval) {
         fprintf (stderr, "CO759lp_objval failed\n"); goto CLEANUP;
     }
@@ -230,7 +251,11 @@ static int subtour (int ncount, int ecount, int *elist, int *elen, int *tlist)
     printf ("Current LP Value: %f\n", objval);
     fflush (stdout);
 
-    rval = CO759lp_x (&lp, x);
+    if (objval > min_tour_value){
+      printf ("Current LP value is higher than min tour value, exitting\n"); fflush(stdout); goto CLEANUP;    
+    }
+    
+    rval = CO759lp_x (lp, x);
     if (rval) {
         fprintf (stderr, "CO759lp_x failed\n"); goto CLEANUP;
     }
@@ -248,71 +273,62 @@ static int subtour (int ncount, int ecount, int *elist, int *elen, int *tlist)
     fflush (stdout);
 
     for (i = 0, j = 0; j < ecount; j++) {
-        if (x[j] > LP_EPSILON && x[j] < 1.0 - LP_EPSILON) break;
+      if (fmin(x[j],1-x[j]) > mindist){
+	mindist = fmin(x[j],1-x[j]);
+	i = j;
+      }
+    }
+    rval = CO759lp_objval (lp, &objval);
+    if (rval) {
+      fprintf (stderr, "CO759lp_objval failed\n"); goto CLEANUP;
     }
 
-    if (j == ecount) {
+    if(objval > min_tour_value){
+      printf ("Current LP value is higher than min tour value, exitting\n"); fflush(stdout); goto CLEANUP;    
+    }
+    
+    if (mindist < LP_EPSILON) {
         printf ("LP solution is an optimal TSP tour\n");
+	if (objval < min_tour_value){
+	  printf("NEW OPTIMAL TOUR VALUE: %f\n", objval);
+	  min_tour_value = objval;
+	  for (i = 0, j = 0; j < ecount; j++){
+	    if (x[j] > LP_EPSILON){
+	      min_tour[i++] = j;
+	    }
+	  }
+	  if(i != ncount){
+	    printf ("Computed tour isn't a tour\n"); goto CLEANUP;
+	  }
+	}
     } else {
-        printf ("Can use edge %d as branching variable\n", j);
+        printf ("Branching on edge %d\n", i);
+        rval = CO759lp_setbnd(lp, i, 'U', 0.0);
+	if(rval){
+	  fprintf(stderr, "CO759lp_setbnd failed\n"); goto CLEANUP;
+	}
+	rval = subtour(lp, ecount, ncount, elist, elen, tlist);
+	if(rval) goto CLEANUP;
+	rval = CO759lp_setbnd(lp, i, 'U', 1.0);
+	if(rval){
+	  fprintf(stderr, "CO759lp_setbnd failed\n"); goto CLEANUP;
+	}
+	rval = CO759lp_setbnd(lp, i, 'L', 1.0);
+	if(rval){
+	  fprintf(stderr, "CO759lp_setbnd failed\n"); goto CLEANUP;
+	}
+	rval = subtour(lp, ecount, ncount, elist, elen, tlist);
+	if(rval) goto CLEANUP;
+	rval = CO759lp_setbnd(lp, i, 'L', 0.0);
+	if(rval){
+	  fprintf(stderr, "CO759lp_setbnd failed\n"); goto CLEANUP;
+	}
     }
 
 
 CLEANUP:
-    CO759lp_free (&lp);
     if (x) free (x);
     return rval;
-}
-
-static int add_all_subtours (int ncount, int ecount, int *elist, CO759lp *lp)
-{
-    int rval = 0, i, sz, maxsz = ncount / 2, deltacount = 0;
-    int *Set = (int *) NULL, *delta = (int *) NULL, *marks = (int *) NULL;
-    int cnt = 0;
-
-    /* To demonstrate the code for adding new constraints, this */
-    /* routine will add ALL subtour inequalities.  This must be */
-    /* replaced with the routine to add only violated subtours. */
-
-    delta = (int *) malloc (ecount * sizeof(int));
-    marks = (int *) malloc (ncount * sizeof(int));
-    Set   = (int *) malloc (ncount * sizeof(int));
-    if (!delta || !marks || !Set) {
-        fprintf (stderr, "out of memory for delta, marks, or Set\n");
-        rval = 1; goto CLEANUP;
-    }
-
-    for (i = 0; i < ncount; i++) marks[i] = 0;
-
-    /* Run through all subsets of size sz from ncount elements */
-
-    for (sz = 3; sz <= maxsz; sz++) {
-        for (i = 0; i < sz; i++) Set[i] = i;
-        for (; Set[sz-1] < ncount; next_set(sz,Set)) {
-            get_delta (sz, Set, ecount, elist, &deltacount, delta, marks);
-            rval = add_subtour (lp, deltacount, delta);
-            if (rval) {
-                fprintf (stderr, "add_subtour failed"); goto CLEANUP;
-            }
-            cnt++;
-        }
-    }
-
-    printf ("Added all %d subtour constraints\n", cnt);
-    fflush (stdout);
-
-CLEANUP:
-    if (delta) free (delta);
-    if (marks) free (marks);
-    if (Set) free (Set);
-    return rval;
-}
-
-static void next_set (int sz, int *Set)
-{
-   int i;
-   for (i=0; i < sz-1 && Set[i]+1 == Set[i+1]; i++) Set[i] = i;
-   Set[i] = Set[i]+1;
 }
 
 static int add_connect (int ncount, int ecount, int *elist, CO759lp *lp)
