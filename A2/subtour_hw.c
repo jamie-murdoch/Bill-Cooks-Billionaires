@@ -208,8 +208,8 @@ static int subtour (CO759lp *lp, int ecount, int ncount, int *elist, int *elen, 
         fprintf (stderr, "CO759lp_opt failed\n"); goto CLEANUP;
     }
     if (infeasible) {
-        fprintf (stderr, "LP is infeasible\n"); 
-        rval = 1; goto CLEANUP;
+      printf("LP is infeasible, exitting\n");
+      goto CLEANUP;
     }
     
     rval = CO759lp_x (lp, x);
@@ -222,11 +222,11 @@ static int subtour (CO759lp *lp, int ecount, int ncount, int *elist, int *elen, 
     }
 
     printf ("LP graph has %d edges\n", i);
-    for (j = 0; j < ecount; j++) {
+    /*    for (j = 0; j < ecount; j++) {
         if (x[j] > LP_EPSILON) {
             printf ("%d %d %f\n", elist[2*j], elist[2*j+1], x[j]);
         }
-    }
+    }*/
     fflush (stdout);
 
     rval = add_connect (ncount, ecount, elist, lp);
@@ -239,8 +239,8 @@ static int subtour (CO759lp *lp, int ecount, int ncount, int *elist, int *elen, 
         fprintf (stderr, "CO759lp_opt failed\n"); goto CLEANUP;
     }
     if (infeasible) {
-        fprintf (stderr, "LP is infeasible\n"); 
-        rval = 1; goto CLEANUP;
+        printf ("LP is infeasible, exitting\n"); 
+        goto CLEANUP;
     }
 
     rval = CO759lp_objval (lp, &objval);
@@ -265,11 +265,11 @@ static int subtour (CO759lp *lp, int ecount, int ncount, int *elist, int *elen, 
     }
 
     printf ("Current LP graph has %d edges\n", i);
-    for (j = 0; j < ecount; j++) {
+    /*    for (j = 0; j < ecount; j++) {
         if (x[j] > LP_EPSILON) {
             printf ("%d %d %f\n", elist[2*j], elist[2*j+1], x[j]);
         }
-    }
+	}*/
     fflush (stdout);
 
     for (i = 0, j = 0; j < ecount; j++) {
@@ -335,7 +335,7 @@ static int add_connect (int ncount, int ecount, int *elist, CO759lp *lp)
 {
     int rval = 0, icount, *island = (int *) NULL, *delta  = (int *) NULL;
     int round = 0, deltacount = 0, *marks = (int *) NULL;
-    int infeasible, i;
+    int infeasible = 0, i;
     double *x = (double *) NULL, objval;
     graph G;
 
@@ -375,7 +375,7 @@ static int add_connect (int ncount, int ecount, int *elist, CO759lp *lp)
         rval = CO759lp_opt (lp, &infeasible);
         if (rval) { fprintf (stderr, "CO759lp_opt failed\n"); goto CLEANUP; }
         if (infeasible) {
-            fprintf (stderr, "LP is infeasible\n"); rval = 1; goto CLEANUP;
+            fprintf (stderr, "LP is infeasible, exitting\n"); goto CLEANUP;
         }
 
         rval = CO759lp_objval (lp, &objval);
