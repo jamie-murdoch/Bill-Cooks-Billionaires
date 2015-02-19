@@ -15,40 +15,38 @@
 #include "lp.h"
 #include "util.h"
 
-typedef struct ajdobj {
-    int n;   /* index of neighbor node */
+typedef struct adjdobj {
+    int n;   /* index of neighbor Node */
     int e;   /* index of adj joining neighbor */
 } adjobj;
 
-typedef struct node {
-    int deg;
-    adjobj *adj;
+typedef struct Node {
+    int degree;
+    adjobj *adj_objs;
     int mark;
-} node;
+} Node;
 
-typedef struct graph {
-    int ncount;
-    int ecount;
-    node *nodelist;
+typedef struct Graph {
+    int node_count;
+    int edge_count;
+    Node *nodelist;
     adjobj *adjspace;
-} graph;
+} Graph;
 
 static void usage (char *f);
-static int getprob(char *fname, int *p_ncount, int *p_ecount, int **p_elist,
-    int **p_elen);
+static int getprob(char *fname, int *p_ncount, int *p_ecount, int **p_elist, int **p_elen);
 static int parseargs (int ac, char **av);
-static int subtour_init (int ncount, int ecount, int *elist, int *elen, int *tlist);
-static int subtour (CO759lp *lp, int ecount, int ncount, int *elist, int *elen, int *tlist);
-  static int euclid_edgelen (int i, int j, double *x, double *y);
-static void get_delta (int nsize, int *nlist, int ecount, int *elist,
-   int *deltacount, int *delta, int *marks);
+static int subtour_init (int node_count, int edge_count, int *elist, int *elen, int *tlist);
+static int subtour (CO759lp *lp, int edge_count, int node_count, int *elist, int *elen, int *tlist);
+static int euclid_edgelen (int i, int j, double *x, double *y);
+static void get_delta (int nsize, int *nlist, int edge_count, int *elist, int *deltacount, int *delta, int *marks);
 static int add_subtour (CO759lp *lp, int deltacount, int *delta);
-static int add_connect (int ncount, int ecount, int *elist, CO759lp *lp);
-static void init_graph (graph *G);
-static void free_graph (graph *G);
-static int build_graph (int ncount, int ecount, int *elist, graph *G);
-static int connected (graph *G, double *x, int *icount, int *island);
-static void dfs (int n, graph *G, double *x, int *icount, int *island);
+static int add_connect (int node_count, int edge_count, int *elist, CO759lp *lp);
+static void init_graph (Graph *G);
+static void free_graph (Graph *G);
+static int build_graph (int node_count, int edge_count, int *elist, Graph *G);
+static int connected (Graph *G, double *x, int *icount, int *island);
+static void dfs (int n, Graph *G, double *x, int *icount, int *island);
 
 static char *fname = (char *) NULL;
 static int seed = 0;
@@ -61,7 +59,7 @@ int *min_tour = (int *) NULL;
 
 int main (int ac, char **av)
 {
-  int rval  = 0, ncount = 0, ecount = 0, j;
+    int rval  = 0, node_count = 0, edge_count = 0, j;
     int *elist = (int *) NULL, *elen = (int *) NULL, *tlist = (int *) NULL;
     double szeit;
 
@@ -82,31 +80,31 @@ int main (int ac, char **av)
         if (geometric_data) printf ("Geometric data\n");
     }
 
-    rval = getprob (fname, &ncount, &ecount, &elist, &elen);
+    rval = getprob (fname, &node_count, &edge_count, &elist, &elen);
     if (rval) {
         fprintf (stderr, "getprob failed\n"); goto CLEANUP;
     }
 
-    if (use_all_subtours && ncount > 20) {
+    if (use_all_subtours && node_count > 20) {
         fprintf (stderr, "Too many nodes to add all subtours\n"); goto CLEANUP;
     }
 
-    min_tour = (int *) malloc((ncount-1) * sizeof(int));
-    tlist = (int *) malloc ((ncount)*sizeof (int));
+    min_tour = (int *) malloc((node_count-1) * sizeof(int));
+    tlist = (int *) malloc ((node_count)*sizeof (int));
     if (!tlist) {
         fprintf (stderr, "out of memory for tlist\n");
         rval = 1;  goto CLEANUP; 
     }
 
     szeit = CO759_zeit ();
-    rval = subtour_init (ncount, ecount, elist, elen, tlist);
+    rval = subtour_init (node_count, edge_count, elist, elen, tlist);
     if (rval) {
         fprintf (stderr, "subtour failed\n");
         goto CLEANUP;
     }
 
     printf("Optimal tour:\n");
-    for (j = 0; j < ncount; j++) {
+    for (j = 0; j < node_count; j++) {
       printf ("%d %d %f\n", elist[2*min_tour[j]], elist[2*min_tour[j]+1], 1.0);
     }
     printf("Optimal tour value: %f\n",min_tour_value);
@@ -123,12 +121,10 @@ CLEANUP:
     return rval;
 }
 
-#define LP_EPSILON 0.000001
-
-static int subtour_init (int ncount, int ecount, int *elist, int *elen, int *tlist)
+static int subtour_init (int node_count, int edge_count, int *elist, int *elen, int *tlist)
 {
     int rval = 0, i, j, infeasible = 0;
-    double  obj[1], lb[1], ub[1], objval;
+    double  objective_val[1], lower_bound[1], upper_bound[1], objval;
     int     cmatbeg[1], cmatind[2];
     double  cmatval[2];
     CO759lp lp;
@@ -141,28 +137,28 @@ static int subtour_init (int ncount, int ecount, int *elist, int *elen, int *tli
 
     /* Build a row for each degree equation */
 
-    for (i = 0; i < ncount; i++) {
+    for (i = 0; i < node_count; i++) {
         rval = CO759lp_new_row (&lp, 'E', 2.0);
         if (rval) {
             fprintf (stderr, "CO759lp_new_row failed\n"); goto CLEANUP;
         }
     }
 
-    /* Build a column for each edge of the graph */
+    /* Build a column for each edge of the Graph */
 
     cmatbeg[0] = 0;
     cmatval[0] = 1.0;
     cmatval[1] = 1.0;
-    for (j = 0; j < ecount; j++) {
-        obj[0]     = (double) elen[j];
-        lb[0]      = 0.0;
-        ub[0]      = 1.0;
+    for (j = 0; j < edge_count; j++) {
+        objective_val[0]     = (double) elen[j];
+        lower_bound[0]      = 0.0;
+        upper_bound[0]      = 1.0;
         cmatind[0] = elist[2*j];
         cmatind[1] = elist[2*j+1];
         rval = CO759lp_addcols (&lp, 1 /* # of new variables */,
-           2 /* # of new nonzeros */, obj, cmatbeg, cmatind, cmatval, lb, ub);
+           2 /* # of new nonzeros */, objective_val, cmatbeg, cmatind, cmatval, lower_bound, upper_bound);
         if (rval) {
-            fprintf (stderr, "CClp_addcols failed\n"); goto CLEANUP;
+            fprintf (stderr, "CO759lp_addcols failed\n"); goto CLEANUP;
         }
     }
 
@@ -187,23 +183,23 @@ static int subtour_init (int ncount, int ecount, int *elist, int *elen, int *tli
 
     printf ("Degree-Equation LP Value: %f\n", objval);
     fflush (stdout);
-    rval = subtour(&lp, ecount, ncount, elist, elen, tlist);
+    rval = subtour(&lp, edge_count, node_count, elist, elen, tlist);
 CLEANUP:
     CO759lp_free (&lp);
     return rval;
 
 }
 
-static int subtour (CO759lp *lp, int ecount, int ncount, int *elist, int *elen, int *tlist){
+static int subtour (CO759lp *lp, int edge_count, int node_count, int *elist, int *elen, int *tlist){
     int rval = 0, i, j, infeasible = 0;
     double objval, *x = (double *) NULL, mindist = 0;
-    x = (double *) malloc (ecount * sizeof (double));
+    x = (double *) malloc (edge_count * sizeof (double));
     if (!x) {
         fprintf (stderr, "out of memory for x\n");
         rval = 1; goto CLEANUP;
     }
 
-    rval = CO759lp_opt (lp, &infeasible);
+    rval = CO759lp_opt (lp, &infeasible); //TODO - Is this being run twice right at the start?  
     if (rval) {
         fprintf (stderr, "CO759lp_opt failed\n"); goto CLEANUP;
     }
@@ -217,19 +213,19 @@ static int subtour (CO759lp *lp, int ecount, int ncount, int *elist, int *elen, 
         fprintf (stderr, "CO759lp_x failed\n"); goto CLEANUP;
     }
  
-    for (i = 0, j = 0; j < ecount; j++) {
+    for (i = 0, j = 0; j < edge_count; j++) {
         if (x[j] > LP_EPSILON) i++;
     }
 
-    printf ("LP graph has %d edges\n", i);
-    /*    for (j = 0; j < ecount; j++) {
+    printf ("LP Graph has %d edges\n", i);
+    /*    for (j = 0; j < edge_count; j++) {
         if (x[j] > LP_EPSILON) {
             printf ("%d %d %f\n", elist[2*j], elist[2*j+1], x[j]);
         }
     }*/
     fflush (stdout);
 
-    rval = add_connect (ncount, ecount, elist, lp);
+    rval = add_connect (node_count, edge_count, elist, lp);
     if (rval) {
         fprintf (stderr, "add_connect failed\n"); goto CLEANUP;
     }
@@ -260,24 +256,26 @@ static int subtour (CO759lp *lp, int ecount, int ncount, int *elist, int *elen, 
         fprintf (stderr, "CO759lp_x failed\n"); goto CLEANUP;
     }
  
-    for (i = 0, j = 0; j < ecount; j++) {
+    for (i = 0, j = 0; j < edge_count; j++) {
         if (x[j] > LP_EPSILON) i++;
     }
 
-    printf ("Current LP graph has %d edges\n", i);
-    /*    for (j = 0; j < ecount; j++) {
+    printf ("Current LP Graph has %d edges\n", i);
+    /*    for (j = 0; j < edge_count; j++) {
         if (x[j] > LP_EPSILON) {
             printf ("%d %d %f\n", elist[2*j], elist[2*j+1], x[j]);
         }
 	}*/
     fflush (stdout);
 
-    for (i = 0, j = 0; j < ecount; j++) {
-      if (fmin(x[j],1-x[j]) > mindist){
-	mindist = fmin(x[j],1-x[j]);
-	i = j;
-      }
+    for (i = 0, j = 0; j < edge_count; j++) {
+        double m = fmin(x[j], 1 - x[j]);
+        if (m > mindist){
+	       mindist = m;
+	       i = j;
+        }
     }
+
     rval = CO759lp_objval (lp, &objval);
     if (rval) {
       fprintf (stderr, "CO759lp_objval failed\n"); goto CLEANUP;
@@ -289,40 +287,40 @@ static int subtour (CO759lp *lp, int ecount, int ncount, int *elist, int *elen, 
     
     if (mindist < LP_EPSILON) {
         printf ("LP solution is an optimal TSP tour\n");
-	if (objval < min_tour_value){
-	  printf("NEW OPTIMAL TOUR VALUE: %f\n", objval);
-	  min_tour_value = objval;
-	  for (i = 0, j = 0; j < ecount; j++){
-	    if (x[j] > LP_EPSILON){
-	      min_tour[i++] = j;
-	    }
-	  }
-	  if(i != ncount){
-	    printf ("Computed tour isn't a tour\n"); goto CLEANUP;
-	  }
-	}
+    	if (objval < min_tour_value){
+    	  printf("NEW OPTIMAL TOUR VALUE: %f\n", objval);
+    	  min_tour_value = objval;
+    	  for (i = 0, j = 0; j < edge_count; j++){
+    	    if (x[j] > LP_EPSILON){
+    	      min_tour[i++] = j;
+    	    }
+    	  }
+    	  if(i != node_count){
+    	    printf ("Computed tour isn't a tour\n"); goto CLEANUP;
+    	  }
+    	}
     } else {
         printf ("Branching on edge %d\n", i);
         rval = CO759lp_setbnd(lp, i, 'U', 0.0);
-	if(rval){
-	  fprintf(stderr, "CO759lp_setbnd failed\n"); goto CLEANUP;
-	}
-	rval = subtour(lp, ecount, ncount, elist, elen, tlist);
-	if(rval) goto CLEANUP;
-	rval = CO759lp_setbnd(lp, i, 'U', 1.0);
-	if(rval){
-	  fprintf(stderr, "CO759lp_setbnd failed\n"); goto CLEANUP;
-	}
-	rval = CO759lp_setbnd(lp, i, 'L', 1.0);
-	if(rval){
-	  fprintf(stderr, "CO759lp_setbnd failed\n"); goto CLEANUP;
-	}
-	rval = subtour(lp, ecount, ncount, elist, elen, tlist);
-	if(rval) goto CLEANUP;
-	rval = CO759lp_setbnd(lp, i, 'L', 0.0);
-	if(rval){
-	  fprintf(stderr, "CO759lp_setbnd failed\n"); goto CLEANUP;
-	}
+    	if(rval){
+    	  fprintf(stderr, "CO759lp_setbnd failed\n"); goto CLEANUP;
+    	}
+    	rval = subtour(lp, edge_count, node_count, elist, elen, tlist);
+    	if(rval) goto CLEANUP;
+    	rval = CO759lp_setbnd(lp, i, 'U', 1.0);
+    	if(rval){
+    	  fprintf(stderr, "CO759lp_setbnd failed\n"); goto CLEANUP;
+    	}
+    	rval = CO759lp_setbnd(lp, i, 'L', 1.0);
+    	if(rval){
+    	  fprintf(stderr, "CO759lp_setbnd failed\n"); goto CLEANUP;
+    	}
+    	rval = subtour(lp, edge_count, node_count, elist, elen, tlist);
+    	if(rval) goto CLEANUP;
+    	rval = CO759lp_setbnd(lp, i, 'L', 0.0);
+    	if(rval){
+    	  fprintf(stderr, "CO759lp_setbnd failed\n"); goto CLEANUP;
+    	}
     }
 
 
@@ -331,13 +329,13 @@ CLEANUP:
     return rval;
 }
 
-static int add_connect (int ncount, int ecount, int *elist, CO759lp *lp)
+static int add_connect (int node_count, int edge_count, int *elist, CO759lp *lp)
 {
     int rval = 0, icount, *island = (int *) NULL, *delta  = (int *) NULL;
     int round = 0, deltacount = 0, *marks = (int *) NULL;
     int infeasible = 0, i;
     double *x = (double *) NULL, objval;
-    graph G;
+    Graph G;
 
     init_graph (&G);
 
@@ -347,18 +345,18 @@ static int add_connect (int ncount, int ecount, int *elist, CO759lp *lp)
         fprintf (stderr, "LP is infeasible\n"); rval = 1; goto CLEANUP;
     }
 
-    rval = build_graph (ncount, ecount, elist, &G);
+    rval = build_graph (node_count, edge_count, elist, &G);
     if (rval) { fprintf (stderr, "build_graph failed\n"); goto CLEANUP; }
 
-    x = (double *) malloc (ecount * sizeof (double));
-    island = (int *) malloc (ncount * sizeof (int));
-    delta  = (int *) malloc (ecount * sizeof(int));
-    marks  = (int *) malloc (ncount * sizeof(int));
+    x = (double *) malloc (edge_count * sizeof (double));
+    island = (int *) malloc (node_count * sizeof (int));
+    delta  = (int *) malloc (edge_count * sizeof(int));
+    marks  = (int *) malloc (node_count * sizeof(int));
     if (!x || !island || !delta || !marks) {
         fprintf (stderr, "out of memory for x, island, delta, or marks\n");
         rval = 1; goto CLEANUP;
     }
-    for (i = 0; i < ncount; i++) marks[i] = 0;
+    for (i = 0; i < node_count; i++) marks[i] = 0;
 
     rval = CO759lp_x (lp, x);
     if (rval) { fprintf (stderr, "CO759lp_x failed\n"); goto CLEANUP; }
@@ -367,7 +365,7 @@ static int add_connect (int ncount, int ecount, int *elist, CO759lp *lp)
 
         /*  just add one subtour; better to add one for each component */
 
-        get_delta (icount, island, ecount, elist, &deltacount, delta, marks);
+        get_delta (icount, island, edge_count, elist, &deltacount, delta, marks);
 
         rval = add_subtour (lp, deltacount, delta);
         if (rval) { fprintf (stderr, "add_subtour failed"); goto CLEANUP; }
@@ -398,23 +396,23 @@ CLEANUP:
     return rval;
 }
 
-static int connected (graph *G, double *x, int *icount, int *island)
+static int connected (Graph *G, double *x, int *icount, int *island)
 {
     int i;
 
     *icount = 0;
-    for (i = 0; i < G->ncount; i++) G->nodelist[i].mark = 0;
+    for (i = 0; i < G->node_count; i++) G->nodelist[i].mark = 0;
 
     dfs (0, G, x, icount, island);
 
-    if (*icount == G->ncount) return 1;
+    if (*icount == G->node_count) return 1;
     else return 0;
 }
 
-static void dfs (int n, graph *G, double *x, int *icount, int *island)
+static void dfs (int n, Graph *G, double *x, int *icount, int *island)
 {
     int i, neighbor;
-    node *pn;
+    Node *pn;
 
     island[*icount] = n;
     (*icount)++;
@@ -422,9 +420,9 @@ static void dfs (int n, graph *G, double *x, int *icount, int *island)
     pn = &G->nodelist[n];
     pn->mark = 1;
 
-    for (i = 0; i < pn->deg; i++) {
-        if (x[pn->adj[i].e] > LP_EPSILON) {
-            neighbor = pn->adj[i].n;
+    for (i = 0; i < pn->degree; i++) {
+        if (x[pn->adj_objs[i].e] > LP_EPSILON) {
+            neighbor = pn->adj_objs[i].n;
             if (G->nodelist[neighbor].mark == 0) {
                 dfs (neighbor, G, x, icount, island);
             }
@@ -432,17 +430,17 @@ static void dfs (int n, graph *G, double *x, int *icount, int *island)
     }
 }
 
-static void init_graph (graph *G)
+static void init_graph (Graph *G)
 {
     if (G) {
-        G->nodelist = (node *) NULL;
+        G->nodelist = (Node *) NULL;
         G->adjspace = (adjobj *) NULL;
-        G->ncount = 0;
-        G->ecount = 0;
+        G->node_count = 0;
+        G->edge_count = 0;
     }
 }
 
-static void free_graph (graph *G)
+static void free_graph (Graph *G)
 {
     if (G) {
         if (G->nodelist) free (G->nodelist);
@@ -450,60 +448,60 @@ static void free_graph (graph *G)
     }
 }
 
-static int build_graph (int ncount, int ecount, int *elist, graph *G)
+static int build_graph (int node_count, int edge_count, int *elist, Graph *G)
 {
     int rval = 0, i, a, b;
-    node *n;
+    Node *n;
     adjobj *p;
 
-    G->nodelist = (node *) malloc (ncount * sizeof (node));
-    G->adjspace = (adjobj *) malloc (2 * ecount * sizeof (node));
+    G->nodelist = (Node *) malloc (node_count * sizeof (Node));
+    G->adjspace = (adjobj *) malloc (2 * edge_count * sizeof (Node));
     if (!G->nodelist || !G->adjspace) {
         fprintf (stderr, "out of memory for nodelist or adjspace\n");
         rval = 1; goto CLEANUP;
     }
 
-    for (i = 0; i < ncount; i++) G->nodelist[i].deg = 0;
-    for (i = 0; i < ecount; i++) {
+    for (i = 0; i < node_count; i++) G->nodelist[i].degree = 0;
+    for (i = 0; i < edge_count; i++) {
         a = elist[2*i];  b = elist[2*i+1];
-        G->nodelist[a].deg++;
-        G->nodelist[b].deg++;
+        G->nodelist[a].degree++;
+        G->nodelist[b].degree++;
     }
 
     p = G->adjspace;
-    for (i = 0; i < ncount; i++) {
-        G->nodelist[i].adj = p;
-        p += G->nodelist[i].deg;
-        G->nodelist[i].deg = 0;
+    for (i = 0; i < node_count; i++) {
+        G->nodelist[i].adj_objs = p;
+        p += G->nodelist[i].degree;
+        G->nodelist[i].degree = 0;
     }
 
-    for (i = 0; i < ecount; i++) {
+    for (i = 0; i < edge_count; i++) {
         a = elist[2*i];  b = elist[2*i+1];
         n = &G->nodelist[a];
-        n->adj[n->deg].n = b;
-        n->adj[n->deg].e = i;
-        n->deg++;
+        n->adj_objs[n->degree].n = b;
+        n->adj_objs[n->degree].e = i;
+        n->degree++;
         n = &G->nodelist[b];
-        n->adj[n->deg].n = a;
-        n->adj[n->deg].e = i;
-        n->deg++;
+        n->adj_objs[n->degree].n = a;
+        n->adj_objs[n->degree].e = i;
+        n->degree++;
     }
 
-    G->ncount = ncount;
-    G->ecount = ecount;
+    G->node_count = node_count;
+    G->edge_count = edge_count;
 
 CLEANUP:
     return rval;
 }
 
-static void get_delta (int nsize, int *nlist, int ecount, int *elist,
+static void get_delta (int nsize, int *nlist, int edge_count, int *elist,
        int *deltacount, int *delta, int *marks)
 {
     int i, k = 0;
 
     for (i = 0; i < nsize; i++) marks[nlist[i]] = 1;
 
-    for (i = 0; i < ecount; i++) {
+    for (i = 0; i < edge_count; i++) {
         if (marks[elist[2*i]] + marks[elist[2*i+1]] == 1) {
             delta[k++] = i;
         }
@@ -547,7 +545,7 @@ static int getprob (char *filename, int *p_ncount, int *p_ecount, int **p_elist,
     int **p_elen)
 {
     FILE *f = (FILE *) NULL;
-    int i, j, end1, end2, w, rval = 0, ncount, ecount;
+    int i, j, end1, end2, w, rval = 0, node_count, edge_count;
     int *elist = (int *) NULL, *elen = (int *) NULL;
     double *x = (double *) NULL, *y = (double *) NULL;
 
@@ -559,27 +557,27 @@ static int getprob (char *filename, int *p_ncount, int *p_ecount, int **p_elist,
     }
 
     if (filename && geometric_data == 0) {
-        if (fscanf (f, "%d %d", &ncount, &ecount) != 2) {
+        if (fscanf (f, "%d %d", &node_count, &edge_count) != 2) {
        	    fprintf (stderr, "Input file %s has invalid format\n",filename);
             rval = 1;  goto CLEANUP;
         }
 
-        printf ("Nodes: %d  Edges: %d\n", ncount, ecount);
+        printf ("Nodes: %d  Edges: %d\n", node_count, edge_count);
         fflush (stdout);
 
-        elist = (int *) malloc (2 * ecount * sizeof (int));
+        elist = (int *) malloc (2 * edge_count * sizeof (int));
         if (!elist) {
             fprintf (stderr, "out of memory for elist\n");
             rval = 1;  goto CLEANUP;
         }
 
-        elen = (int *) malloc (ecount * sizeof (int));
+        elen = (int *) malloc (edge_count * sizeof (int));
         if (!elen) {
             fprintf (stderr, "out of memory for elen\n");
             rval = 1;  goto CLEANUP;
         }
 
-        for (i = 0; i < ecount; i++) {
+        for (i = 0; i < edge_count; i++) {
     	    if (fscanf(f,"%d %d %d",&end1, &end2, &w) != 3) {
 	        fprintf (stderr, "%s has invalid input format\n", filename);
                 rval = 1;  goto CLEANUP;
@@ -590,70 +588,70 @@ static int getprob (char *filename, int *p_ncount, int *p_ecount, int **p_elist,
         }
     } else {
         if (filename) {
-            if (fscanf (f, "%d", &ncount) != 1) {
+            if (fscanf (f, "%d", &node_count) != 1) {
        	        fprintf (stderr, "Input file %s has invalid format\n",filename);
                 rval = 1;  goto CLEANUP;
             }
         } else {
-            ncount = ncount_rand;
+            node_count = ncount_rand;
         }
 
-        x = (double *) malloc (ncount * sizeof (double));
-        y = (double *) malloc (ncount * sizeof (double));
+        x = (double *) malloc (node_count * sizeof (double));
+        y = (double *) malloc (node_count * sizeof (double));
         if (!x || !y) {
             fprintf (stdout, "out of memory for x or y\n");
             rval = 1; goto CLEANUP;
         }
 
         if (filename) {
-            for (i = 0; i < ncount; i++) {
+            for (i = 0; i < node_count; i++) {
     	        if (fscanf(f,"%lf %lf",&x[i], &y[i]) != 2) {
 	            fprintf (stderr, "%s has invalid input format\n", filename);
                     rval = 1;  goto CLEANUP;
 	        }
             }
         } else {
-            rval = CO759_build_xy (ncount, x, y, gridsize_rand);
+            rval = CO759_build_xy (node_count, x, y, gridsize_rand);
             if (rval) {
                 fprintf (stderr, "CO759_build_xy failed\n");
                 goto CLEANUP;
             }
     
-            printf ("%d\n", ncount);
-            for (i = 0; i < ncount; i++) {
+            printf ("%d\n", node_count);
+            for (i = 0; i < node_count; i++) {
                 printf ("%.0f %.0f\n", x[i], y[i]);
             }
             printf ("\n");
         }
 
-        ecount = (ncount * (ncount - 1)) / 2;
-        printf ("Complete graph: %d nodes, %d edges\n", ncount, ecount);
+        edge_count = (node_count * (node_count - 1)) / 2;
+        printf ("Complete Graph: %d nodes, %d edges\n", node_count, edge_count);
 
-        elist = (int *) malloc (2 * ecount * sizeof (int));
+        elist = (int *) malloc (2 * edge_count * sizeof (int));
         if (!elist) {
             fprintf (stderr, "out of memory for elist\n");
             rval = 1;  goto CLEANUP;
         }
 
-        elen = (int *) malloc (ecount * sizeof (int));
+        elen = (int *) malloc (edge_count * sizeof (int));
         if (!elen) {
             fprintf (stderr, "out of memory for elen\n");
             rval = 1;  goto CLEANUP;
         }
 
-        ecount = 0;
-        for (i = 0; i < ncount; i++) {
-            for (j = i+1; j < ncount; j++) {
-                elist[2*ecount] = i;
-                elist[2*ecount+1] = j;
-                elen[ecount] = euclid_edgelen (i, j, x, y);
-                ecount++;
+        edge_count = 0;
+        for (i = 0; i < node_count; i++) {
+            for (j = i+1; j < node_count; j++) {
+                elist[2*edge_count] = i;
+                elist[2*edge_count+1] = j;
+                elen[edge_count] = euclid_edgelen (i, j, x, y);
+                edge_count++;
             }
         }
     }
 
-    *p_ncount = ncount;
-    *p_ecount = ecount;
+    *p_ncount = node_count;
+    *p_ecount = edge_count;
     *p_elist = elist;
     *p_elen = elen;
 

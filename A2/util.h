@@ -7,6 +7,7 @@
 #ifndef __CO759_UTIL_H
 #define __CO759_UTIL_H
 
+#define LP_EPSILON 0.000001
 
 #define CO759_SWAP(x,y,temp) {temp = x; x = y; y = temp;}
 

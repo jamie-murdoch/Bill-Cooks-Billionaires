@@ -1,7 +1,7 @@
 TARGET = subtour
 INCLUDES = -I /Users/lawson/Applications/IBM/ILOG/CPLEX_Studio1261/cplex/include/ilcplex/
 LIBS = /Users/lawson/Applications/IBM/ILOG/CPLEX_Studio1261/cplex/lib/x86-64_osx/static_pic/libcplex.a
-CC = gcc
+CC = g++
 CFLAGS = -O3 -g -Wall -pedantic -Wno-long-long
 
 .PHONY: default all clean
@@ -9,10 +9,10 @@ CFLAGS = -O3 -g -Wall -pedantic -Wno-long-long
 default: $(TARGET)
 all: default
 
-OBJECTS = $(patsubst %.c, %.o, $(wildcard *.c))
+OBJECTS = $(patsubst %.cpp, %.o, $(wildcard *.cpp))
 HEADERS = $(wildcard *.h)
 
-%.o: %.c $(HEADERS)
+%.o: %.cpp $(HEADERS)
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 .PRECIOUS: $(TARGET) $(OBJECTS)
