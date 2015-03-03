@@ -57,7 +57,7 @@ static int use_all_subtours = 0;
 double min_tour_value = INFINITY;
 int *min_tour = (int *) NULL;
 
-int main (int ac, char **av)
+int old_main (int ac, char **av)
 {
     int rval  = 0, node_count = 0, edge_count = 0, j;
     int *elist = (int *) NULL, *elen = (int *) NULL, *tlist = (int *) NULL;
