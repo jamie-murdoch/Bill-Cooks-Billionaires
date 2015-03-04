@@ -5,6 +5,8 @@
 
 #include "find_tour.h"
 
+//valgrind --dsymutil=yes ./subtour r20.dat
+
 bool TSP_Solver::find_min_tour(Graph &graph, vector<int> &tour_indices) {
 	bool success = true;
 
