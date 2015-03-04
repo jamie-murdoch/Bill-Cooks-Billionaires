@@ -3,7 +3,7 @@
 #include <math.h>
 #include <cplex.h>
 
-#include "find_tour.h"
+#include "tsp_solver.h"
 
 //valgrind --dsymutil=yes ./subtour r20.dat
 
