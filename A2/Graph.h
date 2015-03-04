@@ -26,6 +26,8 @@ struct Graph {
     unsigned long sum_edge_weights(vector<int> &edge_indices);
     void print_edges();
 
+    //void find_connected_components(double *x_edges, vector<int> &components)
+
     int node_count;
     int edge_count;
     vector<Edge> edges;
@@ -40,24 +42,24 @@ struct Graph {
  *  - making a singleton, finding parent, swapping, and linking
  */
 
-struct Node {
-    Node();
+// struct Node {
+//     Node();
 
-    // finds the canonical element of Node  performs path-compression en route
-    Node* find_canonical();
-    Node* find_canonical_with_compression();
+//     // finds the canonical element of Node  performs path-compression en route
+//     Node* find_canonical();
+//     Node* find_canonical_with_compression();
 
-    // x and y are the canonical nodes of two disjoint trees.
-    // assumes (or swaps, or increments so that) y has higher rank than x
-    // merges the trees by making y the parent of x
-    // returns a pointer to the merged tree
-    static Node* link(Node* x, Node* y);
+//     // x and y are the canonical nodes of two disjoint trees.
+//     // assumes (or swaps, or increments so that) y has higher rank than x
+//     // merges the trees by making y the parent of x
+//     // returns a pointer to the merged tree
+//     static Node* link(Node* x, Node* y);
 
-    // swaps the nodes x, y
-    static void swap(Node*& x, Node*& y);
+//     // swaps the nodes x, y
+//     static void swap(Node*& x, Node*& y);
 
-    int rank;
-    Node *parent;
-};
+//     int rank;
+//     Node *parent;
+// };
 
 #endif

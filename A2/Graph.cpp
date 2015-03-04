@@ -81,45 +81,45 @@ void Graph::print_edges() {
 }
 
 
-Node::Node(){
-    parent = this;
-    rank = 0;
-}
+// Node::Node(){
+//     parent = this;
+//     rank = 0;
+// }
 
 
-Node* Node::find_canonical() {
-    Node* p;
-    for (p = this; p->parent != p; p = p->parent);
+// Node* Node::find_canonical() {
+//     Node* p;
+//     for (p = this; p->parent != p; p = p->parent);
 
-    return p;
-}
+//     return p;
+// }
 
-Node* Node::find_canonical_with_compression() {
-    if(parent == this) {
-        return this;
-    }
-    else {
-        Node* new_parent = parent->find_canonical_with_compression();
-        parent = new_parent;
-        return parent;
-    }
-}
+// Node* Node::find_canonical_with_compression() {
+//     if(parent == this) {
+//         return this;
+//     }
+//     else {
+//         Node* new_parent = parent->find_canonical_with_compression();
+//         parent = new_parent;
+//         return parent;
+//     }
+// }
 
-Node* Node::link(Node* x, Node* y){
-    if (x->rank > y->rank) {
-        Node::swap(x, y);
-    }
-    else if (x->rank == y->rank) {
-        y->rank += 1;  
-    }
+// Node* Node::link(Node* x, Node* y){
+//     if (x->rank > y->rank) {
+//         Node::swap(x, y);
+//     }
+//     else if (x->rank == y->rank) {
+//         y->rank += 1;  
+//     }
 
-    x->parent = y;
+//     x->parent = y;
 
-    return y;
-}
+//     return y;
+// }
 
-void Node::swap(Node*& x, Node*& y){
-    Node* temp = x;
-    x = y;
-    y = temp;
-}
+// void Node::swap(Node*& x, Node*& y){
+//     Node* temp = x;
+//     x = y;
+//     y = temp;
+// }

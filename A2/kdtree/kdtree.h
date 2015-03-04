@@ -18,6 +18,23 @@ struct kdnode {
   int lopt, hipt;
 };
 
+class PointSet {
+public:
+
+private:
+	
+};
+
+class KDTree {
+public:
+	KDTree(PointSet *s);
+
+private:
+
+};
+
+
+
 
 //global permutation vector perm whose elements are 2-elem vectors
 //corresponding to x and y coordinate of a pt

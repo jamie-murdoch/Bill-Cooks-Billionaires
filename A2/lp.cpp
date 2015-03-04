@@ -20,6 +20,7 @@ int CO759lp_init (CO759lp *lp)
     lp->cplex_lp = (CPXLPptr) NULL;
     lp->cplex_env = CPXopenCPLEX (&rval);
     if (rval) {
+        throw "CPXoptnCPLEX failed";
         fprintf (stderr, "CPXoptnCPLEX failed, return code %d\n", rval);
         goto CLEANUP;
     }
@@ -47,6 +48,7 @@ int CO759lp_create (CO759lp *lp, const char *name)
     char nambuf[32];
 
     if (!lp->cplex_env) {
+        throw "no cplex_env in lp";
         fprintf (stderr, "no cplex_env in lp\n");
         rval = 1; goto CLEANUP;
     }
@@ -57,6 +59,7 @@ int CO759lp_create (CO759lp *lp, const char *name)
 
     lp->cplex_lp = CPXcreateprob (lp->cplex_env, &rval, nambuf);
     if (!lp->cplex_lp || rval) {
+       throw "CPXcreateprob failed";
        fprintf (stderr, "CPXcreateprob failed, return code %d\n", rval);
        goto CLEANUP;
     }
@@ -76,7 +79,9 @@ int CO759lp_new_row (CO759lp *lp, char sense, double rhs)
 
     rval = CPXnewrows (lp->cplex_env, lp->cplex_lp, 1, arhs, asense,
                        (double *) NULL, (char **) NULL);
-    if (rval) { fprintf (stderr, "CPXnewrows failed\n"); goto CLEANUP; }
+    if (rval) { 
+        throw "CPXnewrows failed";
+        fprintf (stderr, "CPXnewrows failed\n"); goto CLEANUP; }
 
 CLEANUP:
     return rval;
@@ -89,7 +94,9 @@ int CO759lp_addrows (CO759lp *lp, int newrows, int newnz, double *rhs,
 
     rval = CPXaddrows (lp->cplex_env, lp->cplex_lp, 0, newrows, newnz, rhs,
              sense, rmatbeg, rmatind, rmatval, (char **) NULL, (char **) NULL);
-    if (rval) { fprintf (stderr, "CPXaddrows failed\n"); goto CLEANUP; }
+    if (rval) { 
+        throw "CPXaddrows failed";
+        fprintf (stderr, "CPXaddrows failed\n"); goto CLEANUP; }
 
 CLEANUP:
     return rval;
@@ -102,7 +109,9 @@ int CO759lp_addcols (CO759lp *lp, int newcols, int newnz, double *obj,
 
     rval = CPXaddcols (lp->cplex_env, lp->cplex_lp, newcols, newnz, obj,
                    cmatbeg, cmatind, cmatval, lb, ub, (char **) NULL);
-    if (rval) { fprintf (stderr, "CPXaddcols failed\n"); goto CLEANUP; }
+    if (rval) { 
+        throw "CPXaddcols failed";
+        fprintf (stderr, "CPXaddcols failed\n"); goto CLEANUP; }
 
 CLEANUP:
     return rval;
@@ -121,6 +130,7 @@ int CO759lp_setbnd (CO759lp *lp, int col, char lower_or_upper, double bnd)
 
     rval = CPXchgbds (lp->cplex_env, lp->cplex_lp, 1, cindex, lu, bd);
     if (rval) {
+        throw "Couldn't set bnd on variable in cplex";
         fprintf (stderr, "Couldn't set bnd on variable %d in cplex\n", col);
         goto CLEANUP;
     }
@@ -138,6 +148,7 @@ int CO759lp_opt (CO759lp *lp, int *infeasible)
  
     rval = CPXdualopt (lp->cplex_env, lp->cplex_lp);
     if (rval) {
+        throw "CPXdualopt failed";
         fprintf (stderr, "CPXdualopt failed\n"); goto CLEANUP;
     }
 
@@ -146,6 +157,7 @@ int CO759lp_opt (CO759lp *lp, int *infeasible)
         if (infeasible) *infeasible = 1;
     } else if (solstat != CPX_STAT_OPTIMAL &&
                solstat != CPX_STAT_OPTIMAL_INFEAS) {
+        throw "Cplex optimization status";
         fprintf (stderr, "Cplex optimization status %d\n", solstat);
         rval = 1; goto CLEANUP;
     }
@@ -160,6 +172,7 @@ int CO759lp_objval (CO759lp *lp, double *obj)
 
     rval = CPXgetobjval (lp->cplex_env, lp->cplex_lp, obj);
     if (rval) {
+        throw "CPXgetobjval failed";
         fprintf (stderr, "CPXgetobjval failed\n"); goto CLEANUP;
     }
 
@@ -173,11 +186,13 @@ int CO759lp_x (CO759lp *lp, double *x)
 
     ncols = CPXgetnumcols (lp->cplex_env, lp->cplex_lp);
     if (ncols == 0) {
+        throw "No columns in LP";
         fprintf (stderr, "No columns in LP\n");
         rval = 1; goto CLEANUP;
     }
     rval = CPXgetx (lp->cplex_env, lp->cplex_lp, x, 0, ncols - 1);
     if (rval) {
+        throw "CPXgetx failed";
         fprintf (stderr, "CPXgetx failed\n"); goto CLEANUP;
     }
 
@@ -197,6 +212,7 @@ int CO759lp_write (CO759lp *lp, const char *fname)
 
     rval = CPXwriteprob (lp->cplex_env, lp->cplex_lp, nambuf, lpbuf);
     if (rval) {
+        throw "CPXwriteprob failed";
         fprintf (stderr, "CPXwriteprob failed\n"); goto CLEANUP;
     }
 
