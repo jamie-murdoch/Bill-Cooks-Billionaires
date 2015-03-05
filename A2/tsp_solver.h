@@ -32,17 +32,21 @@ typedef struct ComponentGraph {
 
 class TSP_Solver {
 public:
-	TSP_Solver() : m_min_tour_value(INFINITY) {}
+	TSP_Solver(Graph &graph);
+	~TSP_Solver();
 
-	bool find_min_tour(Graph &graph, vector<int> &tour_indices);	
+	bool find_min_tour(vector<int> &tour_indices);	
 
 private:
-	void build_lp(CO759lp *lp, const Graph &graph);
-	int subtour (CO759lp *lp, Graph &graph, vector<int> &tour_indices);
-	void add_subtour_inequalities(CO759lp *lp, Graph &graph);
+	int tsp_branch_and_bound(vector<int> &tour_indices);
+	void add_subtour_inequalities();
+	int compute_branch_edge();
+	bool update_current_tour_indices(vector<int> &tour_indices);
+
+
 	void get_delta (int nsize, int *nlist, int edge_count, vector<Edge> &elist, int *deltacount, int *delta, int *marks);
-	int add_subtour (CO759lp *lp, int deltacount, int *delta);
-	int add_connect (int node_count, int edge_count, vector<Edge> &elist, CO759lp *lp);
+	int add_subtour (int deltacount, int *delta);
+	int add_connect (int node_count, int edge_count, vector<Edge> &elist);
 	void init_graph (ComponentGraph *G);
 	void free_graph (ComponentGraph *G);
 	int build_graph (int node_count, int edge_count, vector<Edge> &elist, ComponentGraph *G);
@@ -50,13 +54,15 @@ private:
 	void dfs (int n, ComponentGraph *G, double *x, int *icount, int *island);
 
 	//Helper Functions
-	int run_lp(CO759lp *lp);
-	double get_obj_val(CO759lp *lp);
-	double* get_edges(CO759lp *lp, int max_edges);
-	int get_num_edges(CO759lp *lp, int max_edges);
-	void print_num_edges(CO759lp *lp, int max_edges);
+	int run_lp();
+	double get_obj_val();
+	double* get_edges();
+	int get_num_edges();
+	void print_num_edges();
 
-	vector<double> x;
+	Graph &m_graph;
+	CO759lp m_lp;
+	vector<double> m_lp_edges;
 	double m_min_tour_value;
 };
 

@@ -7,148 +7,130 @@
 
 //valgrind --dsymutil=yes ./subtour r20.dat
 
-bool TSP_Solver::find_min_tour(Graph &graph, vector<int> &tour_indices) {
-	bool success = true;
+TSP_Solver::TSP_Solver(Graph &graph) : m_graph(graph), m_min_tour_value(INFINITY) {
+    //Build the basic LP
+    CO759lp_init (&m_lp);
+    CO759lp_create (&m_lp, "subtour");
 
-	tour_indices.resize(graph.node_count, 0);
-	CO759lp lp;
-
-	double *x;
-	try {
-		//Build the initial lp
-		build_lp(&lp, graph);
-
-		//Run it the first time to check if it is feasible
-		run_lp(&lp);
-		cout << "Degree-Equation LP Value: " << get_obj_val(&lp) << endl;
-
-	    subtour(&lp, graph, tour_indices);
-
-	}
-	catch(const char* error) {
-		cerr << error << endl;
-		success = false;
-	}
-
-
-	//Cleanup
-	CO759lp_free (&lp);
-	return success;
-}
-
-void TSP_Solver::build_lp(CO759lp *lp, const Graph &graph) {
-	CO759lp_init (lp);
-	CO759lp_create (lp, "subtour");
-
-	/* Build a row for each degree equation */
+    /* Build a row for each degree equation */
     for(int i = 0; i < graph.node_count; i++) {
-    	CO759lp_new_row (lp, 'E', 2.0);
+        CO759lp_new_row (&m_lp, 'E', 2.0);
     }
 
     /* Build a column for each edge of the Graph */
     int cmatbeg = 0, num_vars = 1, num_non_zero = 2;
     double coefficients[2] = {1.0, 1.0};
     double lower_bound = 0.0;
-	double upper_bound = 1.0;
+    double upper_bound = 1.0;
     for(int j = 0; j < graph.edge_count; j++) {
-    	int *nodes = (int*)graph.edges[j].end;
+        int *nodes = (int*)graph.edges[j].end;
         double objective_val = (double)graph.edges[j].len;
-        CO759lp_addcols (lp, num_vars, num_non_zero, &objective_val,
-        	             &cmatbeg, nodes, coefficients, &lower_bound, &upper_bound);
+        CO759lp_addcols (&m_lp, num_vars, num_non_zero, &objective_val,
+                         &cmatbeg, nodes, coefficients, &lower_bound, &upper_bound);
     }
 
-    CO759lp_write (lp, "subtour.lp");
-
-    //TODO necessary?
-    //Try runnint subtour outside of subtour_init in original
-    run_lp(lp);
-    double obj = get_obj_val(lp);
-
-    //cout << "Done building LP" << endl;
+    CO759lp_write (&m_lp, "subtour.lp");
 }
 
-int TSP_Solver::subtour (CO759lp *lp, Graph &graph, vector<int> &tour_indices) {
+TSP_Solver::~TSP_Solver() {
+    CO759lp_free (&m_lp);
+}
+
+bool TSP_Solver::find_min_tour(vector<int> &tour_indices) {
+    //Make sure we have room for the tour
+    tour_indices.resize(m_graph.node_count, 0);
+
+    //Use try to catch any errors from CPLEX
+	try {
+		//Run it the first time to check if it is feasible
+		int infeasible = run_lp();
+        if(infeasible) {
+            cout << "Initial LP is infeasible." << endl;
+            return false;
+        } else {
+            cout << "Degree-Equation LP Value: " << get_obj_val() << endl;    
+        }
+		
+        //Run the main solver code
+	    tsp_branch_and_bound(tour_indices);
+	}
+	catch(const char* error) {
+		cerr << error << endl;
+        return false;
+	}
+
+    return true;
+}
+
+int TSP_Solver::tsp_branch_and_bound(vector<int> &tour_indices) {
 	double objval;
 	int rval = 0, infeasible = 0;
 
-	run_lp(lp); //TODO - Is this being run twice right at the start?  
-	print_num_edges(lp, graph.edge_count);
+	run_lp();
+	print_num_edges();
 
-	add_subtour_inequalities(lp, graph);
+    //Add constraints for disconnected components
+	add_subtour_inequalities();
 
-	infeasible = run_lp(lp);
+    //Run and check if the new LP is feasible
+	infeasible = run_lp();
 	if(infeasible) {
 		cout << "LP is infeasible, exitting." << endl;
 		return rval;
 	}
 
-	objval = get_obj_val(lp);
+    //Quit if LP val got worse
+	objval = get_obj_val();
 	cout << "Current LP Value: " << objval << endl;
-
-    if (objval > m_min_tour_value){
+    if (objval >= m_min_tour_value){ //Can I mike this >=? Testing says yes...
       cout << "Current LP value is higher than min tour value, exitting" << endl;
       return rval;
     }
     
-	print_num_edges(lp, graph.edge_count);
+	print_num_edges();
 
-	//Branch on edge with x[edge] closest to 0.5
-	double *x = get_edges(lp, graph.edge_count);
-	double max_dist = 0.0;
-	int branching_edge = 0;
-    for (int edge = 0; edge < graph.edge_count; edge++) {
-        double dist_from_int = min(x[edge], 1.0 - x[edge]);
-        if (dist_from_int > max_dist){
-	       max_dist = dist_from_int;
-	       branching_edge = edge;
-        }
-    }
-    
-    if (max_dist < LP_EPSILON) { //TODO should the indenting on this if be different?
+	//Branch on edge with m_lp_edges[edge] closest to 0.5
+	int branching_edge = compute_branch_edge();
+    double branch_edge_val = m_lp_edges[branching_edge];
+
+    if (is_almost_integral(branch_edge_val)) {
         cout << "LP solution is integral." << endl;
 
-    	if (objval < m_min_tour_value){
-    	  cout << "NEW OPTIMAL TOUR VALUE: " << objval << endl;
-    	  m_min_tour_value = objval;
+    	//if (objval < m_min_tour_value){ //TODO do we really need this check? Only if objval == m_min_tour_val
+    	    cout << "NEW OPTIMAL TOUR VALUE: " << objval << endl;
+    	    m_min_tour_value = objval;
 
-    	  int index = 0;
-    	  for (int j = 0; j < graph.edge_count; j++){
-    	    if (x[j] > LP_EPSILON){
-                if(index > graph.node_count - 1) {
-                        cout << "wow" << endl;
-                }
-    	      tour_indices[index++] = j;
-    	    }
-    	  }
-
-    	  if(index != graph.node_count){
-    	    cout << "Computed tour isn't a tour" << endl;
-    	    return rval;
-    	  }
-    	}
+            //Update the tour
+            if(!update_current_tour_indices(tour_indices)) {
+                cout << "Computed tour isn't a tour" << endl;
+                return rval;
+            } 
+    	//}
 
     } else {
         cout << "Branching on edge " << branching_edge << endl;
-		
-		CO759lp_setbnd(lp, branching_edge, 'U', 0.0);
 
-    	rval = subtour(lp, graph, tour_indices);
+        //Clamp it to 0
+		CO759lp_setbnd(&m_lp, branching_edge, 'U', 0.0);
+
+    	rval = tsp_branch_and_bound(tour_indices);
     	if(rval) return rval;
 
-		CO759lp_setbnd(lp, branching_edge, 'U', 1.0);
-		CO759lp_setbnd(lp, branching_edge, 'L', 1.0);
+        //Clamp it to 1
+		CO759lp_setbnd(&m_lp, branching_edge, 'U', 1.0);
+		CO759lp_setbnd(&m_lp, branching_edge, 'L', 1.0);
 
-    	subtour(lp, graph, tour_indices);
+    	rval = tsp_branch_and_bound(tour_indices);
     	if(rval) return rval;
 
-		CO759lp_setbnd(lp, branching_edge, 'L', 0.0);
+        //Relax again
+		CO759lp_setbnd(&m_lp, branching_edge, 'L', 0.0);
     }
 
     return rval;
 }
 
-void TSP_Solver::add_subtour_inequalities(CO759lp *lp, Graph &graph)
-{
+void TSP_Solver::add_subtour_inequalities() {
     int rval = 0, icount;
     int round = 0, deltacount = 0;
     int infeasible = 0, i;
@@ -159,42 +141,42 @@ void TSP_Solver::add_subtour_inequalities(CO759lp *lp, Graph &graph)
 
     init_graph (&G);
 
-    infeasible = run_lp(lp); //TODO not necessary?
+    infeasible = run_lp(); //TODO not necessary?
     if(infeasible) throw "Adding subtour inequalities failed.";
     cout <<"df" << endl;
     //exit(0);
 
-    rval = build_graph (graph.node_count, graph.edge_count, graph.edges, &G);
+    rval = build_graph (m_graph.node_count, m_graph.edge_count, m_graph.edges, &G);
     if (rval) { fprintf (stderr, "build_graph failed\n"); exit(1); }
 
-    double *x = (double *) malloc (graph.edge_count * sizeof (double));
-    int *island = (int *) malloc (graph.node_count * sizeof (int));
-    int *delta  = (int *) malloc (graph.edge_count * sizeof(int));
-    int *marks  = (int *) malloc (graph.node_count * sizeof(int));
+    double *x = (double *) malloc (m_graph.edge_count * sizeof (double));
+    int *island = (int *) malloc (m_graph.node_count * sizeof (int));
+    int *delta  = (int *) malloc (m_graph.edge_count * sizeof(int));
+    int *marks  = (int *) malloc (m_graph.node_count * sizeof(int));
     if (!x || !island || !delta || !marks) {
         fprintf (stderr, "out of memory for x, island, delta, or marks\n");
         rval = 1; goto CLEANUP;
     }
-    for (i = 0; i < graph.node_count; i++) marks[i] = 0;
+    for (i = 0; i < m_graph.node_count; i++) marks[i] = 0;
 
-    rval = CO759lp_x (lp, x);
+    rval = CO759lp_x (&m_lp, x);
     if (rval) { fprintf (stderr, "CO759lp_x failed\n"); goto CLEANUP; }
 
     while (connected (&G, x, &icount, island) == 0) {
         /*  just add one subtour; better to add one for each component */
 
-        get_delta (icount, island, graph.edge_count, graph.edges, &deltacount, delta, marks);
+        get_delta (icount, island, m_graph.edge_count, m_graph.edges, &deltacount, delta, marks);
 
-        rval = add_subtour (lp, deltacount, delta);
+        rval = add_subtour(deltacount, delta);
         if (rval) { fprintf (stderr, "add_subtour failed"); goto CLEANUP; }
 
-        rval = CO759lp_opt (lp, &infeasible);
+        rval = CO759lp_opt (&m_lp, &infeasible);
         if (rval) { fprintf (stderr, "CO759lp_opt failed\n"); goto CLEANUP; }
         if (infeasible) {
             fprintf (stderr, "LP is infeasible, exitting\n"); goto CLEANUP;
         }
 
-        rval = CO759lp_objval (lp, &objval);
+        rval = CO759lp_objval (&m_lp, &objval);
         if (rval) { fprintf (stderr, "CO759lp_objval failed\n"); goto CLEANUP; }
 
         // printf ("Round %d LP: %fL  (added subtour of size %d)\n",
@@ -202,7 +184,7 @@ void TSP_Solver::add_subtour_inequalities(CO759lp *lp, Graph &graph)
         // fflush (stdout);
         cout << "Round " << round++ << " LP: " << objval << "  (added subtour of size " << icount << ")" << endl;
 
-        rval = CO759lp_x (lp, x);
+        rval = CO759lp_x (&m_lp, x);
         if (rval) { fprintf (stderr, "CO759lp_x failed\n"); goto CLEANUP; }
 
     }
@@ -213,6 +195,33 @@ CLEANUP:
     if (island) free (island);
     if (delta) free (delta);
     if (marks) free (marks);
+}
+
+int TSP_Solver::compute_branch_edge() {
+    double *x = get_edges();
+    double max_dist = 0.0;
+    int branching_edge = 0;
+    for (int edge = 0; edge < m_graph.edge_count; edge++) {
+        double dist_from_int = min(x[edge], 1.0 - x[edge]);
+        if (dist_from_int > max_dist){
+           max_dist = dist_from_int;
+           branching_edge = edge;
+        }
+    }
+
+    return branching_edge;
+}
+
+//Return false if not a tour
+bool TSP_Solver::update_current_tour_indices(vector<int> &tour_indices) {
+    int index = 0;
+    for (int j = 0; j < m_graph.edge_count; j++){
+        if (m_lp_edges[j] > LP_EPSILON){
+            tour_indices[index++] = j;
+        }
+    }
+
+    return index == m_graph.node_count;
 }
 
 int TSP_Solver::connected (ComponentGraph *G, double *x, int *icount, int *island)
@@ -330,7 +339,7 @@ void TSP_Solver::get_delta (int nsize, int *nlist, int edge_count, vector<Edge> 
     for (i = 0; i < nsize; i++) marks[nlist[i]] = 0;
 }
 
-int TSP_Solver::add_subtour (CO759lp *lp, int deltacount, int *delta)
+int TSP_Solver::add_subtour (int deltacount, int *delta)
 {
     int rval = 0, i, newrows = 1, newnz = deltacount, *rmatind = delta;
     int rmatbeg[1];
@@ -348,7 +357,7 @@ int TSP_Solver::add_subtour (CO759lp *lp, int deltacount, int *delta)
     }
     for (i = 0; i < deltacount; i++) rmatval[i] = 1.0;
 
-    rval = CO759lp_addrows (lp, newrows, newnz, rhs, sense, rmatbeg,
+    rval = CO759lp_addrows (&m_lp, newrows, newnz, rhs, sense, rmatbeg,
                             rmatind, rmatval);
     if (rval) {
         fprintf (stderr, "CO759lp_addrows failed: %d\n", rval);
@@ -362,9 +371,9 @@ CLEANUP:
 
 
 //Helpers//
-int TSP_Solver::run_lp(CO759lp *lp) {
+int TSP_Solver::run_lp() {
 	int infeasible = 0;
-	int rval = CO759lp_opt (lp, &infeasible);
+	int rval = CO759lp_opt (&m_lp, &infeasible);
 
     if (rval) {
         throw "run_lp failed"; 
@@ -373,32 +382,32 @@ int TSP_Solver::run_lp(CO759lp *lp) {
     return infeasible;
 }
 
-double TSP_Solver::get_obj_val(CO759lp *lp) {
+double TSP_Solver::get_obj_val() {
 	double objval;
-	CO759lp_objval(lp, &objval);
+	CO759lp_objval(&m_lp, &objval);
 	return objval;
 }
 
-double* TSP_Solver::get_edges(CO759lp *lp, int max_edges) {
-    if(x.size() < max_edges) x.resize(max_edges);
+double* TSP_Solver::get_edges() {
+    if(m_lp_edges.size() < m_graph.edge_count) m_lp_edges.resize(m_graph.edge_count);
 
-    CO759lp_x (lp, &x[0]);
+    CO759lp_x (&m_lp, &m_lp_edges[0]);
     
-    return &x[0];
+    return &m_lp_edges[0];
 }
 
-int TSP_Solver::get_num_edges(CO759lp *lp, int max_edges) {
-    double *x = get_edges(lp, max_edges);
+int TSP_Solver::get_num_edges() {
+    double *x = get_edges();
 
     int i = 0;
-    for (int j = 0; j < max_edges; j++) {
+    for (int j = 0; j < m_graph.edge_count; j++) {
         if (x[j] > LP_EPSILON) i++;
     }
 
     return i;
 }
 
-void TSP_Solver::print_num_edges(CO759lp *lp, int max_edges) {
-	int num_tour_edges = get_num_edges(lp, max_edges);
+void TSP_Solver::print_num_edges() {
+	int num_tour_edges = get_num_edges();
 	cout << "LP Graph has " << num_tour_edges << " edges" << endl;
 }

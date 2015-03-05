@@ -16,4 +16,6 @@ double CO759_real_zeit (void);
 
 int CO759_build_xy (int ncount, double *xlist, double *ylist, int gridsize);
 
+bool is_almost_integral(double x);
+
 #endif  /* __CO759_UTIL_H */
