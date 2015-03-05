@@ -26,7 +26,8 @@ struct Graph {
     unsigned long sum_edge_weights(vector<int> &edge_indices);
     void print_edges();
 
-    //void find_connected_components(double *x_edges, vector<int> &components)
+    //Returns false if graph is connected
+    //bool find_island(double *x_edges, vector<int> &components)
 
     int node_count;
     int edge_count;
