@@ -5,6 +5,7 @@
 #include "kdtree.h"
 
 
+
 void PointSet::addpt(Point newpt){
   ptvec.push_back(newpt);
 }
@@ -37,6 +38,11 @@ KdTree::KdTree(PointSet *ptset){
 //accesses jth coord of perm[i]
 float KdTree::px(int i, int j){
   return source_ptset->x(perm[i], j);
+}
+
+//prints the point perm[i] in the format (x, y)-
+void KdTree::print_point(int i){
+  cout << "(" << px(i, 0) << "," << px(i, 1) << ")-";
 }
 
 //comparison operator to test if perm[i] has dimth coordinate less than perm[j]
@@ -114,16 +120,41 @@ KdNode* KdTree::build(int l, int u){
   return p;
 }
 
+void KdTree::print_tree(KdNode *node){
+  int low, high;
+  if (node == NULL) node = root;
+  if (node->bucket){
+    cout << "bucket node:" << endl;
+    low = node->lopt; high = node->hipt;
+    cout << "bucket low and high range " << low << " " << high << endl;
+    for (int i = low; i <= high; i++)
+      print_point(i);
+    cout << endl;
+  } else {
+    cout << "non-bucket w cut-dim " << node->cutdim << "and val " << node->cutval
+	 << endl;
+    print_tree(node->loson);
+    print_tree(node->hison);
+  }
+}
+
 int main(void){
   PointSet *ptset = new PointSet;
-  Point p1, p2, p3;
-  p1.x = 0; p1.y = -5;
-  p2.x = 0; p2.y = 1;
-  p3.x = -9; p3.y = 7;
-  ptset->addpt(p1); ptset->addpt(p2); ptset->addpt(p3);
+  int x, y;
+  Point newpt;
+  int num;
+  cout << "How many points to enter ";
+  cin >> num;
+  for(; num > 0; num--){
+    cout << "Enter two points for an x-y coord " << num << "remaining ";
+    cin >> x >> y;
+    newpt.x = x; newpt.y = y;
+    ptset->addpt(newpt);
+  }
 
   KdTree *kdt;
   kdt = new KdTree(ptset);
+  kdt->print_tree(NULL);
   
 
   return 0;
