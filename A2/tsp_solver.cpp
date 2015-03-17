@@ -33,11 +33,12 @@ TSP_Solver::TSP_Solver(Graph &graph) : m_graph(graph), m_min_tour_value(INFINITY
 
     //Moving some stuff for the DFS up here to save malloc calls
     init_graph (&G);
-    island = (int *) malloc (m_graph.node_count * sizeof (int));
+    islands = (int *) malloc (m_graph.node_count * sizeof (int));
+    island_sizes = (int *) malloc (m_graph.node_count * sizeof (int));
     delta  = (int *) malloc (m_graph.edge_count * sizeof(int));
     edge_marks  = (int *) malloc (m_graph.node_count * sizeof(int));
-    if (!island || !delta || !edge_marks) {
-        fprintf (stderr, "out of memory for x, island, delta, or edge_marks\n");
+    if (!islands || !delta || !edge_marks) {
+        fprintf (stderr, "out of memory for x, islands, delta, or edge_marks\n");
     }
     build_graph (m_graph.node_count, m_graph.edge_count, m_graph.edges, &G);
 }
@@ -45,7 +46,8 @@ TSP_Solver::TSP_Solver(Graph &graph) : m_graph(graph), m_min_tour_value(INFINITY
 TSP_Solver::~TSP_Solver() {
     CO759lp_free (&m_lp);
 
-    free(island);
+    free(islands);
+    free(island_sizes);
     free(delta);
     free(edge_marks);
 
@@ -103,7 +105,7 @@ int TSP_Solver::tsp_branch_and_bound(vector<int> &tour_indices) {
     //Quit if LP val got worse
 	objval = get_obj_val();
 	cout << "Current LP Value: " << objval << endl;
-    if (objval >= m_min_tour_value){ //Can I mike this >=? Testing says yes...
+    if (objval > m_min_tour_value){ //Can I mike this >=? Testing says yes...
       cout << "Current LP value is higher than min tour value, exitting" << endl;
       return rval;
     }
@@ -117,7 +119,7 @@ int TSP_Solver::tsp_branch_and_bound(vector<int> &tour_indices) {
     if (is_almost_integral(branch_edge_val)) {
         cout << "LP solution is integral." << endl;
 
-    	//if (objval < m_min_tour_value){ //TODO do we really need this check? Only if objval == m_min_tour_val
+    	if (objval < m_min_tour_value){ //TODO do we really need this check? Only if objval == m_min_tour_val
     	    cout << "NEW OPTIMAL TOUR VALUE: " << objval << endl;
     	    m_min_tour_value = objval;
 
@@ -126,11 +128,11 @@ int TSP_Solver::tsp_branch_and_bound(vector<int> &tour_indices) {
                 cout << "Computed tour isn't a tour" << endl;
                 return rval;
             } 
-    	//}
+    	}
     } else {
         cout << "Branching on edge " << branching_edge << endl;
 
-        //Clamp it to 0
+        //Clamp it to 0  //TODO Try setting to 1.0 first
 		CO759lp_setbnd(&m_lp, branching_edge, 'U', 0.0);
 
     	rval = tsp_branch_and_bound(tour_indices);
@@ -157,42 +159,74 @@ int TSP_Solver::add_subtour_inequalities() {
     double objval;
 
 
-    double *x = get_edges();
-    while (!connected (&G, x, &icount, island, 0)) {
+    get_edges();
 
-        get_delta (icount, island, m_graph.edge_count, m_graph.edges, &deltacount, delta, edge_marks);
-        rval = add_subtour(deltacount, delta);
+    cout << "Looking for islands" << endl;
+
+    int num_islands = 0;
+    find_islands(islands, island_sizes, &num_islands);
+
+    cout << "num islands: " << num_islands <<endl;
+    // while(num_islands != 1) {
+
+    //     cout << "Adding inequalities for " << num_islands << " islands" << endl;
+    //     int island_index = 0;
+    //     for(int i = 0; i < num_islands; i++) {
+    //         int island_size = island_sizes[i];
+
+    //         int delta_count = 0;
+    //         get_delta(&islands[island_index], island_size, &delta_count, delta);
+
+    //         add_subtour(deltacount, delta);     
+
+    //         island_index += island_size;
+    //     }
+    //     cout << "Done adding subtour inequalities" << endl;
+
+    //     int infeasible = run_lp();
+    //     if(infeasible) return 1;
+
+    //     get_edges();
+
+    //     find_islands(islands, island_sizes, &num_islands);
+    // }
+
+    
+    // while (!connected (&G, x, &icount, island, 0)) {
+
+    //     get_delta (icount, island, m_graph.edge_count, m_graph.edges, &deltacount, delta, edge_marks);
+    //     rval = add_subtour(deltacount, delta);
 
         
-        for(int i = 1; i < m_graph.node_count; i++) {
-            if(G.nodelist[i].mark == 0) { //Not yet traversed by dfs
-                if(!connected(&G, x, &icount, island, i)) {
-                    get_delta (icount, island, m_graph.edge_count, m_graph.edges, &deltacount, delta, edge_marks);
-                    rval = add_subtour(deltacount, delta);
-                }
-                else {
-                    break; //Graph is now connected
-                }
-            }
-        }
+    //     for(int i = 1; i < m_graph.node_count; i++) {
+    //         if(G.nodelist[i].mark == 0) { //Not yet traversed by 
+    //             if(!connected(&G, x, &icount, island, i)) {
+    //                 get_delta (icount, island, m_graph.edge_count, m_graph.edges, &deltacount, delta, edge_marks);
+    //                 rval = add_subtour(deltacount, delta);
+    //             }
+    //             else {
+    //                 break; //Graph is now connected
+    //             }
+    //         }
+    //     }
         
-        if (rval) { fprintf (stderr, "add_subtour failed"); goto CLEANUP; }
+    //     if (rval) { fprintf (stderr, "add_subtour failed"); goto CLEANUP; }
 
-        rval = CO759lp_opt (&m_lp, &infeasible);
-        if (rval) { fprintf (stderr, "CO759lp_opt failed\n"); goto CLEANUP; }
-        if (infeasible) {
-            fprintf (stderr, "LP is infeasible, exitting\n"); goto CLEANUP;
-        }
+    //     rval = CO759lp_opt (&m_lp, &infeasible);
+    //     if (rval) { fprintf (stderr, "CO759lp_opt failed\n"); goto CLEANUP; }
+    //     if (infeasible) {
+    //         fprintf (stderr, "LP is infeasible, exitting\n"); goto CLEANUP;
+    //     }
 
-        rval = CO759lp_objval (&m_lp, &objval);
-        if (rval) { fprintf (stderr, "CO759lp_objval failed\n"); goto CLEANUP; }
+    //     rval = CO759lp_objval (&m_lp, &objval);
+    //     if (rval) { fprintf (stderr, "CO759lp_objval failed\n"); goto CLEANUP; }
 
-        cout << "Round " << round++ << " LP: " << objval << "  (added subtour of size " << icount << ")" << endl;
+    //     cout << "Round " << round++ << " LP: " << objval << "  (added subtour of size " << icount << ")" << endl;
 
-        rval = CO759lp_x (&m_lp, x);
-        if (rval) { fprintf (stderr, "CO759lp_x failed\n"); goto CLEANUP; }
+    //     rval = CO759lp_x (&m_lp, x);
+    //     if (rval) { fprintf (stderr, "CO759lp_x failed\n"); goto CLEANUP; }
 
-    }
+    // }
 
 CLEANUP:
     return rval;
@@ -218,46 +252,151 @@ bool TSP_Solver::update_current_tour_indices(vector<int> &tour_indices) {
     int index = 0;
     for (int j = 0; j < m_graph.edge_count; j++){
         if (m_lp_edges[j] > LP_EPSILON){
-            tour_indices[index++] = j;
+            //if(is_almost_integral(m_lp_edges[j])){ //TODO do I need to check this?
+                tour_indices[index++] = j;    
+            //}
         }
     }
 
     return index == m_graph.node_count;
 }
 
-int TSP_Solver::connected (ComponentGraph *G, double *x, int *icount, int *island, int starting_node)
+// int TSP_Solver::connected (ComponentGraph *G, double *x, int *icount, int *island, int starting_node)
+// {
+//     int i;
+
+//     *icount = 0;
+//     for (i = 0; i < G->node_count; i++) G->nodelist[i].mark = 0;
+
+//     dfs (starting_node, G, x, icount, island);
+
+//     if (*icount == G->node_count) return 1;
+//     else return 0;
+// }
+
+
+//new -- try using different marks for diffferent
+//THIS IS BROKEN
+void TSP_Solver::find_islands(int *islands, int *island_sizes, int *num_islands)
 {
-    int i;
+    for (int i = 0; i < G.node_count; i++) G.nodelist[i].mark = 0;
 
-    *icount = 0;
-    for (i = 0; i < G->node_count; i++) G->nodelist[i].mark = 0;
+    int mark_colour = 1;
+    int total_explored = 0;
+    *num_islands = 0;
 
-    dfs (starting_node, G, x, icount, island);
+    for(int i = 0; i < G.node_count; i++) {
+        int island_size = 0;
+        dfs (i, &G, &m_lp_edges[0], &island_size, &islands[total_explored], mark_colour);
+        
+        if(island_size != 0) { //If we found a new island
+            *num_islands++;
+            total_explored += island_size;
+            mark_colour++;
 
-    if (*icount == G->node_count) return 1;
-    else return 0;
+            if (total_explored == G.node_count) { //If we traversed all nodes quit
+                cout << *num_islands <<endl;
+                return;
+            }
+        } else {
+            cout << "iszero" << endl;
+        }
+    }
+
+
 }
 
-void TSP_Solver::dfs (int n, ComponentGraph *G, double *x, int *icount, int *island)
+void TSP_Solver::dfs (int n, ComponentGraph *G, double *x, int *icount, int *island, int mark_colour)
 {
     int i, neighbor;
     GNode *pn;
+    
+    if(*icount >= m_graph.node_count) {
+        cout << "interesting " << endl;
+    }
 
     island[*icount] = n;
     (*icount)++;
 
     pn = &G->nodelist[n];
-    pn->mark = 1;
+    pn->mark = mark_colour;
 
     for (i = 0; i < pn->degree; i++) {
         if (x[pn->adj_objs[i].e] > LP_EPSILON) {
+            //cout <<
             neighbor = pn->adj_objs[i].n;
             if (G->nodelist[neighbor].mark == 0) {
-                dfs (neighbor, G, x, icount, island);
+                dfs (neighbor, G, x, icount, island, mark_colour);
             }
         }
     }
 }
+
+void TSP_Solver::get_delta(int *island, int island_size, int *delta_count, int *delta) {
+
+    *delta_count = 0;
+
+    for(int i = 0; i < island_size; i++) { //For every node in the island
+        int node_id = island[i];
+        GNode *node = &G.nodelist[node_id];
+        int mark_colour = node->mark;
+
+        for(int j = 0; j < node->degree; j++) { //Look through all neighboring nodes
+            int neighb_node_id = node->adj_objs[j].n;
+            int neighb_edge = node->adj_objs[j].e;
+
+            GNode *neighb_node = &G.nodelist[neighb_node_id];
+            int neighb_mark_colour = neighb_node->mark;
+
+            //Neighbor in a different isalnd
+            if(mark_colour != neighb_mark_colour) { //If they are marked differently, they aren't in the island
+                delta[*delta_count] = neighb_edge;
+                delta_count++;
+            }
+        }
+    }
+}
+
+// void TSP_Solver::get_delta (int nsize, int *nlist, int edge_count, vector<Edge> &elist,
+//        int *deltacount, int *delta, int *edge_marks)
+// {
+//     int i, k = 0;
+
+//     //TODO Better way?
+//     for(i = 0; i < m_graph.node_count; i++) edge_marks[i] = 0;
+
+//     for (i = 0; i < nsize; i++) edge_marks[nlist[i]] = 1;
+
+//     for (i = 0; i < edge_count; i++) {
+//         if (edge_marks[elist[i].end[0]] + edge_marks[elist[i].end[1]] == 1) {
+//             delta[k++] = i;
+//         }
+//     }
+//     *deltacount = k;
+
+//     for (i = 0; i < nsize; i++) edge_marks[nlist[i]] = 0;
+// }
+
+// void TSP_Solver::dfs (int n, ComponentGraph *G, double *x, int *icount, int *island)
+// {
+//     int i, neighbor;
+//     GNode *pn;
+
+//     island[*icount] = n;
+//     (*icount)++;
+
+//     pn = &G->nodelist[n];
+//     pn->mark = 1;
+
+//     for (i = 0; i < pn->degree; i++) {
+//         if (x[pn->adj_objs[i].e] > LP_EPSILON) {
+//             neighbor = pn->adj_objs[i].n;
+//             if (G->nodelist[neighbor].mark == 0) {
+//                 dfs (neighbor, G, x, icount, island);
+//             }
+//         }
+//     }
+// }
 
 void TSP_Solver::init_graph (ComponentGraph *G)
 {
@@ -323,25 +462,7 @@ CLEANUP:
     return rval;
 }
 
-void TSP_Solver::get_delta (int nsize, int *nlist, int edge_count, vector<Edge> &elist,
-       int *deltacount, int *delta, int *edge_marks)
-{
-    int i, k = 0;
 
-    //Better way?
-    for (i = 0; i < m_graph.node_count; i++) edge_marks[i] = 0;
-
-    for (i = 0; i < nsize; i++) edge_marks[nlist[i]] = 1;
-
-    for (i = 0; i < edge_count; i++) {
-        if (edge_marks[elist[i].end[0]] + edge_marks[elist[i].end[1]] == 1) {
-            delta[k++] = i;
-        }
-    }
-    *deltacount = k;
-
-    for (i = 0; i < nsize; i++) edge_marks[nlist[i]] = 0;
-}
 
 int TSP_Solver::add_subtour (int deltacount, int *delta)
 {

@@ -44,14 +44,16 @@ private:
 	bool update_current_tour_indices(vector<int> &tour_indices);
 
 
-	void get_delta (int nsize, int *nlist, int edge_count, vector<Edge> &elist, int *deltacount, int *delta, int *marks);
+	//void get_delta (int nsize, int *nlist, int edge_count, vector<Edge> &elist, int *deltacount, int *delta, int *marks);
+	void get_delta(int *island, int island_size, int *delta_count, int *delta);
 	int add_subtour (int deltacount, int *delta);
 	int add_connect (int node_count, int edge_count, vector<Edge> &elist);
 	void init_graph (ComponentGraph *G);
 	void free_graph (ComponentGraph *G);
 	int build_graph (int node_count, int edge_count, vector<Edge> &elist, ComponentGraph *G);
-	int connected (ComponentGraph *G, double *x, int *icount, int *island, int starting_node);
-	void dfs (int n, ComponentGraph *G, double *x, int *icount, int *island);
+	//int connected (ComponentGraph *G, double *x, int *icount, int *island, int starting_node);
+	void find_islands(int *islands, int *island_sizes, int *num_islands);
+	void dfs (int n, ComponentGraph *G, double *x, int *icount, int *island, int mark_colour);
 
 	//Helper Functions
 	int run_lp();
@@ -65,7 +67,8 @@ private:
 	vector<double> m_lp_edges;
 	double m_min_tour_value;
 
-	int *island;
+	int *islands;
+	int *island_sizes;
 	int *delta;
 	int *edge_marks;
 	ComponentGraph G;

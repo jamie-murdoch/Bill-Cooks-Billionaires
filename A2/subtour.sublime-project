@@ -1,0 +1,9 @@
+{
+	"settings":
+    {
+         "sublimegdb_workingdir": "./",
+         // NOTE: You MUST provide --interpreter=mi for the plugin to work
+         "sublimegdb_commandline": "/opt/local/bin/gdb-apple --interpreter=mi --args ./subtour r50"
+    
+    }
+}

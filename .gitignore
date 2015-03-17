@@ -5,4 +5,5 @@ g10000000.29999959.edg
 *.trace/
 *.dtps/
 *.prof
-A2/subtour*
+A2/subtour
+A2/bak

@@ -1,0 +1,25 @@
+Ideas
+-----
+
+Submit all code by Apr 3 11:59pm
+
+- implement elimination algorithm from paper
+- get datasets from Bill
+
+- visualize incremental improvement of messy graph
+
+
+- in paper
+	- explain problems
+	- running time charts
+	- visuals?
+
+
+
+Milestones
+----------
+1. Read paper over weekend Mar 15
+2. Verify kd tree
+3. steal kd tree for graphics project
+4. 
+3. 100%

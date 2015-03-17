@@ -1,0 +1,2623 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"free",
+				"free_graph(ComponentGraph *G)	void"
+			],
+			[
+				"bra",
+				"branch_edge_val	double"
+			],
+			[
+				"m_lp",
+				"m_lp_edges	vector<double>"
+			],
+			[
+				"in",
+				"infeasible	int"
+			],
+			[
+				"geto",
+				"get_obj_val(CO759lp *lp)	double"
+			],
+			[
+				"ed",
+				"edge_count	int"
+			],
+			[
+				"num",
+				"num_tour_edges"
+			],
+			[
+				"ma",
+				"max_edges	int"
+			],
+			[
+				"e",
+				"edge_count	int"
+			],
+			[
+				"edge",
+				"edges	vector<Edge>"
+			],
+			[
+				"su",
+				"success	bool"
+			],
+			[
+				"find_",
+				"find_min_tour"
+			],
+			[
+				"m_",
+				"m_size	double"
+			],
+			[
+				"plane",
+				"planePoint	Point3D"
+			],
+			[
+				"sc",
+				"scene_root"
+			],
+			[
+				"min",
+				"minP	Point3D"
+			],
+			[
+				"poin",
+				"pointInConvexPolygon(const int &Point3D)	bool"
+			],
+			[
+				"wM",
+				"wMax	double"
+			],
+			[
+				"tm",
+				"tmax	double"
+			],
+			[
+				"norm",
+				"normal	Vector3D"
+			],
+			[
+				"norma",
+				"normalMatrix	Matrix4x4"
+			],
+			[
+				"no",
+				"normal	Vector3D"
+			],
+			[
+				"Matr",
+				"Matrix4x4	typedef"
+			],
+			[
+				"Point",
+				"Point3D	typedef"
+			],
+			[
+				"m_i",
+				"m_invtrans	Matrix4x4"
+			],
+			[
+				"nor",
+				"normalMatrix	Matrix4x4"
+			],
+			[
+				"D",
+				"DBL_INF	macro"
+			],
+			[
+				"get",
+				"getFlattened() const	std::list<GeometryNode>"
+			],
+			[
+				"com",
+				"computeReflectedContribution(const Intersection &i, int depth)	Colour"
+			],
+			[
+				"co",
+				"copyNode	GeometryNode"
+			],
+			[
+				"G",
+				"GeometryNode	class"
+			],
+			[
+				"worl",
+				"worldH	double"
+			],
+			[
+				"M_PI",
+				"M_PI_2	macro"
+			],
+			[
+				"close",
+				"closestI	Intersection"
+			],
+			[
+				"new",
+				"newI	Intersection"
+			],
+			[
+				"lig",
+				"light	Light *"
+			],
+			[
+				"light",
+				"lightVec	Vecotr3D"
+			],
+			[
+				"mL",
+				"mLookFrom	Point3D"
+			],
+			[
+				"n",
+				"normal	Vector3D"
+			],
+			[
+				"Poi",
+				"Point3D	typedef"
+			],
+			[
+				"In",
+				"Intersection	struct"
+			],
+			[
+				"MIN",
+				"MIN_INTERSECT_DIST	macro"
+			],
+			[
+				"clos",
+				"closestI	Intersection"
+			],
+			[
+				"print",
+				"print_self"
+			],
+			[
+				"V",
+				"VIEW_ROT	Viewer::INTERACTION_MODE"
+			],
+			[
+				"cur",
+				"curFov	double"
+			],
+			[
+				"M_P",
+				"M_PI_2	macro"
+			],
+			[
+				"bui",
+				"build_z_rotation_matrix(float rads)	int"
+			],
+			[
+				"buil",
+				"build_x_rotation_matrix(float rads)	int"
+			],
+			[
+				"X_",
+				"X_AXIS	Viewer::AXIS"
+			],
+			[
+				"tran",
+				"translate_eyepoint(int lookFrom)	void"
+			],
+			[
+				"mod",
+				"model_point1	const QVector3D &"
+			],
+			[
+				"final",
+				"final_point2	QVector2D"
+			],
+			[
+				"point",
+				"point_j	int"
+			],
+			[
+				"face",
+				"face_i	int"
+			],
+			[
+				"cube",
+				"cubeVertices	float [8]"
+			],
+			[
+				"fin",
+				"find_canonical_with_compression()	Node *"
+			],
+			[
+				"gra",
+				"graph	Graph *"
+			],
+			[
+				"for",
+				"forv	Vector For Loop"
+			],
+			[
+				"she",
+				"shellcode_size	int"
+			],
+			[
+				"mPr",
+				"mProgram	int"
+			],
+			[
+				"mRo",
+				"mRotationAxis	int"
+			],
+			[
+				"mR",
+				"mRotationAxis	int"
+			],
+			[
+				"rot",
+				"rotateCW()	bool"
+			],
+			[
+				"ro",
+				"rotateCW()	bool"
+			],
+			[
+				"ga",
+				"mGame	const Game *"
+			],
+			[
+				"ini",
+				"initial_scale	float"
+			],
+			[
+				"multic",
+				"Multicoloured"
+			],
+			[
+				"del",
+				"deltaLen	double"
+			],
+			[
+				"L",
+				"LIBS"
+			],
+			[
+				"res",
+				"resize(size_type __new_size)	void"
+			],
+			[
+				"m_m",
+				"m_menu_tools	int *"
+			],
+			[
+				"getA",
+				"getCostForAdjacent(int router1, int router2)	int"
+			],
+			[
+				"NB",
+				"NBR_ROUTER	macro"
+			],
+			[
+				"rout",
+				"routerConnectedToLink(int router, int link)	bool"
+			],
+			[
+				"link",
+				"link_cost	struct"
+			],
+			[
+				"router",
+				"routerId	int"
+			],
+			[
+				"rou",
+				"router1DB	circuit_DB"
+			],
+			[
+				"router1",
+				"router1DB	circuit_DB"
+			],
+			[
+				"ne",
+				"newPDU	struct pkt_LSPDU"
+			],
+			[
+				"r",
+				"router_id	unsigned int"
+			],
+			[
+				"H",
+				"HELLO"
+			],
+			[
+				"pk",
+				"pkt_LSPDU	struct"
+			],
+			[
+				"pkt",
+				"pkt_LSPDU	struct"
+			],
+			[
+				"c",
+				"c_str() const	const_pointer"
+			],
+			[
+				"net",
+				"networkDB	std::map<int, circuit_DB>"
+			],
+			[
+				"init",
+				"pkt_INIT"
+			],
+			[
+				"emu",
+				"emuSock	int"
+			],
+			[
+				"pkt_",
+				"pkt_INIT	struct"
+			],
+			[
+				"em",
+				"emuPort	const char *"
+			],
+			[
+				"send",
+				"send(int, const void *, size_t, int)	ssize_t"
+			],
+			[
+				"arg",
+				"argv	char const *[]"
+			],
+			[
+				"Inc",
+				"IncomingSocketManager	class"
+			],
+			[
+				"getAr",
+				"getArgDataType(int argType)	int"
+			],
+			[
+				"size",
+				"sizeOfArg(int argType)	int"
+			],
+			[
+				"argTe",
+				"argTypes	int *"
+			],
+			[
+				"msg",
+				"msgData	char*"
+			],
+			[
+				"serial",
+				"serializeArgs(char *destData, int index)	int"
+			],
+			[
+				"ARG_",
+				"ARG_OUTPUT	macro"
+			],
+			[
+				"EX",
+				"EXECUTE_FAILURE	MessageType"
+			],
+			[
+				"Mes",
+				"Messenger"
+			],
+			[
+				"po",
+				"portBuf"
+			],
+			[
+				"connectTo",
+				"connectTo(const char *address, const char *port)	int"
+			],
+			[
+				"Out",
+				"OutgoingSocketManager::connectTo"
+			],
+			[
+				"MESSAG",
+				"MessageType"
+			],
+			[
+				"bin",
+				"binderPort"
+			],
+			[
+				"bind",
+				"binderAddress"
+			],
+			[
+				"look",
+				"lookupBinder"
+			],
+			[
+				"loo",
+				"lookupServerInfo"
+			],
+			[
+				"TER",
+				"TERMINATE"
+			],
+			[
+				"Mess",
+				"Messenger"
+			],
+			[
+				"BIND",
+				"BINDER_FUNCTION_NOT_FOUND"
+			],
+			[
+				"ar",
+				"argTypes	int *"
+			],
+			[
+				"LO",
+				"LOC_FAILURE"
+			],
+			[
+				"MEss",
+				"Messenger"
+			],
+			[
+				"MyExc",
+				"MyExceptions"
+			],
+			[
+				"fi",
+				"first"
+			],
+			[
+				"data",
+				"database"
+			],
+			[
+				"conn",
+				"connection"
+			],
+			[
+				"connetion",
+				"connections"
+			],
+			[
+				"termin",
+				"terminateServers()	void"
+			],
+			[
+				"Server",
+				"ServerInfo"
+			],
+			[
+				"Binde",
+				"Binder::handleServerConnection"
+			],
+			[
+				"prin",
+				"printException(int e)	int"
+			],
+			[
+				"Bind",
+				"Binder::handleServerConnection"
+			],
+			[
+				"REG",
+				"REGISTER_SUCCESS"
+			],
+			[
+				"regi",
+				"registerServerFunction"
+			],
+			[
+				"UN",
+				"UNEXPECTED_MESSAGE_ERROR"
+			]
+		]
+	},
+	"buffers":
+	[
+		{
+			"file": "Makefile",
+			"settings":
+			{
+				"buffer_size": 613,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "tsp_solver.h",
+			"settings":
+			{
+				"buffer_size": 1849,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lp.h",
+			"settings":
+			{
+				"buffer_size": 1337,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "util.h",
+			"settings":
+			{
+				"buffer_size": 732,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "util.cpp",
+			"settings":
+			{
+				"buffer_size": 2898,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "lp.cpp",
+			"settings":
+			{
+				"buffer_size": 5705,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "Graph.h",
+			"settings":
+			{
+				"buffer_size": 1643,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "tsp_solver.cpp",
+			"settings":
+			{
+				"buffer_size": 16773,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/Users/lawson/Workspace/Bill-Cooks-Billionaires/.gitignore",
+			"settings":
+			{
+				"buffer_size": 75,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "subtour.cpp",
+			"settings":
+			{
+				"buffer_size": 6105,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "Graph.cpp",
+			"settings":
+			{
+				"buffer_size": 2638,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/usr/local/Cellar/valgrind/HEAD/lib/valgrind/default.supp",
+			"settings":
+			{
+				"buffer_size": 30249,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "/****************************************************************************/\n/*                                                                          */\n/*              CO759: Model for HW2, TSP via Subtour Cuts                  */\n/*              Date:  January 27, 2015                                     */\n/*                     February 9, 2015   added add_all_subtours()          */\n/*                     February 11, 2015  added add_connect()               */\n/*                                                                          */\n/****************************************************************************/\n\n#include <stdio.h>\n#include <stdlib.h>\n#include <getopt.h>\n#include <math.h>\n#include <cplex.h>\n#include \"lp.h\"\n#include \"util.h\"\n\ntypedef struct adjdobj {\n    int n;   /* index of neighbor Node */\n    int e;   /* index of adj joining neighbor */\n} adjobj;\n\ntypedef struct Node {\n    int degree;\n    adjobj *adj_objs;\n    int mark;\n} Node;\n\ntypedef struct Graph {\n    int node_count;\n    int edge_count;\n    Node *nodelist;\n    adjobj *adjspace;\n} Graph;\n\nstatic void usage (char *f);\nstatic int getprob(char *fname, int *p_ncount, int *p_ecount, int **p_elist, int **p_elen);\nstatic int parseargs (int ac, char **av);\nstatic int subtour_init (int node_count, int edge_count, int *elist, int *elen, int *tlist);\nstatic int subtour (CO759lp *lp, int edge_count, int node_count, int *elist, int *elen, int *tlist);\nstatic int euclid_edgelen (int i, int j, double *x, double *y);\nstatic void get_delta (int nsize, int *nlist, int edge_count, int *elist, int *deltacount, int *delta, int *marks);\nstatic int add_subtour (CO759lp *lp, int deltacount, int *delta);\nstatic int add_connect (int node_count, int edge_count, int *elist, CO759lp *lp);\nstatic void init_graph (Graph *G);\nstatic void free_graph (Graph *G);\nstatic int build_graph (int node_count, int edge_count, int *elist, Graph *G);\nstatic int connected (Graph *G, double *x, int *icount, int *island);\nstatic void dfs (int n, Graph *G, double *x, int *icount, int *island);\n\nstatic char *fname = (char *) NULL;\nstatic int seed = 0;\nstatic int geometric_data = 1;\nstatic int ncount_rand = 0;\nstatic int gridsize_rand = 100;\nstatic int use_all_subtours = 0;\ndouble min_tour_value = INFINITY;\nint *min_tour = (int *) NULL;\n\nint old_main (int ac, char **av)\n{\n    int rval  = 0, node_count = 0, edge_count = 0, j;\n    int *elist = (int *) NULL, *elen = (int *) NULL, *tlist = (int *) NULL;\n    double szeit;\n\n    seed = (int) CO759_real_zeit ();\n\n    rval = parseargs (ac, av);\n    if (rval) goto CLEANUP;\n\n    if (!fname && !ncount_rand) {\n        printf (\"Must specify a problem file or use -k for random prob\\n\");\n        rval = 1; goto CLEANUP;\n    }\n    printf (\"Seed = %d\\n\", seed);\n    srandom (seed);\n\n    if (fname) {\n        printf (\"Problem name: %s\\n\", fname);\n        if (geometric_data) printf (\"Geometric data\\n\");\n    }\n\n    rval = getprob (fname, &node_count, &edge_count, &elist, &elen);\n    if (rval) {\n        fprintf (stderr, \"getprob failed\\n\"); goto CLEANUP;\n    }\n\n    if (use_all_subtours && node_count > 20) {\n        fprintf (stderr, \"Too many nodes to add all subtours\\n\"); goto CLEANUP;\n    }\n\n    min_tour = (int *) malloc((node_count-1) * sizeof(int));\n    tlist = (int *) malloc ((node_count)*sizeof (int));\n    if (!tlist) {\n        fprintf (stderr, \"out of memory for tlist\\n\");\n        rval = 1;  goto CLEANUP; \n    }\n\n    szeit = CO759_zeit ();\n    rval = subtour_init (node_count, edge_count, elist, elen, tlist);\n    if (rval) {\n        fprintf (stderr, \"subtour failed\\n\");\n        goto CLEANUP;\n    }\n\n    printf(\"Optimal tour:\\n\");\n    for (j = 0; j < node_count; j++) {\n      printf (\"%d %d %f\\n\", elist[2*min_tour[j]], elist[2*min_tour[j]+1], 1.0);\n    }\n    printf(\"Optimal tour value: %f\\n\",min_tour_value);\n    fflush (stdout);\n    \n    printf (\"Running Time: %.2f seconds\\n\", CO759_zeit() - szeit);\n    fflush (stdout);\n\nCLEANUP:\n\n    if (tlist) free (tlist);\n    if (elist) free (elist);\n    if (elen) free (elen);\n    return rval;\n}\n\nstatic int subtour_init (int node_count, int edge_count, int *elist, int *elen, int *tlist)\n{\n    int rval = 0, i, j, infeasible = 0;\n    double  objective_val[1], lower_bound[1], upper_bound[1], objval;\n    int     cmatbeg[1], cmatind[2];\n    double  cmatval[2];\n    CO759lp lp;\n\n    rval = CO759lp_init (&lp);\n    if (rval) { fprintf (stderr, \"CO759lp_init failed\\n\"); goto CLEANUP; }\n\n    rval = CO759lp_create (&lp, \"subtour\");\n    if (rval) { fprintf (stderr, \"CO759lp_create failed\\n\"); goto CLEANUP; }\n\n    /* Build a row for each degree equation */\n\n    for (i = 0; i < node_count; i++) {\n        rval = CO759lp_new_row (&lp, 'E', 2.0);\n        if (rval) {\n            fprintf (stderr, \"CO759lp_new_row failed\\n\"); goto CLEANUP;\n        }\n    }\n\n    /* Build a column for each edge of the Graph */\n\n    cmatbeg[0] = 0;\n    cmatval[0] = 1.0;\n    cmatval[1] = 1.0;\n    for (j = 0; j < edge_count; j++) {\n        objective_val[0]     = (double) elen[j];\n        lower_bound[0]      = 0.0;\n        upper_bound[0]      = 1.0;\n        cmatind[0] = elist[2*j];\n        cmatind[1] = elist[2*j+1];\n        rval = CO759lp_addcols (&lp, 1 /* # of new variables */,\n           2 /* # of new nonzeros */, objective_val, cmatbeg, cmatind, cmatval, lower_bound, upper_bound);\n        if (rval) {\n            fprintf (stderr, \"CO759lp_addcols failed\\n\"); goto CLEANUP;\n        }\n    }\n\n    rval = CO759lp_write (&lp, \"subtour.lp\");\n    if (rval) {\n        fprintf (stderr, \"CO759lp_write failed\\n\"); goto CLEANUP;\n    }\n\n    rval = CO759lp_opt (&lp, &infeasible);\n    if (rval) {\n        fprintf (stderr, \"CO759lp_opt failed\\n\"); goto CLEANUP;\n    }\n    if (infeasible) {\n        fprintf (stderr, \"LP is infeasible\\n\"); \n        rval = 1; goto CLEANUP;\n    }\n\n    rval = CO759lp_objval (&lp, &objval);\n    if (rval) {\n        fprintf (stderr, \"CO759lp_objval failed\\n\"); goto CLEANUP;\n    }\n\n    printf (\"Degree-Equation LP Value: %f\\n\", objval);\n    fflush (stdout);\n    rval = subtour(&lp, edge_count, node_count, elist, elen, tlist);\nCLEANUP:\n    CO759lp_free (&lp);\n    return rval;\n\n}\n\nstatic int subtour (CO759lp *lp, int edge_count, int node_count, int *elist, int *elen, int *tlist){\n    int rval = 0, i, j, infeasible = 0;\n    double objval, *x = (double *) NULL, mindist = 0;\n    x = (double *) malloc (edge_count * sizeof (double));\n    if (!x) {\n        fprintf (stderr, \"out of memory for x\\n\");\n        rval = 1; goto CLEANUP;\n    }\n\n    rval = CO759lp_opt (lp, &infeasible); //TODO - Is this being run twice right at the start?  \n    if (rval) {\n        fprintf (stderr, \"CO759lp_opt failed\\n\"); goto CLEANUP;\n    }\n    if (infeasible) {\n      printf(\"LP is infeasible, exitting\\n\");\n      goto CLEANUP;\n    }\n    \n    rval = CO759lp_x (lp, x);\n    if (rval) {\n        fprintf (stderr, \"CO759lp_x failed\\n\"); goto CLEANUP;\n    }\n \n    for (i = 0, j = 0; j < edge_count; j++) {\n        if (x[j] > LP_EPSILON) i++;\n    }\n\n    printf (\"LP Graph has %d edges\\n\", i);\n    /*    for (j = 0; j < edge_count; j++) {\n        if (x[j] > LP_EPSILON) {\n            printf (\"%d %d %f\\n\", elist[2*j], elist[2*j+1], x[j]);\n        }\n    }*/\n    fflush (stdout);\n\n    rval = add_connect (node_count, edge_count, elist, lp);\n    if (rval) {\n        fprintf (stderr, \"add_connect failed\\n\"); goto CLEANUP;\n    }\n\n    rval = CO759lp_opt (lp, &infeasible);\n    if (rval) {\n        fprintf (stderr, \"CO759lp_opt failed\\n\"); goto CLEANUP;\n    }\n    if (infeasible) {\n        printf (\"LP is infeasible, exitting\\n\"); \n        goto CLEANUP;\n    }\n\n    rval = CO759lp_objval (lp, &objval);\n    if (rval) {\n        fprintf (stderr, \"CO759lp_objval failed\\n\"); goto CLEANUP;\n    }\n\n    printf (\"Current LP Value: %f\\n\", objval);\n    fflush (stdout);\n\n    if (objval > min_tour_value){\n      printf (\"Current LP value is higher than min tour value, exitting\\n\"); fflush(stdout); goto CLEANUP;    \n    }\n    \n    rval = CO759lp_x (lp, x);\n    if (rval) {\n        fprintf (stderr, \"CO759lp_x failed\\n\"); goto CLEANUP;\n    }\n \n    for (i = 0, j = 0; j < edge_count; j++) {\n        if (x[j] > LP_EPSILON) i++;\n    }\n\n    printf (\"Current LP Graph has %d edges\\n\", i);\n    /*    for (j = 0; j < edge_count; j++) {\n        if (x[j] > LP_EPSILON) {\n            printf (\"%d %d %f\\n\", elist[2*j], elist[2*j+1], x[j]);\n        }\n	}*/\n    fflush (stdout);\n\n    for (i = 0, j = 0; j < edge_count; j++) {\n        double m = fmin(x[j], 1 - x[j]);\n        if (m > mindist){\n	       mindist = m;\n	       i = j;\n        }\n    }\n\n    rval = CO759lp_objval (lp, &objval);\n    if (rval) {\n      fprintf (stderr, \"CO759lp_objval failed\\n\"); goto CLEANUP;\n    }\n\n    if(objval > min_tour_value){\n      printf (\"Current LP value is higher than min tour value, exitting\\n\"); fflush(stdout); goto CLEANUP;    \n    }\n    \n    if (mindist < LP_EPSILON) {\n        printf (\"LP solution is an optimal TSP tour\\n\");\n    	if (objval < min_tour_value){\n    	  printf(\"NEW OPTIMAL TOUR VALUE: %f\\n\", objval);\n    	  min_tour_value = objval;\n    	  for (i = 0, j = 0; j < edge_count; j++){\n    	    if (x[j] > LP_EPSILON){\n    	      min_tour[i++] = j;\n    	    }\n    	  }\n    	  if(i != node_count){\n    	    printf (\"Computed tour isn't a tour\\n\"); goto CLEANUP;\n    	  }\n    	}\n    } else {\n        printf (\"Branching on edge %d\\n\", i);\n        rval = CO759lp_setbnd(lp, i, 'U', 0.0);\n    	if(rval){\n    	  fprintf(stderr, \"CO759lp_setbnd failed\\n\"); goto CLEANUP;\n    	}\n    	rval = subtour(lp, edge_count, node_count, elist, elen, tlist);\n    	if(rval) goto CLEANUP;\n    	rval = CO759lp_setbnd(lp, i, 'U', 1.0);\n    	if(rval){\n    	  fprintf(stderr, \"CO759lp_setbnd failed\\n\"); goto CLEANUP;\n    	}\n    	rval = CO759lp_setbnd(lp, i, 'L', 1.0);\n    	if(rval){\n    	  fprintf(stderr, \"CO759lp_setbnd failed\\n\"); goto CLEANUP;\n    	}\n    	rval = subtour(lp, edge_count, node_count, elist, elen, tlist);\n    	if(rval) goto CLEANUP;\n    	rval = CO759lp_setbnd(lp, i, 'L', 0.0);\n    	if(rval){\n    	  fprintf(stderr, \"CO759lp_setbnd failed\\n\"); goto CLEANUP;\n    	}\n    }\n\n\nCLEANUP:\n    if (x) free (x);\n    return rval;\n}\n\nstatic int add_connect (int node_count, int edge_count, int *elist, CO759lp *lp)\n{\n    int rval = 0, icount, *island = (int *) NULL, *delta  = (int *) NULL;\n    int round = 0, deltacount = 0, *marks = (int *) NULL;\n    int infeasible = 0, i;\n    double *x = (double *) NULL, objval;\n    Graph G;\n\n    init_graph (&G);\n\n    rval = CO759lp_opt (lp, &infeasible);\n    if (rval) { fprintf (stderr, \"CO759lp_opt failed\\n\"); goto CLEANUP; }\n    if (infeasible) {\n        fprintf (stderr, \"LP is infeasible\\n\"); rval = 1; goto CLEANUP;\n    }\n\n    rval = build_graph (node_count, edge_count, elist, &G);\n    if (rval) { fprintf (stderr, \"build_graph failed\\n\"); goto CLEANUP; }\n\n    x = (double *) malloc (edge_count * sizeof (double));\n    island = (int *) malloc (node_count * sizeof (int));\n    delta  = (int *) malloc (edge_count * sizeof(int));\n    marks  = (int *) malloc (node_count * sizeof(int));\n    if (!x || !island || !delta || !marks) {\n        fprintf (stderr, \"out of memory for x, island, delta, or marks\\n\");\n        rval = 1; goto CLEANUP;\n    }\n    for (i = 0; i < node_count; i++) marks[i] = 0;\n\n    rval = CO759lp_x (lp, x);\n    if (rval) { fprintf (stderr, \"CO759lp_x failed\\n\"); goto CLEANUP; }\n\n    while (connected (&G, x, &icount, island) == 0) {\n\n        /*  just add one subtour; better to add one for each component */\n\n        get_delta (icount, island, edge_count, elist, &deltacount, delta, marks);\n\n        rval = add_subtour (lp, deltacount, delta);\n        if (rval) { fprintf (stderr, \"add_subtour failed\"); goto CLEANUP; }\n\n        rval = CO759lp_opt (lp, &infeasible);\n        if (rval) { fprintf (stderr, \"CO759lp_opt failed\\n\"); goto CLEANUP; }\n        if (infeasible) {\n            fprintf (stderr, \"LP is infeasible, exitting\\n\"); goto CLEANUP;\n        }\n\n        rval = CO759lp_objval (lp, &objval);\n        if (rval) { fprintf (stderr, \"CO759lp_objval failed\\n\"); goto CLEANUP; }\n\n        printf (\"Round %d LP: %f  (added subtour of size %d)\\n\",\n                 round++, objval, icount); \n        fflush (stdout);\n\n        rval = CO759lp_x (lp, x);\n        if (rval) { fprintf (stderr, \"CO759lp_x failed\\n\"); goto CLEANUP; }\n    }\n\nCLEANUP:\n    free_graph (&G);\n    if (x) free (x);\n    if (island) free (island);\n    if (delta) free (delta);\n    if (marks) free (marks);\n    return rval;\n}\n\nstatic int connected (Graph *G, double *x, int *icount, int *island)\n{\n    int i;\n\n    *icount = 0;\n    for (i = 0; i < G->node_count; i++) G->nodelist[i].mark = 0;\n\n    dfs (0, G, x, icount, island);\n\n    if (*icount == G->node_count) return 1;\n    else return 0;\n}\n\nstatic void dfs (int n, Graph *G, double *x, int *icount, int *island)\n{\n    int i, neighbor;\n    Node *pn;\n\n    island[*icount] = n;\n    (*icount)++;\n\n    pn = &G->nodelist[n];\n    pn->mark = 1;\n\n    for (i = 0; i < pn->degree; i++) {\n        if (x[pn->adj_objs[i].e] > LP_EPSILON) {\n            neighbor = pn->adj_objs[i].n;\n            if (G->nodelist[neighbor].mark == 0) {\n                dfs (neighbor, G, x, icount, island);\n            }\n        }\n    }\n}\n\nstatic void init_graph (Graph *G)\n{\n    if (G) {\n        G->nodelist = (Node *) NULL;\n        G->adjspace = (adjobj *) NULL;\n        G->node_count = 0;\n        G->edge_count = 0;\n    }\n}\n\nstatic void free_graph (Graph *G)\n{\n    if (G) {\n        if (G->nodelist) free (G->nodelist);\n        if (G->adjspace) free (G->adjspace);\n    }\n}\n\nstatic int build_graph (int node_count, int edge_count, int *elist, Graph *G)\n{\n    int rval = 0, i, a, b;\n    Node *n;\n    adjobj *p;\n\n    G->nodelist = (Node *) malloc (node_count * sizeof (Node));\n    G->adjspace = (adjobj *) malloc (2 * edge_count * sizeof (Node));\n    if (!G->nodelist || !G->adjspace) {\n        fprintf (stderr, \"out of memory for nodelist or adjspace\\n\");\n        rval = 1; goto CLEANUP;\n    }\n\n    for (i = 0; i < node_count; i++) G->nodelist[i].degree = 0;\n    for (i = 0; i < edge_count; i++) {\n        a = elist[2*i];  b = elist[2*i+1];\n        G->nodelist[a].degree++;\n        G->nodelist[b].degree++;\n    }\n\n    p = G->adjspace;\n    for (i = 0; i < node_count; i++) {\n        G->nodelist[i].adj_objs = p;\n        p += G->nodelist[i].degree;\n        G->nodelist[i].degree = 0;\n    }\n\n    for (i = 0; i < edge_count; i++) {\n        a = elist[2*i];  b = elist[2*i+1];\n        n = &G->nodelist[a];\n        n->adj_objs[n->degree].n = b;\n        n->adj_objs[n->degree].e = i;\n        n->degree++;\n        n = &G->nodelist[b];\n        n->adj_objs[n->degree].n = a;\n        n->adj_objs[n->degree].e = i;\n        n->degree++;\n    }\n\n    G->node_count = node_count;\n    G->edge_count = edge_count;\n\nCLEANUP:\n    return rval;\n}\n\nstatic void get_delta (int nsize, int *nlist, int edge_count, int *elist,\n       int *deltacount, int *delta, int *marks)\n{\n    int i, k = 0;\n\n    for (i = 0; i < nsize; i++) marks[nlist[i]] = 1;\n\n    for (i = 0; i < edge_count; i++) {\n        if (marks[elist[2*i]] + marks[elist[2*i+1]] == 1) {\n            delta[k++] = i;\n        }\n    }\n    *deltacount = k;\n\n    for (i = 0; i < nsize; i++) marks[nlist[i]] = 0;\n}\n\nstatic int add_subtour (CO759lp *lp, int deltacount, int *delta)\n{\n    int rval = 0, i, newrows = 1, newnz = deltacount, *rmatind = delta;\n    int rmatbeg[1];\n    char sense[1];\n    double rhs[1], *rmatval = (double *) NULL;\n\n    rmatbeg[0] = 0; /* info for row starts at position 0 */\n    rhs[0] = 2.0;   /* right-hand-side of subtour is 2.0 */\n    sense[0] = 'G';    /* it is a >= inequality */\n\n    rmatval = (double *) malloc (deltacount * sizeof (double));\n    if (!rmatval) {\n        fprintf (stderr, \"out of memory for rmatval\\n\");\n        rval = 1; goto CLEANUP;\n    }\n    for (i = 0; i < deltacount; i++) rmatval[i] = 1.0;\n\n    rval = CO759lp_addrows (lp, newrows, newnz, rhs, sense, rmatbeg,\n                            rmatind, rmatval);\n    if (rval) {\n        fprintf (stderr, \"CO759lp_addrows failed: %d\\n\", rval);\n        goto CLEANUP;\n    }\n\nCLEANUP:\n    if (rmatval) free (rmatval);\n    return rval;\n}\n\nstatic int getprob (char *filename, int *p_ncount, int *p_ecount, int **p_elist,\n    int **p_elen)\n{\n    FILE *f = (FILE *) NULL;\n    int i, j, end1, end2, w, rval = 0, node_count, edge_count;\n    int *elist = (int *) NULL, *elen = (int *) NULL;\n    double *x = (double *) NULL, *y = (double *) NULL;\n\n    if (filename) {\n        if ((f = fopen (filename, \"r\")) == NULL) {\n    	    fprintf (stderr, \"Unable to open %s for input\\n\",filename);\n            rval = 1;  goto CLEANUP;\n        }\n    }\n\n    if (filename && geometric_data == 0) {\n        if (fscanf (f, \"%d %d\", &node_count, &edge_count) != 2) {\n       	    fprintf (stderr, \"Input file %s has invalid format\\n\",filename);\n            rval = 1;  goto CLEANUP;\n        }\n\n        printf (\"Nodes: %d  Edges: %d\\n\", node_count, edge_count);\n        fflush (stdout);\n\n        elist = (int *) malloc (2 * edge_count * sizeof (int));\n        if (!elist) {\n            fprintf (stderr, \"out of memory for elist\\n\");\n            rval = 1;  goto CLEANUP;\n        }\n\n        elen = (int *) malloc (edge_count * sizeof (int));\n        if (!elen) {\n            fprintf (stderr, \"out of memory for elen\\n\");\n            rval = 1;  goto CLEANUP;\n        }\n\n        for (i = 0; i < edge_count; i++) {\n    	    if (fscanf(f,\"%d %d %d\",&end1, &end2, &w) != 3) {\n	        fprintf (stderr, \"%s has invalid input format\\n\", filename);\n                rval = 1;  goto CLEANUP;\n	    }\n	    elist[2*i] = end1;\n	    elist[2*i+1] = end2;\n	    elen[i] = w;\n        }\n    } else {\n        if (filename) {\n            if (fscanf (f, \"%d\", &node_count) != 1) {\n       	        fprintf (stderr, \"Input file %s has invalid format\\n\",filename);\n                rval = 1;  goto CLEANUP;\n            }\n        } else {\n            node_count = ncount_rand;\n        }\n\n        x = (double *) malloc (node_count * sizeof (double));\n        y = (double *) malloc (node_count * sizeof (double));\n        if (!x || !y) {\n            fprintf (stdout, \"out of memory for x or y\\n\");\n            rval = 1; goto CLEANUP;\n        }\n\n        if (filename) {\n            for (i = 0; i < node_count; i++) {\n    	        if (fscanf(f,\"%lf %lf\",&x[i], &y[i]) != 2) {\n	            fprintf (stderr, \"%s has invalid input format\\n\", filename);\n                    rval = 1;  goto CLEANUP;\n	        }\n            }\n        } else {\n            rval = CO759_build_xy (node_count, x, y, gridsize_rand);\n            if (rval) {\n                fprintf (stderr, \"CO759_build_xy failed\\n\");\n                goto CLEANUP;\n            }\n    \n            printf (\"%d\\n\", node_count);\n            for (i = 0; i < node_count; i++) {\n                printf (\"%.0f %.0f\\n\", x[i], y[i]);\n            }\n            printf (\"\\n\");\n        }\n\n        edge_count = (node_count * (node_count - 1)) / 2;\n        printf (\"Complete Graph: %d nodes, %d edges\\n\", node_count, edge_count);\n\n        elist = (int *) malloc (2 * edge_count * sizeof (int));\n        if (!elist) {\n            fprintf (stderr, \"out of memory for elist\\n\");\n            rval = 1;  goto CLEANUP;\n        }\n\n        elen = (int *) malloc (edge_count * sizeof (int));\n        if (!elen) {\n            fprintf (stderr, \"out of memory for elen\\n\");\n            rval = 1;  goto CLEANUP;\n        }\n\n        edge_count = 0;\n        for (i = 0; i < node_count; i++) {\n            for (j = i+1; j < node_count; j++) {\n                elist[2*edge_count] = i;\n                elist[2*edge_count+1] = j;\n                elen[edge_count] = euclid_edgelen (i, j, x, y);\n                edge_count++;\n            }\n        }\n    }\n\n    *p_ncount = node_count;\n    *p_ecount = edge_count;\n    *p_elist = elist;\n    *p_elen = elen;\n\nCLEANUP:\n    if (f) fclose (f);\n    if (x) free (x);\n    if (y) free (y);\n    return rval;\n}\n\nstatic int euclid_edgelen (int i, int j, double *x, double *y)\n{\n    double t1 = x[i] - x[j], t2 = y[i] - y[j];\n    return (int) (sqrt (t1 * t1 + t2 * t2) + 0.5);\n}\n\nstatic int parseargs (int ac, char **av)\n{\n    int c;\n\n    if (ac == 1) {\n        usage (av[0]);\n        return 1;\n    }\n\n    while ((c = getopt (ac, av, \"ab:gk:s:\")) != EOF) {\n        switch (c) {\n        case 'a':\n            use_all_subtours = 1;\n            break;\n        case 'b':\n            gridsize_rand = atoi (optarg); \n            break;\n        case 'g':\n            geometric_data = 1;\n            break;\n        case 'k':\n            ncount_rand = atoi (optarg);\n            break;\n        case 's':\n            seed = atoi (optarg);\n            break;\n        case '?':\n        default:\n            usage (av[0]);\n            return 1;\n        }\n    }\n\n    if (optind < ac) fname = av[optind++];\n\n    if (optind != ac) {\n        usage (av[0]);\n        return 1;\n    }\n\n    return 0;\n}\n\nstatic void usage (char *f)\n{\n    fprintf (stderr, \"Usage: %s [-see below-] [prob_file]\\n\", f);\n    fprintf (stderr, \"   -a    add all subtours cuts at once\\n\");\n    fprintf (stderr, \"   -b d  gridsize d for random problems\\n\");\n    fprintf (stderr, \"   -g    prob_file has x-y coordinates\\n\");\n    fprintf (stderr, \"   -k d  generate problem with d cities\\n\");\n    fprintf (stderr, \"   -s d  random seed\\n\");\n}\n\n",
+			"file": "subtour_hw.cpp",
+			"file_size": -1,
+			"file_write_time": -1,
+			"settings":
+			{
+				"buffer_size": 21273,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "g10.22.edg",
+			"settings":
+			{
+				"buffer_size": 138,
+				"line_ending": "Unix"
+			}
+		}
+	],
+	"build_system": "Packages/Makefile/Make.sublime-build",
+	"command_palette":
+	{
+		"height": 392.0,
+		"selected_items":
+		[
+			[
+				"ins",
+				"Package Control: Install Package"
+			],
+			[
+				"in",
+				"Package Control: Install Package"
+			],
+			[
+				"clang",
+				"Set Syntax: SublimeClangErrorPanel"
+			],
+			[
+				"clan",
+				"Set Syntax: SublimeClangErrorPanel"
+			],
+			[
+				"pack",
+				"Package Control: Disable Package"
+			],
+			[
+				"package",
+				"PackageResourceViewer: Extract Package"
+			],
+			[
+				"inst",
+				"Package Control: Install Package"
+			],
+			[
+				"insta",
+				"Package Control: Install Package"
+			],
+			[
+				"install",
+				"Package Control: Install Package"
+			],
+			[
+				"Pac",
+				"Package Control: Install Package"
+			],
+			[
+				"Pack",
+				"Package Control: Install Package"
+			],
+			[
+				"",
+				"About"
+			]
+		],
+		"width": 593.0
+	},
+	"console":
+	{
+		"height": 120.0,
+		"history":
+		[
+			"\\",
+			"import urllib.request,os,hashlib; h = '7183a2d3e96f11eeadd761d777e62404' + 'e330c659d4bb41d3bdf022e94cab3cd0'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://sublime.wbond.net/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/Users/lawson/Workspace/CS488/A4/run",
+		"/Users/lawson/Workspace/Bill-Cooks-Billionaires/A2/TODO",
+		"/Users/lawson/Workspace/Bill-Cooks-Billionaires/A2/find_tour.cpp",
+		"/Users/lawson/Workspace/Bill-Cooks-Billionaires/A2/find_tour.h",
+		"/Users/lawson/Workspace/Bill-Cooks-Billionaires/A2/old/subtour_hw.cpp",
+		"/Users/lawson/Workspace/Bill-Cooks-Billionaires/A2/lp_helpers.h",
+		"/Users/lawson/Workspace/Bill-Cooks-Billionaires/A2/subtour.lp",
+		"/Users/lawson/Workspace/Bill-Cooks-Billionaires/A2/subtour.cpp",
+		"/Users/lawson/Library/Application Support/Sublime Text 3/Packages/Default/Preferences.sublime-settings",
+		"/Users/lawson/Workspace/Bill-Cooks-Billionaires/A2/subtour.sublime-project",
+		"/Users/lawson/Workspace/CS458/A1/debug",
+		"/Users/lawson/Workspace/CS488/A4/scenes/new_scene.lua",
+		"/Users/lawson/Workspace/CS488/A4/scenes/simple-cows.lua",
+		"/Users/lawson/Workspace/CS488/A4/scenes/mickey.lua",
+		"/Users/lawson/Workspace/CS488/A4/scenes/mickey",
+		"/Users/lawson/Workspace/CS488/A4/nonhier.lua",
+		"/Users/lawson/Workspace/CS488/A4/simple.lua",
+		"/Users/lawson/Workspace/CS488/A4/puppet.lua",
+		"/Users/lawson/Workspace/CS488/A4/myscene.lua",
+		"/Users/lawson/Workspace/CS488/A3/handin/puppet.lua",
+		"/Users/lawson/Workspace/CS488/A3/handin/src/Viewer.cpp",
+		"/Users/lawson/Workspace/CS488/A4/image.hpp",
+		"/Users/lawson/Workspace/CS488/A3/handin/src/scene.cpp",
+		"/Users/lawson/Workspace/CS488/A3/handin/src/scene.hpp",
+		"/Users/lawson/Workspace/CS488/A4/smstdodeca.lua",
+		"/Users/lawson/Workspace/CS488/A4/image.cpp",
+		"/Users/lawson/Workspace/CS488/A4/algebra.hpp",
+		"/Users/lawson/Workspace/CS488/A4/ray.hpp",
+		"/Users/lawson/Workspace/CS488/A4/mesh.hpp",
+		"/Users/lawson/Workspace/CS488/A4/camera.hpp",
+		"/Users/lawson/Workspace/CS488/A4/Makefile",
+		"/Users/lawson/Workspace/CS488/A3/handin/src/Makefile",
+		"/Users/lawson/Workspace/CS488/A1/handin/src/shader.vert",
+		"/Users/lawson/Workspace/CS488/A1/handin/src/Viewer.cpp",
+		"/Users/lawson/Workspace/CS488/A2/handin/src/Viewer.cpp",
+		"/Users/lawson/Workspace/CS488/A1/handin/src/shader.frag",
+		"/Users/lawson/Workspace/CS488/A3/handin/src/primitive.cpp",
+		"/Users/lawson/Workspace/CS488/A3/handin/src/puppeteer.pro",
+		"/Users/lawson/Workspace/CS488/A2/handin/src/a2.pro",
+		"/Users/lawson/Documents/Spotify - 2015-02-10 at 6.22 PM.pcap",
+		"/Users/lawson/Workspace/quines/pyquine.py",
+		"/Users/lawson/Downloads/m.js",
+		"/Users/lawson/Workspace/CS488/A2/handin/src/AppWindow.cpp",
+		"/Users/lawson/Workspace/Bill-Cooks-Billionaires/kruskal.cpp",
+		"/Users/lawson/Workspace/CS488/A2/handin/src/Viewer.hpp",
+		"/Users/lawson/Workspace/CS488/A2/handin/src/AppWindow.hpp",
+		"/Users/lawson/Workspace/CS488/A2/handin/src/algebra.hpp",
+		"/Users/lawson/Workspace/Bill-Cooks-Billionaires/Graph.cpp",
+		"/Users/lawson/Workspace/Bill-Cooks-Billionaires/A1-NewCode-Lawson_Jamie_Christos/Graph.cpp",
+		"/Users/lawson/Workspace/Bill-Cooks-Billionaires/README.md",
+		"/Users/lawson/Workspace/CS488/A2/tmp/newA2code/Viewer.cpp",
+		"/Users/lawson/Workspace/CS488/A2/tmp/newA2code/Viewer.",
+		"/Users/lawson/Workspace/CS488/A2/handin/src/algebra.cpp",
+		"/Users/lawson/Documents/Asus Laptop/ASUS Backup Nov 17  - 2013/home/coding/old/Old Projects/Lawson Fulton Grade 12 ICS/Fulton Exam/Question8.cpp",
+		"/Users/lawson/Documents/Asus Laptop/ASUS Backup Nov 17  - 2013/home/coding/old/Old Projects/Lawson Fulton Grade 12 ICS/Fulton Exam/Question2.cpp",
+		"/Users/lawson/Dropbox/Feels/ammars advice.txt",
+		"/Users/lawson/Documents/Asus Laptop/ASUS Backup Nov 17  - 2013/home/documents/personal/feels/External Validation.txt",
+		"/Users/lawson/Documents/Asus Laptop/ASUS Backup Nov 17  - 2013/home/coding/old/Old Projects/Comm Tech Exam/more stuff.txt",
+		"/Users/lawson/Documents/Asus Laptop/ASUS Backup Nov 17  - 2013/home/coding/old/Old Projects/Comm Tech Exam/manny tut edited by lawson.txt",
+		"/Users/lawson/random.dat",
+		"/Users/lawson/Workspace/CO759/A1/package/code/Graph.h",
+		"/Users/lawson/Workspace/CO759/A1/package/code/Graph.cpp",
+		"/Users/lawson/Downloads/CO759-A1-Christos-Jamie-Lawson/kruskal.cpp",
+		"/Users/lawson/Workspace/Bill-Cooks-Billionaires/kruskal.",
+		"/Users/lawson/Documents/Asus Laptop/ASUS Backup Nov 17  - 2013/home/coding/old/Current Projects/Graphics Sandbox/Raytracer/scene.cpp",
+		"/Users/lawson/Documents/Asus Laptop/ASUS Backup Nov 17  - 2013/home/coding/old/Current Projects/Graphics Sandbox/Delauny/delaunay.cpp",
+		"/Users/lawson/Documents/Asus Laptop/ASUS Backup Nov 17  - 2013/home/coding/old/Current Projects/Hughes/nums.t",
+		"/Users/lawson/Documents/Asus Laptop/ASUS Backup Nov 17  - 2013/home/coding/old/Current Projects/Hughes/checkers.cpp",
+		"/Users/lawson/Documents/Asus Laptop/ASUS Backup Nov 17  - 2013/home/coding/old/Current Projects/Hughes/num.cpp",
+		"/Users/lawson/Documents/Asus Laptop/ASUS Backup Nov 17  - 2013/home/coding/old/Current Projects/Hughes/test.cpp",
+		"/Users/lawson/Documents/Asus Laptop/ASUS Backup Nov 17  - 2013/home/coding/Processing/processing-2.0b7/modes/java/examples/Topics/Advanced Data/HashMapClass/data/dracula.txt",
+		"/Users/lawson/Workspace/CS488/A2/handin/src/.gitignore",
+		"/Users/lawson/Workspace/CS488/A1/handin/src/game488.pro",
+		"/Users/lawson/Workspace/Receipt_OCR/README.md",
+		"/Users/lawson/Downloads/SimpleCV/doc/README",
+		"/Users/lawson/Downloads/SimpleCV/scripts/install/mac/build_instructions.txt",
+		"/Users/lawson/Workspace/Receipt_OCR/ocr.py",
+		"/Library/Python/2.7/site-packages/pytesseract/pytesseract.py",
+		"/Library/Python/2.7/site-packages/SimpleCV-1.3-py2.7.egg/SimpleCV/base.py",
+		"/Users/lawson/Workspace/Receipt_OCR/run.py",
+		"/Users/lawson/Workspace/Receipt_OCR/requirements.txt",
+		"/Users/lawson/Workspace/Receipt_OCR/.gitignore",
+		"/Users/lawson/Workspace/Receipt_OCR/SimpleCV/requirements.txt",
+		"/Users/lawson/Workspace/Receipt_OCR/SimpleCV/README.markdown",
+		"/Users/lawson/Downloads/SimpleCV/doc/Makefile",
+		"/Users/lawson/Workspace/CS458/A1/foo",
+		"/Users/lawson/Workspace/Bill-Cooks-Billionaires/DisjointSet.cpp",
+		"/Users/lawson/Workspace/Bill-Cooks-Billionaires/DisjointSet.h",
+		"/Users/lawson/Workspace/Bill-Cooks-Billionaires/freq.dat",
+		"/Users/lawson/Workspace/CO759/A1/freq",
+		"/Users/lawson/Google Drive/School/4B/CO 759/Example Code/tour_rand15.c",
+		"/Users/lawson/Google Drive/School/4B/CO 759/Example Code/tour_rand11.c",
+		"/Users/lawson/Google Drive/School/4B/CO 759/Example Code/tour_rand10.c",
+		"/Users/lawson/Google Drive/School/4B/CO 759/Example Code/tour_rand9.c",
+		"/Users/lawson/Google Drive/School/4B/CO 759/Example Code/tour_rand8.c",
+		"/Users/lawson/Workspace/Bill-Cooks-Billionaires/Graph.h",
+		"/Users/lawson/Workspace/Bill-Cooks-Billionaires/Makefile",
+		"/Users/lawson/.bash_profile",
+		"/Users/lawson/Workspace/Bill-Cooks-Billionaires/util.h",
+		"/Users/lawson/Workspace/Bill-Cooks-Billionaires/util.cpp",
+		"/Users/lawson/Workspace/Bill-Cooks-Billionaires/radix.h",
+		"/Users/lawson/Workspace/Bill-Cooks-Billionaires/g1000000.1694628.edg",
+		"/Users/lawson/Workspace/Bill-Cooks-Billionaires/g100000.299967.edg",
+		"/Users/lawson/Workspace/Bill-Cooks-Billionaires/.gitignore",
+		"/Users/lawson/Workspace/Bill-Cooks-Billionaires/prog.dtps/dtps.plist",
+		"/Users/lawson/Workspace/Bill-Cooks-Billionaires/prog.dtps/dtps0.data",
+		"/Users/lawson/Workspace/Bill-Cooks-Billionaires/prog.dtps/dtps0.msgq",
+		"/Users/lawson/Workspace/Bill-Cooks-Billionaires/prog.dtps/dtps1.data",
+		"/Users/lawson/Workspace/Bill-Cooks-Billionaires/prog.dtps/dtps1.msgq",
+		"/Users/lawson/Workspace/Bill-Cooks-Billionaires/prog.prof",
+		"/Users/lawson/Workspace/CS458/A1/Makefile",
+		"/Users/lawson/Workspace/CS458/A1/sploit1.c",
+		"/Users/lawson/Workspace/CS458/A1/testsh.c",
+		"/Users/lawson/Workspace/CS458/A1/shellcode.h",
+		"/Users/lawson/Workspace/CS458/A1/example_code.c",
+		"/Users/lawson/Workspace/CS458/A1/backup.c",
+		"/Users/lawson/Downloads/gperftools-2.4/README",
+		"/Users/lawson/Downloads/gperftools-2.4/INSTALL",
+		"/Users/lawson/Downloads/gperftools-2.4/AUTHORS",
+		"/Users/lawson/Workspace/Bill-Cooks-Billionaires/util.c",
+		"/Users/lawson/Workspace/Bill-Cooks-Billionaires/kruskal.h",
+		"/Users/lawson/Workspace/CS458/A1/gdbsploit1",
+		"/Users/lawson/Workspace/CS458/A1/sftp-config.json",
+		"/Users/lawson/Workspace/CS458/A1/test",
+		"/Users/lawson/Workspace/Bill-Cooks-Billionaires/nodeset.h",
+		"/Users/lawson/Workspace/Bill-Cooks-Billionaires/nodeset.cpp",
+		"/Users/lawson/Workspace/CO759/A1/kruskal_hw.cpp",
+		"/Users/lawson/Workspace/Bill-Cooks-Billionaires/graph_example/Graph.cpp"
+	],
+	"find":
+	{
+		"height": 35.0
+	},
+	"find_in_files":
+	{
+		"height": 93.0,
+		"where_history":
+		[
+			"/Users/lawson/Workspace/CS454/A3/*.cpp,*.h",
+			"/Users/lawson/Workspace/CS454/A3,*.cpp,*.h",
+			"/Users/lawson/Library/Application Support/Sublime Text 3/*",
+			"/Users/lawson/Workspace/CS454/A3/,*.cpp,*.h",
+			"/Users/lawson/Workspace/CS454/A3/,*.cpp",
+			"/Users/lawson/Workspace/CS454/A3/*.cpp",
+			"/Users/lawson/Workspace/CS454/A3/*",
+			"/Users/lawson/Workspace/CS454/A3"
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"cout",
+			"marks",
+			"add_subtour_inequalities",
+			"build_graph",
+			"add_connect",
+			"add_co",
+			"get_delta",
+			"(lp",
+			"add_subtour",
+			"m_lp",
+			"add_subtour",
+			"graph",
+			"(lp",
+			"lp",
+			"&lp",
+			"add_subtour",
+			"(lp",
+			"lp",
+			"lp, graph, ",
+			"subtour",
+			"(,",
+			"(lp",
+			"lp",
+			"x",
+			"x.",
+			"x",
+			"graph",
+			"max_edges",
+			"CO759lp",
+			"int max_edges",
+			"max_edges",
+			"Graph",
+			"(lp",
+			"lp",
+			"(,",
+			"CO759lp",
+			"add_subtour_inequalities",
+			"TSP_Solver",
+			";\n	}",
+			"cout",
+			"init_graph",
+			"add_connect",
+			"infeasible",
+			"feasible",
+			"build_graph",
+			"add_connect",
+			"subtour",
+			"add_subtour_inequalities",
+			"subtour",
+			"&lp",
+			"subtour_init",
+			"cout",
+			"add_connect",
+			"mindist",
+			"j",
+			"m ",
+			"m",
+			"min_tour_value",
+			"void",
+			"ilist",
+			"subtour",
+			"CO759lp_write",
+			"$",
+			"malloc",
+			"(int *)",
+			"copy",
+			"Graph",
+			"Node",
+			"add_subtour_inequalities",
+			"elist[i][",
+			"elist[i]",
+			"elist[i][0]",
+			"elist",
+			"elist[i][0]",
+			"add_sub",
+			"add",
+			"int *elist",
+			"elist[2*i+1]",
+			"elist[2*i]",
+			"elist",
+			"edges",
+			"elist",
+			"edge_count",
+			"node_count",
+			"init_graph",
+			"static",
+			"Node *",
+			"node",
+			"Node",
+			"node",
+			"Node",
+			" node",
+			" Node",
+			"Node ",
+			"Node",
+			"Graph",
+			"// void get_delta (int nsize, int *nlist, int edge_count, int *elist, int *deltacount, int *delta, int *marks);\n// int add_subtour (CO759lp *lp, int deltacount, int *delta);\n// int add_connect (int node_count, int edge_count, int *elist, CO759lp *lp);\n// void init_graph (Graph *G);\n// void free_graph (Graph *G);\n// int build_graph (int node_count, int edge_count, int *elist, Graph *G);\n// int connected (Graph *G, double *x, int *icount, int *island);\n// void dfs (int n, Graph *G, double *x, int *icount, int *island);\n",
+			"Graph",
+			"add_subtour",
+			"i",
+			"i ",
+			"obj_val",
+			"max_edges",
+			"`",
+			"i,",
+			"i",
+			"printf",
+			"mindis",
+			"num_tour_edges = get_num_edges(lp, graph.edge_count);\n	cout << \"LP Graph has \" << num_tour_edges << \" edges\" << endl;",
+			"max_edges",
+			"add_subtour",
+			"add_connect",
+			"tlist",
+			"CPXgetnumcols",
+			"(lp",
+			"lp",
+			"(lp",
+			"objval",
+			"cmatval",
+			"for (",
+			"for",
+			"add",
+			"&",
+			"throw",
+			"stderr",
+			"&tour_indices",
+			"FIND_TOUR_H",
+			"return"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+			"servinfo->"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"selected": 0,
+			"sheets":
+			[
+				{
+					"buffer": 0,
+					"file": "Makefile",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 613,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								272,
+								272
+							]
+						],
+						"settings":
+						{
+							"BracketHighlighterBusy": false,
+							"bh_regions":
+							[
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content"
+							],
+							"incomplete_sync": null,
+							"remote_loading": false,
+							"synced": false,
+							"syntax": "Packages/Makefile/Makefile.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "tsp_solver.h",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1849,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								421,
+								421
+							]
+						],
+						"settings":
+						{
+							"BracketHighlighterBusy": false,
+							"bh_regions":
+							[
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content"
+							],
+							"incomplete_sync": null,
+							"remote_loading": false,
+							"synced": false,
+							"syntax": "Packages/C++/C++.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 218.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "lp.h",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1337,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1337,
+								1337
+							]
+						],
+						"settings":
+						{
+							"BracketHighlighterBusy": false,
+							"bh_regions":
+							[
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content"
+							],
+							"incomplete_sync": null,
+							"remote_loading": false,
+							"synced": false,
+							"syntax": "Packages/C++/C++.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 12,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "util.h",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 732,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								702,
+								702
+							]
+						],
+						"settings":
+						{
+							"BracketHighlighterBusy": false,
+							"bh_regions":
+							[
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content"
+							],
+							"incomplete_sync": null,
+							"remote_loading": false,
+							"synced": false,
+							"syntax": "Packages/C++/C++.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 11,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "util.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2898,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1501,
+								1501
+							]
+						],
+						"settings":
+						{
+							"BracketHighlighterBusy": false,
+							"bh_regions":
+							[
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content"
+							],
+							"incomplete_sync": null,
+							"remote_loading": false,
+							"synced": false,
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 596.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 10,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "lp.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 5705,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								851,
+								823
+							]
+						],
+						"settings":
+						{
+							"BracketHighlighterBusy": false,
+							"bh_regions":
+							[
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content"
+							],
+							"incomplete_sync": null,
+							"remote_loading": false,
+							"synced": false,
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1639.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 13,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "Graph.h",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1643,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								531,
+								531
+							]
+						],
+						"settings":
+						{
+							"BracketHighlighterBusy": false,
+							"bh_regions":
+							[
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content"
+							],
+							"incomplete_sync": null,
+							"remote_loading": false,
+							"synced": false,
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 8,
+					"type": "text"
+				}
+			]
+		},
+		{
+			"selected": 2,
+			"sheets":
+			[
+				{
+					"buffer": 7,
+					"file": "tsp_solver.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 16773,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								467,
+								467
+							]
+						],
+						"settings":
+						{
+							"BracketHighlighterBusy": false,
+							"bh_regions":
+							[
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content"
+							],
+							"incomplete_sync": null,
+							"remote_loading": false,
+							"synced": false,
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "/Users/lawson/Workspace/Bill-Cooks-Billionaires/.gitignore",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 75,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								75,
+								75
+							]
+						],
+						"settings":
+						{
+							"BracketHighlighterBusy": false,
+							"bh_regions":
+							[
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content"
+							],
+							"incomplete_sync": null,
+							"remote_loading": false,
+							"synced": false,
+							"syntax": "Packages/Text/Plain text.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 9,
+					"file": "subtour.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 6105,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								467,
+								467
+							]
+						],
+						"settings":
+						{
+							"BracketHighlighterBusy": false,
+							"bh_regions":
+							[
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content"
+							],
+							"incomplete_sync": null,
+							"remote_loading": false,
+							"synced": false,
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 66.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 10,
+					"file": "Graph.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2638,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1849,
+								2637
+							]
+						],
+						"settings":
+						{
+							"BracketHighlighterBusy": false,
+							"bh_regions":
+							[
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content"
+							],
+							"incomplete_sync": null,
+							"remote_loading": false,
+							"synced": false,
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 838.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 9,
+					"type": "text"
+				},
+				{
+					"buffer": 11,
+					"file": "/usr/local/Cellar/valgrind/HEAD/lib/valgrind/default.supp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 30249,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								29503,
+								29503
+							]
+						],
+						"settings":
+						{
+							"BracketHighlighterBusy": false,
+							"bh_regions":
+							[
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content"
+							],
+							"incomplete_sync": null,
+							"remote_loading": false,
+							"synced": false,
+							"syntax": "Packages/Text/Plain text.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 19356.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 12,
+					"file": "subtour_hw.cpp",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 21273,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								7236,
+								7247
+							],
+							[
+								7327,
+								7338
+							],
+							[
+								10148,
+								10159
+							]
+						],
+						"settings":
+						{
+							"BracketHighlighterBusy": false,
+							"bh_regions":
+							[
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content"
+							],
+							"incomplete_sync": null,
+							"remote_loading": false,
+							"synced": false,
+							"syntax": "Packages/C++/C++.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1410.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 6,
+					"type": "text"
+				},
+				{
+					"buffer": 13,
+					"file": "g10.22.edg",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 138,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"BracketHighlighterBusy": false,
+							"bh_regions":
+							[
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content"
+							],
+							"incomplete_sync": null,
+							"remote_loading": false,
+							"synced": false,
+							"syntax": "Packages/Text/Plain text.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 7,
+					"type": "text"
+				}
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 22.0
+	},
+	"input":
+	{
+		"height": 30.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			],
+			[
+				1,
+				0,
+				2,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			0.372576275244,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.clang":
+	{
+		"height": 94.0
+	},
+	"output.exec":
+	{
+		"height": 152.0
+	},
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"output.sftp":
+	{
+		"height": 188.0
+	},
+	"project": "subtour.sublime-project",
+	"replace":
+	{
+		"height": 40.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+			[
+				"sub",
+				"~/Workspace/Bill-Cooks-Billionaires/A2/subtour_hw.cpp"
+			],
+			[
+				"pr",
+				"~/Workspace/CS488/A4/primitive.hpp"
+			],
+			[
+				"ray",
+				"~/Workspace/CS488/A4/ray.hpp"
+			],
+			[
+				"",
+				"A1/foo"
+			],
+			[
+				"rou",
+				"router.cpp"
+			],
+			[
+				"me",
+				"Messenger.cpp"
+			],
+			[
+				"mes",
+				"Messenger.cpp"
+			],
+			[
+				"my",
+				"MyExceptions.h"
+			],
+			[
+				"mak",
+				"makefile"
+			],
+			[
+				"rpc",
+				"rpc.cpp"
+			],
+			[
+				"cl",
+				"client1.c"
+			],
+			[
+				"m",
+				"Message.cpp"
+			],
+			[
+				"ser",
+				"server.c"
+			],
+			[
+				"to",
+				"TODO.txt"
+			],
+			[
+				"serv",
+				"server_functions.c"
+			],
+			[
+				"func",
+				"server_function_skels.c"
+			],
+			[
+				"cli",
+				"client1.c"
+			],
+			[
+				"rp",
+				"rpc.h"
+			],
+			[
+				"da",
+				"Database.h"
+			],
+			[
+				"tes",
+				"tests.cpp"
+			],
+			[
+				"bin",
+				"Binder.cpp"
+			],
+			[
+				"rpc.h",
+				"rpc.h"
+			],
+			[
+				"binde",
+				"Binder.cpp"
+			],
+			[
+				"clie",
+				"client1"
+			],
+			[
+				"ou",
+				"OutgoingSocketManager.h"
+			],
+			[
+				"d",
+				"Database.cpp"
+			],
+			[
+				"e",
+				"MyExceptions.h"
+			],
+			[
+				"r",
+				"RPCServer.cpp"
+			],
+			[
+				"i",
+				"IncomingSocketManager.h"
+			],
+			[
+				"ex",
+				"MyExceptions.h"
+			],
+			[
+				"b",
+				"Binder.h"
+			],
+			[
+				"mess",
+				"Message.cpp"
+			],
+			[
+				"tod",
+				"TODO.txt"
+			],
+			[
+				"incom",
+				"IncomingSocketManager.h"
+			],
+			[
+				"out",
+				"OutgoingSocketManager.cpp"
+			],
+			[
+				"in",
+				"IncomingSocketManager.cpp"
+			],
+			[
+				"ol",
+				"makefile_old"
+			],
+			[
+				"inco",
+				"IncomingSocketManager.h"
+			],
+			[
+				"dat",
+				"Database.cpp"
+			],
+			[
+				"make",
+				"makefile"
+			],
+			[
+				"tot",
+				"TODO.txt"
+			],
+			[
+				"hel",
+				"~/Workspace/CS454/A2/helperFcns.h"
+			],
+			[
+				"mye",
+				"MyExceptions.h"
+			],
+			[
+				"t",
+				"TODO.txt"
+			],
+			[
+				"inc",
+				"IncomingSocketManager.h"
+			],
+			[
+				"bi",
+				"Binder.cpp"
+			],
+			[
+				"ma",
+				"makefile"
+			],
+			[
+				"he",
+				"helperFcns.h"
+			],
+			[
+				"sh",
+				"SharedQueue.cpp"
+			],
+			[
+				"str",
+				"stringServer.cpp"
+			],
+			[
+				"st",
+				"stringClient.cpp"
+			],
+			[
+				"stri",
+				"stringServer.cpp"
+			],
+			[
+				"se",
+				"stringServer"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"selected_items":
+		[
+			[
+				"",
+				"~/Workspace/CS456/A2/A2.sublime-project"
+			]
+		],
+		"width": 380.0
+	},
+	"select_symbol":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"selected_group": 1,
+	"settings":
+	{
+	},
+	"show_minimap": false,
+	"show_open_files": true,
+	"show_tabs": true,
+	"side_bar_visible": false,
+	"side_bar_width": 91.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

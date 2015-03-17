@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VariablesViewState
+   version = "1.0">
+   <ContextStates>
+      <ContextState
+         contextName = "TSP_Solver::dfs(int, ComponentGraph*, double*, int*, int*, int):tsp_solver.cpp">
+         <PersistentStrings>
+            <PersistentString
+               value = "pn-&gt;adj_objs[i].e">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "TSP_Solver::subtour(CO759lp*, Graph&amp;, std::__1::vector&lt;int, std::__1::allocator&lt;int&gt; &gt;&amp;):find_tour.cpp">
+         <PersistentStrings>
+            <PersistentString
+               value = "0x30082e860">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "TSP_Solver::add_subtour_inequalities(CO759lp*, Graph&amp;):find_tour.cpp">
+         <PersistentStrings>
+            <PersistentString
+               value = "0x10180a010">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "main:subtour.cpp">
+      </ContextState>
+   </ContextStates>
+</VariablesViewState>
