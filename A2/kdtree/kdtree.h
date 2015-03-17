@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#define BUCKETSIZE 5
+#define BUCKETSIZE 3
 
 //used to initialize the nearest-neighbor search
 //#define HUGE 9999
@@ -43,6 +43,8 @@ class KdTree {
   bool pt_less(int i, int j, int dim);
   void select(int l, int u, int m, int dim);
   KdNode* build(int l, int u);
+  void print_point(int i);
+  void print_tree(KdNode *node);
 
  private:
   vector<int> perm;
