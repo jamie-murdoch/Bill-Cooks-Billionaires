@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <limits>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -34,15 +35,45 @@ int main(int argc, char* argv[]) {
 
 static int delete_edges(Graph g)
 {
-  int p, q;
   vector<double> delta_r;
-
+  vector<vector<double>> rounded_len, len; // Using 2d vectors allows constant access, as opposed to walking through an edge list
+  rounded_len.resize(g.node_count); len.resize(g.node_count);
   for(int i = 0; i < g.node_count; i++){
-    int d = 0;
+    rounded_len[i].resize(g.node_count); len[i].resize(g.node_count);
+    rounded_len[i][i] = numeric_limits<int>.max();
+    len[i][i] = numeric_limits<double>::infinity();
+  }
+  for(vector<Edge>::iterator e = g.edges.begin(); e != g.edges.end(); ++e){
+    len[e.end[0]][e.end[1]] = e.len; len[e.end[1]][e.end[0]] = e.len;
+    rounded_len[e.end[0]][e.end[1]] = e.rounded_len; len[e.end[1]][e.end[0]] = e.rounded_len;
+  }
+
+  vector<double> delta_r;
+  for(int i = 0; i < g.node_count; i++){
+    delta_r.push_back(0.5 + *min_element(rounded_len[i]) - 1);
   }
   
   for(vector<Edge>::iterator pq = g.edges.begin(); pq != g.edges.end(); ++pq){
-    p = pq->end[0]; q = pq->end[1];
+    int p = pq->end[0], q = pq->end[1];
+    vector<int> potential_points;
+    vector<double> eq_19, eq_20;
+    for(int r = 0; r < g.node_count; r++){
+      if(r != p && r != q){
+	double l_p = delta_r[r] + rounded_len[p][q] - rounded_len[q][r] - 1, l_q = delta_r[r] + rounded_len[p][q] - rounded_len[p][r] - 1;
+	double alpha_p = 2 * acos( (l_q * l_q - delta_r[r] * delta_r[r] - len[r][q] * len[r][q]) / (2 * delta_r[r] * len[r][q])), \
+	  alpha_q = 2 * acos( (l_p * l_p - delta_r[r] * delta_r[r] - len[r][p] * len[r][p]) / (2 * delta_r[r] * len[r][p])), \
+	  gamma_r = acos(1 - pow(l_p + l_q - rounded_len[p][q] + 0.5,2.0) / (2 * delta_r[r] * delta_r[r]));
+	if(gamma_r > max(alpha_p,alpha_q)){
+	  // record r as strongly potential
+	  potential_points.push_back(r);
+	  // TODO: Update eq_19, eq_20
+	}
+      }
+    }
+
+    // Compute a smart order to look through potential_points - distance from the midpoint of pq?
+
+    // check to see if we can eliminate the edge
     
   }
 }
@@ -123,6 +154,7 @@ static int load_graph (Graph &graph, int ac, char** av) {
     }
 
     if (fname && geometric_data == 0) {
+      cout << "ERROR! ERROR! DON'T GO HERE! BAD THINGS MAY HAPPEN" << endl;
         if (fscanf (f, "%d %d", &node_count, &edge_count) != 2) {
        	    fprintf (stderr, "Input file %s has invalid format\n",fname);
             rval = 1;  goto CLEANUP;
