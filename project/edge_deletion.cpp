@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <limits>
+#include <algorithm>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -59,37 +60,36 @@ static vector<double> circle_proj(int r, int s, double deltar, Graph g)
   }
 }
 
-double compute_lemma_8(int p, int q, double deltar, double lp, double lq, Graph g)
+double compute_lemma_8(int p, int q, int r, double deltar, double lp, double lq, Graph g)
 {
   vector<double> max_vec;
   for(int t = 0; t < g.node_count; t++){
-    vector<double> t_r = circle_proj(r, t, delta_r[r], g);
+    vector<double> t_r = circle_proj(r, t, deltar, g);
     if(sqrt(pow(g.x[q] - t_r[0],2.0) + pow(g.y[q] - t_r[1],2.0)) >= lp)
       {
 	max_vec.push_back(sqrt(pow(g.x[p] - t_r[0],2.0) + pow(g.y[p] - t_r[1],2.0)));
       }
   }
-  return deltar - 1 - *max_element(max_vec);
+  return deltar - 1 - *max_element(max_vec.begin(), max_vec.end());
 }
 
 static int delete_edges(Graph g)
 {
   vector<double> delta_r;
-  vector<vector<double>> rounded_len, len; // Using 2d vectors allows constant access, as opposed to walking through an edge list
+  vector<vector<double> > rounded_len, len; // Using 2d vectors allows constant access, as opposed to walking through an edge list
   rounded_len.resize(g.node_count); len.resize(g.node_count);
   for(int i = 0; i < g.node_count; i++){
     rounded_len[i].resize(g.node_count); len[i].resize(g.node_count);
-    rounded_len[i][i] = numeric_limits<int>.max();
+    rounded_len[i][i] = numeric_limits<int>::max();
     len[i][i] = numeric_limits<double>::infinity();
   }
   for(vector<Edge>::iterator e = g.edges.begin(); e != g.edges.end(); ++e){
-    len[e.end[0]][e.end[1]] = e.len; len[e.end[1]][e.end[0]] = e.len;
-    rounded_len[e.end[0]][e.end[1]] = e.rounded_len; len[e.end[1]][e.end[0]] = e.rounded_len;
+    len[e->end[0]][e->end[1]] = e->len; len[e->end[1]][e->end[0]] = e->len;
+    rounded_len[e->end[0]][e->end[1]] = e->rounded_len; len[e->end[1]][e->end[0]] = e->rounded_len;
   }
 
-  vector<double> delta_r;
   for(int i = 0; i < g.node_count; i++){
-    delta_r.push_back(0.5 + *min_element(rounded_len[i]) - 1);
+    delta_r.push_back(0.5 + *min_element(rounded_len[i].begin(), rounded_len[i].end()) - 1);
   }
   
   for(vector<Edge>::iterator pq = g.edges.begin(); pq != g.edges.end(); ++pq){
@@ -112,9 +112,8 @@ static int delete_edges(Graph g)
       }
     }
 
-    //
     vector<int> points_to_check;
-    if(potential_points.len() < 10) points_to_check = potential_points;
+    if(potential_points.size() < 10) points_to_check = potential_points;
     else
       {
 	for(int i = 0; i < 10; i++){
@@ -128,13 +127,25 @@ static int delete_edges(Graph g)
     // Compute eq_19, eq_20 for those chosen edges
     vector<double> eq_19, eq_20;
     for(vector<int>::iterator it = points_to_check.begin(); it != points_to_check.end(); ++it){
-      eq_19.push_back(compute_lemma_8(p, q, delta_r[r], lp, lq, g));
-      eq_20.push_back(compute_lamma_8(q, p, delta_r[r], lq, lp, g));
+      double l_p = delta_r[*it] + rounded_len[p][q] - rounded_len[q][*it] - 1, l_q = delta_r[*it] + rounded_len[p][q] - rounded_len[p][*it] - 1;
+      eq_19.push_back(compute_lemma_8(p, q, *it, delta_r[*it], l_p, l_q, g));
+      eq_20.push_back(compute_lemma_8(q, p, *it, delta_r[*it], l_q, l_p, g));
     }
     
     // check to see if we can eliminate the edge
-    
-	  }
+    bool all_break = false;
+    for(vector<int>::iterator r = points_to_check.begin(); r != points_to_check.end(); ++r){
+      for(vector<int>::iterator s = points_to_check.begin(); s != points_to_check.end(); ++s){
+	if(*s != *r && rounded_len[p][q] - rounded_len[*r][*s] + eq_19[*s] + eq_20[*r] > 0
+	   && rounded_len[p][q] - rounded_len[*r][*s] + eq_19[*r] + eq_20[*s] > 0){
+	  cout << "Delete edge " << p << " " << q << endl;
+	  all_break = true;
+	  break;
+	}
+      }
+      if(all_break) break;
+    }
+  }
 }
 
       

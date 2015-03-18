@@ -55,8 +55,8 @@ int CO759_build_xy (int ncount, double *xlist, double *ylist, int gridsize)
     for (i = 0; i < ncount; i++) {
         winner = 0;
         do {
-            x = (int) (random () % gridsize);
-            y = (int) (random () % gridsize);
+            x = (int) (rand() % gridsize);
+            y = (int) (rand() % gridsize);
 
             /* check to see if (x,y) is a duplicate point */
 

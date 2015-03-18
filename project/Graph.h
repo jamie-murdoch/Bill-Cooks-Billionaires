@@ -32,8 +32,8 @@ struct Graph {
 
     int node_count;
     int edge_count;
-    shared_ptr<int> x;
-    shared_ptr<int> y;
+    double *x; //TODO: These never get freed, but I couldn't get a smart pointer to compile. Lawson?
+    double *y;
     vector<Edge> edges;
 };
 
