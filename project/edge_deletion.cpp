@@ -33,6 +33,32 @@ int main(int argc, char* argv[]) {
 	return 0;
 }
 
+static vector<double> circle_proj(int r, int s, double deltar, Graph g)
+{
+  /* This is the function for computing s_r, as described in the paper. That is, given vertices s and r, this function
+     computes s_r on the line rs such that |rs_r| = delta_r. This can be solved by writing out the euclidean norm for lines between r and s,
+     which is quadratic and can be solved using the quadratic formula. 
+     It may not be a bad idea to write some tests for this bad boy :)
+   */
+  double m = (g.edges[s].end[1] - g.edges[r].end[1]) / (g.edges[s].end[0] - g.edges[r].end[0]);
+  double b = g.edges[r].end[1] + m * g.edges[r].end[0];
+  double x1 = (-m * b + sqrt(m * m * b * b - (m * m + 1) * (b * b - deltar * deltar))) / (m * m + 1); // quadratic formula
+  double x2 = (-m * b - sqrt(m * m * b * b - (m * m + 1) * (b * b - deltar * deltar))) / (m * m + 1);
+  vector<double> result;
+  if(x1 > g.edges[r].end[0] && x1 < g.edges[s].end[0]){
+    result.push_back(x1); result.push_back(m * (x1 - g.edges[r].end[0]) + g.edges[r].end[1]);
+    return result;
+  }
+  else if(x2 > g.edges[r].end[0] && x2 < g.edges[s].end[0]){
+    result.push_back(x2); result.push_back(m * (x2 - g.edges[r].end[0]) + g.edges[r].end[1]);
+    return result;
+  }
+  else {
+    cout << "Something broke in circle_proj =(" << endl;
+    result.push_back(-1); result.push_back(-1); return result;
+  }
+}
+
 static int delete_edges(Graph g)
 {
   vector<double> delta_r;
