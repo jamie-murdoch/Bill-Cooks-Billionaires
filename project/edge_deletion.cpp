@@ -59,6 +59,19 @@ static vector<double> circle_proj(int r, int s, double deltar, Graph g)
   }
 }
 
+double compute_lemma_8(int p, double deltar, Graph g)
+{
+  vector<double> max_vec;
+  for(int t = 0; t < g.node_count; t++){
+    vector<double> t_r = circle_proj(r, t, delta_r[r], g);
+    if(sqrt(pow(g.edges[q].end[0] - t_r[0],2.0) + pow(g.edges[q].end[1] - t_r[1],2.0)) >= lp)
+      {
+	max_vec.push_back(sqrt(pow(g.edges[p].end[0] - t_r[0],2.0) + pow(g.edges[p].end[1] - t_r[1],2.0)));
+      }
+  }
+  return deltar - 1 - *max_element(max_vec);
+}
+
 static int delete_edges(Graph g)
 {
   vector<double> delta_r;
@@ -90,9 +103,10 @@ static int delete_edges(Graph g)
 	  alpha_q = 2 * acos( (l_p * l_p - delta_r[r] * delta_r[r] - len[r][p] * len[r][p]) / (2 * delta_r[r] * len[r][p])), \
 	  gamma_r = acos(1 - pow(l_p + l_q - rounded_len[p][q] + 0.5,2.0) / (2 * delta_r[r] * delta_r[r]));
 	if(gamma_r > max(alpha_p,alpha_q)){
-	  // record r as strongly potential
 	  potential_points.push_back(r);
-	  // TODO: Update eq_19, eq_20
+
+	  // Update eq_19
+	  eq_19.push_back(delta_r[r] - 1 - );
 	}
       }
     }
@@ -101,9 +115,11 @@ static int delete_edges(Graph g)
 
     // check to see if we can eliminate the edge
     
-  }
+	  }
 }
 
+      
+	
 
 static void usage (char *f)
 {
