@@ -32,6 +32,8 @@ struct Graph {
 
     int node_count;
     int edge_count;
+    shared_ptr<int> x;
+    shared_ptr<int> y;
     vector<Edge> edges;
 };
 

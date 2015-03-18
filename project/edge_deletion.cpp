@@ -64,9 +64,9 @@ double compute_lemma_8(int p, double deltar, Graph g)
   vector<double> max_vec;
   for(int t = 0; t < g.node_count; t++){
     vector<double> t_r = circle_proj(r, t, delta_r[r], g);
-    if(sqrt(pow(g.edges[q].end[0] - t_r[0],2.0) + pow(g.edges[q].end[1] - t_r[1],2.0)) >= lp)
+    if(sqrt(pow(g.x[q] - t_r[0],2.0) + pow(g.y[q] - t_r[1],2.0)) >= lp)
       {
-	max_vec.push_back(sqrt(pow(g.edges[p].end[0] - t_r[0],2.0) + pow(g.edges[p].end[1] - t_r[1],2.0)));
+	max_vec.push_back(sqrt(pow(g.x[p] - t_r[0],2.0) + pow(g.y[p] - t_r[1],2.0)));
       }
   }
   return deltar - 1 - *max_element(max_vec);
@@ -95,7 +95,7 @@ static int delete_edges(Graph g)
   for(vector<Edge>::iterator pq = g.edges.begin(); pq != g.edges.end(); ++pq){
     int p = pq->end[0], q = pq->end[1];
     vector<int> potential_points;
-    vector<double> eq_19, eq_20;
+    vector<double> dist_to_mid;
     for(int r = 0; r < g.node_count; r++){
       if(r != p && r != q){
 	double l_p = delta_r[r] + rounded_len[p][q] - rounded_len[q][r] - 1, l_q = delta_r[r] + rounded_len[p][q] - rounded_len[p][r] - 1;
@@ -104,15 +104,16 @@ static int delete_edges(Graph g)
 	  gamma_r = acos(1 - pow(l_p + l_q - rounded_len[p][q] + 0.5,2.0) / (2 * delta_r[r] * delta_r[r]));
 	if(gamma_r > max(alpha_p,alpha_q)){
 	  potential_points.push_back(r);
-
-	  // Update eq_19
-	  eq_19.push_back(delta_r[r] - 1 - );
+	  // updates dist_to_mid
 	}
       }
     }
 
     // Compute a smart order to look through potential_points - distance from the midpoint of pq?
 
+    // Compute eq_19, eq_20 for those chosen edges
+    vector<double> eq_19, eq_20;
+    
     // check to see if we can eliminate the edge
     
 	  }
@@ -263,21 +264,20 @@ static int load_graph (Graph &graph, int ac, char** av) {
         for (i = 0; i < node_count; i++) {
             for (j = i+1; j < node_count; j++) {
                 graph.edges[edge_count].end[0] = i;
-	   			graph.edges[edge_count].end[1] = j;
-	   			graph.edges[edge_count].rounded_len = rounded_euclid_edgelen (i, j, x, y);
-				graph.edges[edge_count].len = euclid_edgelen(i,j,x,y);
-	   			edge_count++;
+		graph.edges[edge_count].end[1] = j;
+		graph.edges[edge_count].rounded_len = rounded_euclid_edgelen (i, j, x, y);
+		graph.edges[edge_count].len = euclid_edgelen(i,j,x,y);
+		edge_count++;
             }
         }
     }
 
     graph.node_count = node_count;
     graph.edge_count = edge_count;
-
+    graph.x = x;
+    graph.y = y;
 CLEANUP:
     if (f) fclose (f);
-    if (x) free (x);
-    if (y) free (y);
     return rval;
 }
 
