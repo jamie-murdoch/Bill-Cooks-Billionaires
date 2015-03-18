@@ -59,7 +59,7 @@ static vector<double> circle_proj(int r, int s, double deltar, Graph g)
   }
 }
 
-double compute_lemma_8(int p, double deltar, Graph g)
+double compute_lemma_8(int p, int q, double deltar, double lp, double lq, Graph g)
 {
   vector<double> max_vec;
   for(int t = 0; t < g.node_count; t++){
@@ -94,6 +94,8 @@ static int delete_edges(Graph g)
   
   for(vector<Edge>::iterator pq = g.edges.begin(); pq != g.edges.end(); ++pq){
     int p = pq->end[0], q = pq->end[1];
+    vector<double> mid_point;
+    mid_point.push_back(((double)g.x[p] + g.x[q]) / 2); mid_point.push_back(((double)g.y[p] + g.y[q]) / 2);
     vector<int> potential_points;
     vector<double> dist_to_mid;
     for(int r = 0; r < g.node_count; r++){
@@ -105,14 +107,30 @@ static int delete_edges(Graph g)
 	if(gamma_r > max(alpha_p,alpha_q)){
 	  potential_points.push_back(r);
 	  // updates dist_to_mid
+	  dist_to_mid.push_back(sqrt(pow(mid_point[0] - g.x[r],2) + pow(mid_point[1] - g.y[r],2.0)));
 	}
       }
     }
 
-    // Compute a smart order to look through potential_points - distance from the midpoint of pq?
+    //
+    vector<int> points_to_check;
+    if(potential_points.len() < 10) points_to_check = potential_points;
+    else
+      {
+	for(int i = 0; i < 10; i++){
+	  int new_r_ind = distance(dist_to_mid.begin(), min_element(dist_to_mid.begin(), dist_to_mid.end()));
+	  int new_r = potential_points[new_r_ind];
+	  potential_points.erase(potential_points.begin() + new_r_ind); dist_to_mid.erase(dist_to_mid.begin() + new_r_ind);
+	  points_to_check.push_back(new_r);
+	}
+      }
 
     // Compute eq_19, eq_20 for those chosen edges
     vector<double> eq_19, eq_20;
+    for(vector<int>::iterator it = points_to_check.begin(); it != points_to_check.end(); ++it){
+      eq_19.push_back(compute_lemma_8(p, q, delta_r[r], lp, lq, g));
+      eq_20.push_back(compute_lamma_8(q, p, delta_r[r], lq, lp, g));
+    }
     
     // check to see if we can eliminate the edge
     
