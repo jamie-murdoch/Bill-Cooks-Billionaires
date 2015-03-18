@@ -10,7 +10,8 @@ struct Edge {
     Edge(int e0, int e1, int _len);
 
     int end[2];
-    int len;
+    int rounded_len;
+    double len;
 
     bool operator<(const Edge& val) const {
     return len < val.len;

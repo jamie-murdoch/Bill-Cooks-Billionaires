@@ -13,8 +13,9 @@ using namespace std;
 
 static void usage (char *f);
 static int load_graph (Graph &graph, int ac, char** av);
-static int euclid_edgelen (int i, int j, double *x, double *y);
-
+static double euclid_edgelen (int i, int j, double *x, double *y);
+static int rounded_euclid_edgelen(int i, int j, double *x, double *y);
+static int delete_edges(Graph g);
 
 int main(int argc, char* argv[]) {
 	//Initialize the problem
@@ -31,6 +32,20 @@ int main(int argc, char* argv[]) {
 	return 0;
 }
 
+static int delete_edges(Graph g)
+{
+  int p, q;
+  vector<double> delta_r;
+
+  for(int i = 0; i < g.node_count; i++){
+    int d = 0;
+  }
+  
+  for(vector<Edge>::iterator pq = g.edges.begin(); pq != g.edges.end(); ++pq){
+    p = pq->end[0]; q = pq->end[1];
+    
+  }
+}
 
 
 static void usage (char *f)
@@ -175,7 +190,8 @@ static int load_graph (Graph &graph, int ac, char** av) {
             for (j = i+1; j < node_count; j++) {
                 graph.edges[edge_count].end[0] = i;
 	   			graph.edges[edge_count].end[1] = j;
-	   			graph.edges[edge_count].len = euclid_edgelen (i, j, x, y);
+	   			graph.edges[edge_count].rounded_len = rounded_euclid_edgelen (i, j, x, y);
+				graph.edges[edge_count].len = euclid_edgelen(i,j,x,y);
 	   			edge_count++;
             }
         }
@@ -191,8 +207,14 @@ CLEANUP:
     return rval;
 }
 
-static int euclid_edgelen (int i, int j, double *x, double *y)
+static int rounded_euclid_edgelen (int i, int j, double *x, double *y)
 {
     double t1 = x[i] - x[j], t2 = y[i] - y[j];
     return (int) (sqrt (t1 * t1 + t2 * t2) + 0.5);
+}
+
+static double euclid_edgelen(int i, int j, double *x, double *y)
+{
+  double t1 = x[i] - x[j], t2 = y[i] - y[j];
+  return sqrt(t1 * t1 + t2 * t2);
 }
