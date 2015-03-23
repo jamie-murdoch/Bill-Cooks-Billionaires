@@ -11,6 +11,8 @@
 #include <time.h>
 #include "util.h"
 
+using namespace std;
+
 /* zeit function for recording times */
 
 double CO759_zeit (void)
@@ -30,7 +32,7 @@ double CO759_real_zeit (void)
 
 /* function for creating a random set of points in unit square */
 
-int CO759_build_xy (int ncount, double *xlist, double *ylist, int gridsize)
+int CO759_build_xy (int ncount, vector<double> xlist, vector<double> ylist, int gridsize)
 {
     int rval = 0, i, j, winner, x, y;
     int **hit = (int **) NULL, *hitcount = (int *) NULL;

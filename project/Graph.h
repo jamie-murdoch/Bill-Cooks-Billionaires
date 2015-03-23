@@ -32,13 +32,13 @@ struct Graph {
 
     int node_count;
     int edge_count;
-    double *x; 
-    double *y;
+    vector<double> x; 
+    vector<double> y;
     vector<Edge> edges;
-    ~Graph(){
+  /*    ~Graph(){
       if(x) delete x;
       if(y) delete y;
-    }
+      }*/
 };
 
 /*

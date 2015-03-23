@@ -15,8 +15,8 @@ using namespace std;
 
 static void usage (char *f);
 static int load_graph (Graph &graph, int ac, char** av);
-static double euclid_edgelen (int i, int j, double *x, double *y);
-static int rounded_euclid_edgelen(int i, int j, double *x, double *y);
+static double euclid_edgelen (int i, int j, vector<double> x, vector<double> y);
+static int rounded_euclid_edgelen(int i, int j, vector<double> x, vector<double> y);
 static int delete_edges(Graph g);
 bool is_empty_set_intersection(vector<int> R1, vector<int> R2, vector<int> S1, vector<int> S2);
 
@@ -34,8 +34,7 @@ int main(int argc, char* argv[]) {
   delete_edges(graph);
   return 0;
 }
-
-static vector<double> circle_proj(int r, int s, double deltar, Graph g)
+void circle_proj(int r, int s, double deltar, Graph g, vector<double>& result)
 {
   /* This is the function for computing s_r, as described in the paper. That is, given vertices s and r, this function
      computes s_r on the line rs such that |rs_r| = delta_r. This can be solved by writing out the euclidean norm for lines between r and s,
@@ -45,44 +44,51 @@ static vector<double> circle_proj(int r, int s, double deltar, Graph g)
   cout << "Entered circle proj " << endl;
   if(g.x[s] == g.x[r]){
     // We can't define a line y=mx + b in this case
-    vector<double> result;
     if(g.y[s] > g.y[r]){
       result.push_back(g.x[r]); result.push_back(deltar + g.y[r]);
       cout << "Exitted circle_proj" << endl;
-      return result;
+      return;
     }
     else{
       result.push_back(g.x[r]); result.push_back(g.y[r] - deltar);
       cout << "Exitted circle_proj" << endl;
-      return result;
+      return;
     }
   }
   double m = (g.y[s] - g.y[r]) / (g.x[s] - g.x[r]);
   double x1 = deltar / (m * m + 1) + g.x[r], x2 = g.x[r] - deltar / (m * m + 1);
-  cout << "r = " << g.x[r] << " " << g.y[r] << " s = " << g.x[s] << " " << g.y[s] << " x1 " << x1 << " x2 " << x2 << " deltar " << deltar << " distance between r and s: " << sqrt(pow(g.y[s] - g.y[r], 2.0) + pow(g.x[s] - g.x[r], 2.0)) << endl;
-  vector<double> result;
+  cout << "r = " << r << " " << g.x[r] << " " << g.y[r] << " s = " << s << " " << g.x[s] << " " << g.y[s] << " x1 " << x1 << " x2 " << x2 << " deltar " << deltar << " distance between r and s: " << sqrt(pow(g.y[s] - g.y[r], 2.0) + pow(g.x[s] - g.x[r], 2.0)) << endl;
+  cout << "X1 " << g.x[1] << endl;
   if(g.x[s] > g.x[r]){
     result.push_back(x1); result.push_back(m * (x1 - g.x[r]) + g.y[r]);
     cout << "Exitted circle_proj" << endl;
-    return result;
+    cout << g.x[1] << endl;
+    return;
   }
   else {
     result.push_back(x2); result.push_back(m * (x2 - g.x[r]) + g.y[r]);
     cout << "Exited circle_proj" << endl;
-    return result;
+    cout << result[0] << " " << result[1] << endl;
+    cout << "X1 " << g.x[1] << endl;
+    return;
   }
 }
 
 double compute_lemma_8(int p, int q, int r, double deltar, double lp, double lq, Graph g, vector<int> &R_p)
 {
   vector<double> max_vec;
+  vector<double> t_r;
   for(int t = 0; t < g.node_count; t++){
-    vector<double> t_r = circle_proj(r, t, deltar, g);
+    cout << "Call " << t << "X1 " << g.x[1] << endl;
+    circle_proj(r, t, deltar, g, t_r);
+    cout << "first out X1 " << g.x[1] << endl;
     if(sqrt(pow(g.x[q] - t_r[0],2.0) + pow(g.y[q] - t_r[1],2.0)) >= lq)
       {
+	cout << "Added q " << q << endl;
 	R_p.push_back(q);
 	max_vec.push_back(sqrt(pow(g.x[p] - t_r[0],2.0) + pow(g.y[p] - t_r[1],2.0)));
       }
+    t_r.clear();
   }
   sort(R_p.begin(), R_p.end());
   return deltar - 1 - *max_element(max_vec.begin(), max_vec.end());
@@ -101,14 +107,11 @@ static int delete_edges(Graph g)
   for(vector<Edge>::iterator e = g.edges.begin(); e != g.edges.end(); ++e){
     len[e->end[0]][e->end[1]] = e->len; len[e->end[1]][e->end[0]] = e->len;
     rounded_len[e->end[0]][e->end[1]] = e->rounded_len; rounded_len[e->end[1]][e->end[0]] = e->rounded_len;
-    cout << e->end[0] << " " << e->end[1] << " " << e->rounded_len << " " << e->len << endl;
   }
 
   for(int i = 0; i < g.node_count; i++){
     delta_r.push_back(0.5 + *min_element(rounded_len[i].begin(), rounded_len[i].end()) - 1);
-    cout << i << " " << delta_r[i] << endl;
   }
-
   cout << "Looping through edges" << endl;
   for(vector<Edge>::iterator pq = g.edges.begin(); pq != g.edges.end(); ++pq){
     int p = pq->end[0], q = pq->end[1];
@@ -154,8 +157,9 @@ static int delete_edges(Graph g)
     vector<vector<int> > R_p, R_q; vector<int> temp;
     for(vector<int>::iterator it = points_to_check.begin(); it != points_to_check.end(); ++it){
       double l_p = delta_r[*it] + rounded_len[p][q] - rounded_len[q][*it] - 1, l_q = delta_r[*it] + rounded_len[p][q] - rounded_len[p][*it] - 1;
-      eq_19.push_back(compute_lemma_8(p, q, *it, delta_r[*it], l_p, l_q, g, temp)); R_p.push_back(temp); temp.clear();
-      eq_20.push_back(compute_lemma_8(q, p, *it, delta_r[*it], l_q, l_p, g, temp)); R_q.push_back(temp); temp.clear();
+      eq_19.push_back(compute_lemma_8(p, q, *it, delta_r[*it], l_p, l_q, g, temp)); cout << "Exitted first call " << endl; R_p.push_back(temp); temp.clear();
+      eq_20.push_back(compute_lemma_8(q, p, *it, delta_r[*it], l_q, l_p, g, temp));
+      cout << "Exitted second call " << endl; R_q.push_back(temp); temp.clear();
     }
     
     // check to see if we can eliminate the edge
@@ -263,7 +267,7 @@ static int load_graph (Graph &graph, int ac, char** av) {
 
     FILE *f = (FILE *) NULL;
     int i, j, end1, end2, w, node_count, edge_count;
-    double *x = (double *) NULL, *y = (double *) NULL;
+    vector<double> x, y;
 
     if (fname) {
         if ((f = fopen (fname, "r")) == NULL) {
@@ -303,12 +307,8 @@ static int load_graph (Graph &graph, int ac, char** av) {
             node_count = random_city_count;
         }
 
-        x = (double *) malloc (node_count * sizeof (double));
-        y = (double *) malloc (node_count * sizeof (double));
-        if (!x || !y) {
-            fprintf (stdout, "out of memory for x or y\n");
-            rval = 1; goto CLEANUP;
-        }
+        x.resize(node_count);
+        y.resize(node_count);
 
         if (fname) {
             for (i = 0; i < node_count; i++) {
@@ -357,13 +357,13 @@ CLEANUP:
     return rval;
 }
 
-static int rounded_euclid_edgelen (int i, int j, double *x, double *y)
+static int rounded_euclid_edgelen (int i, int j, vector<double> x, vector<double> y)
 {
     double t1 = x[i] - x[j], t2 = y[i] - y[j];
     return (int) (sqrt (t1 * t1 + t2 * t2) + 0.5);
 }
 
-static double euclid_edgelen(int i, int j, double *x, double *y)
+static double euclid_edgelen(int i, int j, vector<double> x, vector<double> y)
 {
   double t1 = x[i] - x[j], t2 = y[i] - y[j];
   return sqrt(t1 * t1 + t2 * t2);
