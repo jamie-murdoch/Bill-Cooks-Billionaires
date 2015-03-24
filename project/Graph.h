@@ -32,9 +32,13 @@ struct Graph {
 
     int node_count;
     int edge_count;
-    double *x; //TODO: These never get freed, but I couldn't get a smart pointer to compile. Lawson?
-    double *y;
+    vector<double> x; 
+    vector<double> y;
     vector<Edge> edges;
+  /*    ~Graph(){
+      if(x) delete x;
+      if(y) delete y;
+      }*/
 };
 
 /*
