@@ -16,7 +16,7 @@
 double CO759_zeit (void);
 double CO759_real_zeit (void);
 
-int CO759_build_xy (int ncount, std::vector<double> xlist, std::vector<double> ylist, int gridsize);
+int CO759_build_xy (int ncount, std::vector<double>& xlist, std::vector<double>& ylist, int gridsize);
 
 bool is_almost_integral(double x);
 

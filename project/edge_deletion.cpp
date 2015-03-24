@@ -18,7 +18,7 @@ static int load_graph (Graph &graph, int ac, char** av);
 static double euclid_edgelen (int i, int j, vector<double> x, vector<double> y);
 static int rounded_euclid_edgelen(int i, int j, vector<double> x, vector<double> y);
 static int delete_edges(Graph g);
-bool is_empty_set_intersection(vector<int> R1, vector<int> R2, vector<int> S1, vector<int> S2);
+bool set_contains(int s, vector<int> R1, vector<int> R2);
 
 int main(int argc, char* argv[]) {
 	//Initialize the problem
@@ -41,35 +41,35 @@ void circle_proj(int r, int s, double deltar, Graph g, vector<double>& result)
      which is quadratic and can be solved using the quadratic formula. 
      It may not be a bad idea to write some tests for this bad boy :)
    */
-  cout << "Entered circle proj " << endl;
+  //  cout << "Entered circle proj " << endl;
   if(g.x[s] == g.x[r]){
     // We can't define a line y=mx + b in this case
     if(g.y[s] > g.y[r]){
       result.push_back(g.x[r]); result.push_back(deltar + g.y[r]);
-      cout << "Exitted circle_proj" << endl;
+      //cout << "Exitted circle_proj" << endl;
       return;
     }
     else{
       result.push_back(g.x[r]); result.push_back(g.y[r] - deltar);
-      cout << "Exitted circle_proj" << endl;
+      //cout << "Exitted circle_proj" << endl;
       return;
     }
   }
   double m = (g.y[s] - g.y[r]) / (g.x[s] - g.x[r]);
   double x1 = deltar / (m * m + 1) + g.x[r], x2 = g.x[r] - deltar / (m * m + 1);
-  cout << "r = " << r << " " << g.x[r] << " " << g.y[r] << " s = " << s << " " << g.x[s] << " " << g.y[s] << " x1 " << x1 << " x2 " << x2 << " deltar " << deltar << " distance between r and s: " << sqrt(pow(g.y[s] - g.y[r], 2.0) + pow(g.x[s] - g.x[r], 2.0)) << endl;
-  cout << "X1 " << g.x[1] << endl;
+  //cout << "r = " << r << " " << g.x[r] << " " << g.y[r] << " s = " << s << " " << g.x[s] << " " << g.y[s] << " x1 " << x1 << " x2 " << x2 << " deltar " << deltar << " distance between r and s: " << sqrt(pow(g.y[s] - g.y[r], 2.0) + pow(g.x[s] - g.x[r], 2.0)) << endl;
+  //cout << "X1 " << g.x[1] << endl;
   if(g.x[s] > g.x[r]){
     result.push_back(x1); result.push_back(m * (x1 - g.x[r]) + g.y[r]);
-    cout << "Exitted circle_proj" << endl;
-    cout << g.x[1] << endl;
+    //cout << "Exitted circle_proj" << endl;
+    //cout << g.x[1] << endl;
     return;
   }
   else {
     result.push_back(x2); result.push_back(m * (x2 - g.x[r]) + g.y[r]);
-    cout << "Exited circle_proj" << endl;
-    cout << result[0] << " " << result[1] << endl;
-    cout << "X1 " << g.x[1] << endl;
+    //    cout << "Exited circle_proj" << endl;
+    //cout << result[0] << " " << result[1] << endl;
+    //    cout << "X1 " << g.x[1] << endl;
     return;
   }
 }
@@ -79,18 +79,22 @@ double compute_lemma_8(int p, int q, int r, double deltar, double lp, double lq,
   vector<double> max_vec;
   vector<double> t_r;
   for(int t = 0; t < g.node_count; t++){
-    cout << "Call " << t << "X1 " << g.x[1] << endl;
-    circle_proj(r, t, deltar, g, t_r);
-    cout << "first out X1 " << g.x[1] << endl;
-    if(sqrt(pow(g.x[q] - t_r[0],2.0) + pow(g.y[q] - t_r[1],2.0)) >= lq)
-      {
-	cout << "Added q " << q << endl;
-	R_p.push_back(q);
-	max_vec.push_back(sqrt(pow(g.x[p] - t_r[0],2.0) + pow(g.y[p] - t_r[1],2.0)));
-      }
-    t_r.clear();
+    if(t != r || true ){
+      circle_proj(r, t, deltar, g, t_r);
+      //cout << "first out X1 " << g.x[1] << endl;
+      if(sqrt(pow(g.x[q] - t_r[0],2.0) + pow(g.y[q] - t_r[1],2.0)) >= lq)
+	{
+	  //	  cout << "Added q " << t << endl;
+	  R_p.push_back(t);
+	  max_vec.push_back(sqrt(pow(g.x[p] - t_r[0],2.0) + pow(g.y[p] - t_r[1],2.0)));
+	}
+      t_r.clear();
+    }
   }
   sort(R_p.begin(), R_p.end());
+  if(max_vec.size() == 0) {
+    return 0; // I'm not really sure if this is the right behaviour here, but it seems to make sense - if R_p is empty, then don't make any moves, and so there's no change in the tree's value
+  }
   return deltar - 1 - *max_element(max_vec.begin(), max_vec.end());
 }
 
@@ -112,10 +116,8 @@ static int delete_edges(Graph g)
   for(int i = 0; i < g.node_count; i++){
     delta_r.push_back(0.5 + *min_element(rounded_len[i].begin(), rounded_len[i].end()) - 1);
   }
-  cout << "Looping through edges" << endl;
   for(vector<Edge>::iterator pq = g.edges.begin(); pq != g.edges.end(); ++pq){
     int p = pq->end[0], q = pq->end[1];
-    cout << "p = " << p << " q = " << q << endl;
     vector<double> mid_point;
     mid_point.push_back(((double)g.x[p] + g.x[q]) / 2); mid_point.push_back(((double)g.y[p] + g.y[q]) / 2);
     vector<int> potential_points;
@@ -127,7 +129,7 @@ static int delete_edges(Graph g)
 	  double alpha_p = 2 * acos( (l_q * l_q - delta_r[r] * delta_r[r] - len[r][q] * len[r][q]) / (2 * delta_r[r] * len[r][q])), \
 	    alpha_q = 2 * acos( (l_p * l_p - delta_r[r] * delta_r[r] - len[r][p] * len[r][p]) / (2 * delta_r[r] * len[r][p])), \
 	    gamma_r = acos(1 - pow(l_p + l_q - rounded_len[p][q] + 0.5,2.0) / (2 * delta_r[r] * delta_r[r]));
-	  cout << "r " << r << " l_p " << l_p << " l_q " << l_q << " alpha_p " << alpha_p << " alpha_q " << alpha_q << " gamma_r " << gamma_r << " deltar " << delta_r[r] << " len[r][q] " << len[r][q] << " alpha_p arg " << (l_q * l_q - delta_r[r] * delta_r[r] - len[r][q] * len[r][q]) / (2 * delta_r[r] * len[r][q]) << endl;
+	  //	  cout << "r " << r << " l_p " << l_p << " l_q " << l_q << " alpha_p " << alpha_p << " alpha_q " << alpha_q << " gamma_r " << gamma_r << " deltar " << delta_r[r] << " len[r][q] " << len[r][q] << " alpha_p arg " << (l_q * l_q - delta_r[r] * delta_r[r] - len[r][q] * len[r][q]) / (2 * delta_r[r] * len[r][q]) << endl;
 	  if(gamma_r > max(alpha_p,alpha_q)){
 	    potential_points.push_back(r);
 	    // updates dist_to_mid
@@ -136,8 +138,6 @@ static int delete_edges(Graph g)
 	}
       }
     }
-
-    cout << "Looped through points " << potential_points.size() << endl;
     vector<int> points_to_check;
     if(potential_points.size() < 2) continue;
     if(potential_points.size() < 10) points_to_check = potential_points;
@@ -151,25 +151,33 @@ static int delete_edges(Graph g)
 	}
       }
 
-    cout << "Computing lemma 8" << endl;
     // Compute eq_19, eq_20 for those chosen edges
     vector<double> eq_19, eq_20;
     vector<vector<int> > R_p, R_q; vector<int> temp;
-    for(vector<int>::iterator it = points_to_check.begin(); it != points_to_check.end(); ++it){
+    eq_19.resize(points_to_check.size()); eq_20.resize(points_to_check.size()); R_q.resize(points_to_check.size()); R_p.resize(points_to_check.size()); // does this do it?
+
+    int i = 0;
+    for(vector<int>::iterator it = points_to_check.begin(); it != points_to_check.end(); ++it, i++){
       double l_p = delta_r[*it] + rounded_len[p][q] - rounded_len[q][*it] - 1, l_q = delta_r[*it] + rounded_len[p][q] - rounded_len[p][*it] - 1;
-      eq_19.push_back(compute_lemma_8(p, q, *it, delta_r[*it], l_p, l_q, g, temp)); cout << "Exitted first call " << endl; R_p.push_back(temp); temp.clear();
-      eq_20.push_back(compute_lemma_8(q, p, *it, delta_r[*it], l_q, l_p, g, temp));
-      cout << "Exitted second call " << endl; R_q.push_back(temp); temp.clear();
+      eq_19[i] = compute_lemma_8(p, q, *it, delta_r[*it], l_p, l_q, g, temp);
+      R_p[i] = temp; temp.clear();
+      
+      eq_20[i] = compute_lemma_8(q, p, *it, delta_r[*it], l_q, l_p, g, temp);
+      R_q[i] = temp; 
+      temp.clear();
     }
     
     // check to see if we can eliminate the edge
-    cout << "Checking what edge to eliminate" << endl;
     bool all_break = false;
-    for(vector<int>::iterator r = points_to_check.begin(); r != points_to_check.end(); ++r){
-      for(vector<int>::iterator s = points_to_check.begin(); s != points_to_check.end(); ++s){
-	if(*s != *r && rounded_len[p][q] - rounded_len[*r][*s] + eq_19[*s] + eq_20[*r] > 0
-	   && rounded_len[p][q] - rounded_len[*r][*s] + eq_19[*r] + eq_20[*s] > 0 && \
-	   is_empty_set_intersection(R_p[*s], R_q[*s], R_p[*r], R_q[*r])){
+    int j;
+    i = 0;
+    for(vector<int>::iterator r = points_to_check.begin(); r != points_to_check.end(); ++r, i++){
+      j = 0;
+      for(vector<int>::iterator s = points_to_check.begin(); s != points_to_check.end(); ++s, j++){
+
+	if(*s != *r && rounded_len[p][q] - rounded_len[*r][*s] + eq_19[j] + eq_20[i] > 0
+	   && rounded_len[p][q] - rounded_len[*r][*s] + eq_19[i] + eq_20[j] > 0 && \
+	   !set_contains(*r, R_q[j], R_p[j]) && !set_contains(*s, R_q[i], R_p[i])){
 	  cout << "Delete edge " << p << " " << q << endl;
 	  all_break = true;
 	  break;
@@ -183,22 +191,20 @@ static int delete_edges(Graph g)
 }
 
       
-bool is_empty_set_intersection(vector<int> R1, vector<int> R2, vector<int> S1, vector<int> S2)
+bool set_contains(int s, vector<int> R1, vector<int> R2)
 {
-  vector<int> intersect;
-  set_intersection(R1.begin(), R1.end(), S1.begin(), S1.end(), intersect.begin());
-  if(intersect.size() > 0) return false;
-  
-  set_intersection(R1.begin(), R1.end(), S2.begin(), S2.end(), intersect.begin());
-  if(intersect.size() > 0) return false;
-  
-  set_intersection(R2.begin(), R2.end(), S2.begin(), S2.end(), intersect.begin());
-  if(intersect.size() > 0) return false;
-  
-  set_intersection(R2.begin(), R2.end(), S1.begin(), S1.end(), intersect.begin());
-  if(intersect.size() > 0) return false;
+  return find(R1.begin(), R1.end(), s) != R1.end() || find(R2.begin(), R2.end(), s) != R2.end();
+  /*  vector<int> intersect, singleton;
+  singleton.push_back(s);
+  intersect.resize(max(R1.size(), R2.size())); intersect[0] = -1;
 
-  return true;
+  set_intersection(singleton.begin(), singleton.end(), R1.begin(), R1.end(), intersect.begin());
+  if(intersect[0] != -1) return true;
+
+  set_intersection(singleton.begin(), singleton.end(), R2.begin(), R2.end(), intersect.begin());
+  if(intersect[0] != -1) return true;
+
+  return false;*/
   
 }
 
