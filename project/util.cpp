@@ -32,8 +32,7 @@ double CO759_real_zeit (void)
 }
 
 /* function for creating a random set of points in unit square */
-
-int CO759_build_xy (int ncount, vector<double>& xlist, vector<double>& ylist, int gridsize)
+int CO759_build_xy (int ncount, double *xlist, double *ylist, int gridsize)
 {
     int rval = 0, i, j, winner, x, y;
     int **hit = (int **) NULL, *hitcount = (int *) NULL;
@@ -58,8 +57,8 @@ int CO759_build_xy (int ncount, vector<double>& xlist, vector<double>& ylist, in
     for (i = 0; i < ncount; i++) {
         winner = 0;
         do {
-            x = (int) (rand() % gridsize);
-            y = (int) (rand() % gridsize);
+            x = (int) (random () % gridsize);
+            y = (int) (random () % gridsize);
 
             /* check to see if (x,y) is a duplicate point */
 
@@ -98,6 +97,11 @@ CLEANUP:
     }
     if (hitcount) free (hitcount);
     return rval;
+}
+
+int CO759_build_xy (int ncount, vector<double>& xlist, vector<double>& ylist, int gridsize)
+{
+    return CO759_build_xy(ncount, &xlist[0], &ylist[0], gridsize);
 }
 
 bool is_almost_integral(double x) {

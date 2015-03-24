@@ -10,6 +10,7 @@
 #include "util.h"
 
 #include "Graph.h"
+#include "TSP_Solver.h"
 
 using namespace std;
 
@@ -17,8 +18,10 @@ static void usage (char *f);
 static int load_graph (Graph &graph, int ac, char** av);
 static double euclid_edgelen (int i, int j, vector<double> x, vector<double> y);
 static int rounded_euclid_edgelen(int i, int j, vector<double> x, vector<double> y);
-static int delete_edges(Graph &g, vector<int> &deleted_edges);
+static int delete_edges(Graph &g, vector<Edge*> &deleted_edges);
 bool set_contains(int s, vector<int> R1, vector<int> R2);
+
+bool compare_results = true;
 
 int main(int argc, char* argv[]) {
     //Initialize the problem
@@ -32,8 +35,43 @@ int main(int argc, char* argv[]) {
     }
     cout << "Entering delete graph" << endl;
 
-    vector<int> deleted_edges;
+    double running_time = CO759_zeit();
+    vector<Edge*> deleted_edges;
     delete_edges(graph, deleted_edges);
+    running_time = CO759_zeit() - running_time;
+
+    for(int i = 0; i < (int)deleted_edges.size(); i++) {
+        Edge *e = deleted_edges[i];
+        cout << "Deleted edge: " << e->end[0] << " " << e->end[1] <<endl;
+    }
+
+    cout << "Removed " << deleted_edges.size() << " out of " << graph.edge_count << " edges in " << running_time << "s" << endl;
+    
+    //Run a test by comparing the removed edges to the ones in the optimal tour
+    if(compare_results) {
+        cout << "Running the TSP solver to compare results." << endl;
+        TSP_Solver solver(graph);
+        vector<int> tour_indices;
+        solver.find_min_tour(tour_indices);
+
+        //N^2 check for now
+        bool pass = true;
+        for(int i = 0; i < (int)deleted_edges.size(); i++) {
+            for(int j = 0; j < (int)tour_indices.size(); j++) {
+                Edge *del_edge = deleted_edges[i];
+                Edge *tour_edge = &graph.edges[tour_indices[j]];
+
+                if(del_edge == tour_edge) {
+                    cout << "***Failed test! Deleted edge " << del_edge->end[0] << " " << del_edge->end[1] << " that was in the optimal tour!" << endl;
+                    pass = false;
+                }
+            }
+        }
+
+        if(pass) {
+            cout << "Passed the test. Optimal tour contains none of the removed edges." << endl;
+        }
+    }
 
     return 0;
 }
@@ -106,7 +144,7 @@ double compute_lemma_8(int p, int q, int r, double deltar, double lp, double lq,
     return deltar - 1 - *max_element(max_vec.begin(), max_vec.end());
 }
 
-static int delete_edges(Graph &g, vector<int> &deleted_edges)
+static int delete_edges(Graph &g, vector<Edge*> &deleted_edges)
 {
     vector<double> delta_r;
     vector<vector<double> > rounded_len, len; // Using 2d vectors allows constant access, as opposed to walking through an edge list
@@ -195,12 +233,14 @@ static int delete_edges(Graph &g, vector<int> &deleted_edges)
         i = 0;
         for(vector<int>::iterator r = points_to_check.begin(); r != points_to_check.end(); ++r, i++){
             j = 0;
-            
+
             for(vector<int>::iterator s = points_to_check.begin(); s != points_to_check.end(); ++s, j++){
                 if(*s != *r && rounded_len[p][q] - rounded_len[*r][*s] + eq_19[j] + eq_20[i] > 0
                     && rounded_len[p][q] - rounded_len[*r][*s] + eq_19[i] + eq_20[j] > 0 && \
                     !set_contains(*r, R_q[j], R_p[j]) && !set_contains(*s, R_q[i], R_p[i])){
-                    cout << "Delete edge " << p << " " << q << endl;
+                    
+                    deleted_edges.push_back(&(*pq));
+
                     all_break = true;
                     break;
                 }
@@ -234,11 +274,12 @@ return false;*/
 
 static void usage (char *f)
 {
-    fprintf (stderr, "Usage: %s [-see below-] [prob_file]\n", f);
-    fprintf (stderr, "   -b d  gridsize d for random problems\n");
-    fprintf (stderr, "   -g    prob_file has x-y coordinates\n");
-    fprintf (stderr, "   -k d  generate problem with d cities\n");
-    fprintf (stderr, "   -s d  random seed\n");
+    //TODO update this
+    // fprintf (stderr, "Usage: %s [-see below-] [prob_file]\n", f);
+    // fprintf (stderr, "   -b d  gridsize d for random problems\n");
+    // fprintf (stderr, "   -g    prob_file has x-y coordinates\n");
+    // fprintf (stderr, "   -k d  generate problem with d cities\n");
+    // fprintf (stderr, "   -s d  random seed\n");
 }
 
 static int load_graph (Graph &graph, int ac, char** av) {
