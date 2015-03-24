@@ -2,7 +2,7 @@ TARGET = edge_deletion
 INCLUDES = 
 LIBS = 
 CC = g++
-CFLAGS =  -g -Wall -pedantic -Wno-long-long -ggdb 
+CFLAGS =  -g -Wall -pedantic -Wno-long-long -ggdb -O3
 #-O3
 #-O3
 .PHONY: default all clean
