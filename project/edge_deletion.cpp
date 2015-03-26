@@ -18,7 +18,7 @@ static void usage (char *f);
 static int load_graph (Graph &graph, int ac, char** av);
 static double euclid_edgelen (int i, int j, vector<double> x, vector<double> y);
 static int rounded_euclid_edgelen(int i, int j, vector<double> x, vector<double> y);
-static int delete_edges(Graph &g, vector<Edge*> &deleted_edges);
+static int delete_edges(Graph &g);
 bool set_contains(int s, vector<int> R1, vector<int> R2);
 
 bool compare_results = false;
@@ -36,16 +36,10 @@ int main(int argc, char* argv[]) {
     cout << "Entering delete graph" << endl;
 
     double running_time = CO759_zeit();
-    vector<Edge*> deleted_edges;
-    delete_edges(graph, deleted_edges);
+    delete_edges(graph);
     running_time = CO759_zeit() - running_time;
 
-    for(int i = 0; i < (int)deleted_edges.size(); i++) {
-        Edge *e = deleted_edges[i];
-        cout << "Deleted edge: " << e->end[0] << " " << e->end[1] <<endl;
-    }
-
-    cout << "Removed " << deleted_edges.size() << " out of " << graph.edge_count << " edges in " << running_time << "s" << endl;
+    cout << "Removed " << graph.edges.size() << " out of " << graph.count_useless() << " edges in " << running_time << "s" << endl;
     
     //Run a test by comparing the removed edges to the ones in the optimal tour
     if(compare_results) {
@@ -56,15 +50,12 @@ int main(int argc, char* argv[]) {
 
         //N^2 check for now
         bool pass = true;
-        for(int i = 0; i < (int)deleted_edges.size(); i++) {
-            for(int j = 0; j < (int)tour_indices.size(); j++) {
-                Edge *del_edge = deleted_edges[i];
-                Edge *tour_edge = &graph.edges[tour_indices[j]];
+        for(int j = 0; j < (int)tour_indices.size(); j++) {
+            Edge *tour_edge = &graph.edges[tour_indices[j]];
 
-                if(del_edge == tour_edge) {
-                    cout << "***Failed test! Deleted edge " << del_edge->end[0] << " " << del_edge->end[1] << " that was in the optimal tour!" << endl;
-                    pass = false;
-                }
+            if(tour_edge->useless) {
+                cout << "***Failed test! Deleted edge " << tour_edge->end[0] << " " << tour_edge->end[1] << " that was in the optimal tour!" << endl;
+                pass = false;
             }
         }
 
@@ -144,7 +135,7 @@ double compute_lemma_8(int p, int q, int r, double deltar, double lp, double lq,
     return deltar - 1 - *max_element(max_vec.begin(), max_vec.end());
 }
 
-static int delete_edges(Graph &g, vector<Edge*> &deleted_edges)
+static int delete_edges(Graph &g)
 {
     vector<double> delta_r;
     vector<vector<double> > rounded_len, len; // Using 2d vectors allows constant access, as opposed to walking through an edge list
@@ -239,7 +230,8 @@ static int delete_edges(Graph &g, vector<Edge*> &deleted_edges)
                     && rounded_len[p][q] - rounded_len[*r][*s] + eq_19[i] + eq_20[j] > 0 && \
                     !set_contains(*r, R_q[j], R_p[j]) && !set_contains(*s, R_q[i], R_p[i])){
                     
-                    deleted_edges.push_back(&(*pq));
+                    pq->useless = true;
+                    cout << "Deleted edge: " << pq->end[0] << " " << pq->end[1] <<endl;
 
                     all_break = true;
                     break;

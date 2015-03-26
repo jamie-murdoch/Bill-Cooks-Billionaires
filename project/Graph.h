@@ -6,12 +6,13 @@
 using namespace std;
 
 struct Edge {
-    Edge() {}
+    Edge() : useless(false) {}
     Edge(int e0, int e1, int _len);
 
     int end[2];
     int rounded_len;
     double len;
+    bool useless;
 
     bool operator<(const Edge& val) const {
     return len < val.len;
@@ -27,6 +28,7 @@ struct Graph {
     unsigned long sum_edge_weights(vector<int> &edge_indices);
     void print_edges();
 
+    int count_useless();
     //Returns false if graph is connected
     //bool find_island(double *x_edges, vector<int> &components)
 

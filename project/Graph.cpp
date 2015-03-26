@@ -8,6 +8,7 @@ Edge::Edge(int e0, int e1, int _len) {
     end[0] = e0;
     end[1] = e1;
     len = _len;
+    useless = false;
 }
 
 bool Edge::ptr_compare(Edge *e0, Edge *e1) {
@@ -80,6 +81,13 @@ void Graph::print_edges() {
     }
 }
 
+int Graph::count_useless() {
+    int sum = 0;
+    for(int i = 0; i < edge_count; i++) {
+        if(edges[i].useless) sum++;
+    }
+    return sum;
+}
 
 // Node::Node(){
 //     parent = this;
