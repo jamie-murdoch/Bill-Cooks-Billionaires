@@ -39,7 +39,7 @@ int main(int argc, char* argv[]) {
     delete_edges(graph);
     running_time = CO759_zeit() - running_time;
 
-    cout << "Removed " << graph.edges.size() << " out of " << graph.count_useless() << " edges in " << running_time << "s" << endl;
+    cout << "Removed " << graph.count_useless() << " out of " << graph.edges.size() << " edges in " << running_time << "s" << endl;
     
     //Run a test by comparing the removed edges to the ones in the optimal tour
     if(compare_results) {
