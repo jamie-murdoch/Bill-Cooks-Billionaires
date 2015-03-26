@@ -21,7 +21,7 @@ static int rounded_euclid_edgelen(int i, int j, vector<double> x, vector<double>
 static int delete_edges(Graph &g, vector<Edge*> &deleted_edges);
 bool set_contains(int s, vector<int> R1, vector<int> R2);
 
-bool compare_results = true;
+bool compare_results = false;
 
 int main(int argc, char* argv[]) {
     //Initialize the problem
