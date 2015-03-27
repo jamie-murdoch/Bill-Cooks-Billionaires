@@ -116,7 +116,7 @@ void KdTree::select(int l, int u, int m, int dim){
     again = 0;
     // tests if mPerm[m] has dimth coordinate greater than any pt to its left
     for(int i = l; i <= m; i++){
-      if(pt_less(i, m, dim)){
+      if(pt_less(m, i, dim)){
 	  temp = mPerm[m];
 	  mPerm[m] = mPerm[i];
 	  mPerm[i] = temp;
@@ -130,7 +130,7 @@ void KdTree::select(int l, int u, int m, int dim){
     }
     //tests if mPerm[m] has dimth coordinate less than any pt to its right
     for(int i = m; i <= u; i++){
-      if(pt_less(m, i, dim)){
+      if(pt_less(i, m, dim)){
 	  temp = mPerm[m];
 	  mPerm[m] = mPerm[i];
 	  mPerm[i] = temp;
