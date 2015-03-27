@@ -16,8 +16,11 @@ using namespace std;
 
 static void usage (char *f);
 static int load_graph (Graph &graph, int ac, char** av);
+
 static int delete_edges(Graph &g);
-bool set_contains(int s, vector<int> R1, vector<int> R2);
+//bool set_contains(int s, vector<int> R1, vector<int> R2);
+bool set_contains(int r, int s, int q, int p, double lq, double lp, Graph & g, double deltar);
+
 
 bool compare_results = false;
 
@@ -112,7 +115,7 @@ void circle_proj(int r, int s, double deltar, Graph g, vector<double>& result)
     }
 }
 
-double compute_lemma_8(int p, int q, int r, double deltar, double lp, double lq, Graph g, vector<int> &R_p)
+double compute_lemma_8(int p, int q, int r, double deltar, double lp, double lq, Graph g)
 {
     vector<double> max_vec;
     vector<double> t_r;
@@ -124,14 +127,12 @@ double compute_lemma_8(int p, int q, int r, double deltar, double lp, double lq,
             if(sqrt(pow(g.points[q].x() - t_r[0],2.0) + pow(g.points[q].y() - t_r[1],2.0)) >= lq)
             {
                 //cout << "Added q " << t << endl;
-                R_p.push_back(t);
                 max_vec.push_back(sqrt(pow(g.points[p].x() - t_r[0],2.0) + pow(g.points[p].y() - t_r[1],2.0)));
             }
             t_r.clear();
         }
     }
 
-    sort(R_p.begin(), R_p.end());
 
     if(max_vec.size() == 0) {
         return 0; // I'm not really sure if this is the right behaviour here, but it seems to make sense - if R_p is empty, then don't make any moves, and so there's no change in the tree's value
@@ -195,39 +196,38 @@ static int delete_edges(Graph &g)
 
         // Compute eq_19, eq_20 for those chosen edges
         vector<double> eq_19, eq_20;
-        vector<vector<int> > R_p, R_q; vector<int> temp;
-        
-        eq_19.resize(points_to_check.size()); eq_20.resize(points_to_check.size()); R_q.resize(points_to_check.size()); R_p.resize(points_to_check.size()); // does this do it?
+	eq_19.resize(points_to_check.size()); eq_20.resize(points_to_check.size()); 
 
         int i = 0;
         for(vector<int>::iterator it = points_to_check.begin(); it != points_to_check.end(); ++it, i++){
             double l_p = delta_r[*it] + g.int_lengths[p][q] - g.int_lengths[q][*it] - 1, l_q = delta_r[*it] + g.int_lengths[p][q] - g.int_lengths[p][*it] - 1;
-            eq_19[i] = compute_lemma_8(p, q, *it, delta_r[*it], l_p, l_q, g, temp);
-            R_p[i] = temp; temp.clear();
+            eq_19[i] = compute_lemma_8(p, q, *it, delta_r[*it], l_p, l_q, g);
 
-            eq_20[i] = compute_lemma_8(q, p, *it, delta_r[*it], l_q, l_p, g, temp);
-            R_q[i] = temp; 
-            temp.clear();
+            eq_20[i] = compute_lemma_8(q, p, *it, delta_r[*it], l_q, l_p, g);
         }
 
         // check to see if we can eliminate the edge
         bool all_break = false;
         int j;
         i = 0;
+
         for(vector<int>::iterator r = points_to_check.begin(); r != points_to_check.end(); ++r, i++){
             j = 0;
 
             for(vector<int>::iterator s = points_to_check.begin(); s != points_to_check.end(); ++s, j++){
                 if(*s != *r && g.int_lengths[p][q] - g.int_lengths[*r][*s] + eq_19[j] + eq_20[i] > 0
-                    && g.int_lengths[p][q] - g.int_lengths[*r][*s] + eq_19[i] + eq_20[j] > 0 && \
-                    !set_contains(*r, R_q[j], R_p[j]) && !set_contains(*s, R_q[i], R_p[i])){
+                    && g.int_lengths[p][q] - g.int_lengths[*r][*s] + eq_19[i] + eq_20[j] > 0){
+		  double l_p_s = delta_r[*s] + g.int_lengths[p][q] - g.int_lengths[q][*s] - 1, l_q_s = delta_r[*s] + g.int_lengths[p][q] - g.int_lengths[p][*s] - 1; // we could probably cache these... 
+		  double l_p_r = delta_r[*r] + g.int_lengths[p][q] - g.int_lengths[q][*r] - 1, l_q_r = delta_r[*r] + g.int_lengths[p][q] - g.int_lengths[p][*r] - 1; // we could probably cache these...
+		  if(!set_contains(*r, *s, q, p, l_q_r, l_p_r, g, delta_r[*r]) && !set_contains(*s, *r, q, p, l_q_s, l_p_s, g, delta_r[*s])){
                     
                     pq->useless = true;
                     cout << "Deleted edge: " << pq->end[0] << " " << pq->end[1] <<endl;
 
                     all_break = true;
                     break;
-                }
+		  }
+		}
             }
 
             if(all_break) break;
@@ -239,9 +239,13 @@ static int delete_edges(Graph &g)
 }
 
 
-bool set_contains(int s, vector<int> R1, vector<int> R2)
+bool set_contains(int r, int s, int q, int p, double lq, double lp, Graph & g, double deltar)
 {
-    return find(R1.begin(), R1.end(), s) != R1.end() || find(R2.begin(), R2.end(), s) != R2.end();
+  // Check if s \in R_p \cup R_q
+  vector<double> s_r; 
+  circle_proj(r, s, deltar, g, s_r);
+  return sqrt(pow(g.points[q][0] - s_r[0],2.0) + pow(g.points[q][1] - s_r[1],2.0)) >= lq || sqrt(pow(g.points[p][0] - s_r[0], 2.0) + pow(g.points[p][1] - s_r[1], 2.0)) >= lp;
+  //    return find(R1.begin(), R1.end(), s) != R1.end() || find(R2.begin(), R2.end(), s) != R2.end();
 /*  vector<int> intersect, singleton;
 singleton.push_back(s);
 intersect.resize(max(R1.size(), R2.size())); intersect[0] = -1;
