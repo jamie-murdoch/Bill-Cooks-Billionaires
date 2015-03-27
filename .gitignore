@@ -13,3 +13,4 @@ edge_deletion
 subtour.exe
 *.sublime-workspace
 *.sublime-project
+project/Makefile

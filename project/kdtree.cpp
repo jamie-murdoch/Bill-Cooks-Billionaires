@@ -3,6 +3,8 @@
 #include <fstream>
 #include <iostream>
 #include <cmath>
+#include <stdlib.h>
+#include <limits>
 
 
 // builds a kdtree from a given pointset
