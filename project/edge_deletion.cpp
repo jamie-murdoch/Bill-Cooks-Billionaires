@@ -45,11 +45,12 @@ int main(int argc, char* argv[]) {
         SDL_RenderPresent(renderer);
     #endif
 
-    //Test code for Kd_tree
-    // for(int j = 0; j < 100; j++) {
+    // //Test code for Kd_tree
+    // for(int j = 0; j < 1000; j++) {
     //     Point2D p(1000 + rand() %4000, 1000 + rand() % 4000);
     //     double dist;
-    //     int close = graph.kd_tree->find_closest_point(p, dist);
+    //     double min_dist = rand() % 1000;
+    //     int close = graph.kd_tree->find_closest_point(p, dist, min_dist);
 
     //     vector<double> dists(graph.node_count());
     //     for(int i = 0; i < graph.node_count(); i++) {
@@ -57,10 +58,16 @@ int main(int argc, char* argv[]) {
     //     }
 
     //     sort(dists.begin(), dists.end());
+    //     int index = 0;
+    //     while(index < graph.node_count()) {
+    //         if(dists[index] >= min_dist) break;
+    //         index++;
+    //     }
     //     cout << close << endl;
-    //     cout << "actual: " << dists[0] << " nn: " << dist << endl;
-    //     if(dists[0] != dist) {
+    //     cout << "actual: " << dists[index] << " nn: " << dist << endl;
+    //     if(dists[index] != dist) {
     //         cout << "FAILED! " << endl;
+    //         break;
     //     }
     // }
 
@@ -155,10 +162,10 @@ double compute_lemma_8(int p, int q, int r, double deltar, double lp, double lq,
         if(t != r || true ){
             circle_proj(r, t, deltar, g, t_r);
             //cout << "first out X1 " << g.points[1].x() << endl;
-            if(sqrt(pow(g.points[q].x() - t_r[0],2.0) + pow(g.points[q].y() - t_r[1],2.0)) >= lq)
+            if(sqrt(pow(g.points[q].x() - t_r[0],2) + pow(g.points[q].y() - t_r[1],2)) >= lq)
             {
                 //cout << "Added q " << t << endl;
-                max_vec.push_back(sqrt(pow(g.points[p].x() - t_r[0],2.0) + pow(g.points[p].y() - t_r[1],2.0)));
+                max_vec.push_back(sqrt(pow(g.points[p].x() - t_r[0],2) + pow(g.points[p].y() - t_r[1],2)));
             }
             t_r.clear();
         }
@@ -195,14 +202,14 @@ static int delete_edges(Graph &g)
                 if(l_p + l_q >= g.int_lengths[p][q] - 0.5){
                     double alpha_p = 2 * acos( (l_q * l_q - delta_r[r] * delta_r[r] - g.lengths[r][q] * g.lengths[r][q]) / (2 * delta_r[r] * g.lengths[r][q]));
                     double alpha_q = 2 * acos( (l_p * l_p - delta_r[r] * delta_r[r] - g.lengths[r][p] * g.lengths[r][p]) / (2 * delta_r[r] * g.lengths[r][p]));
-                    double gamma_r = acos(1 - pow(l_p + l_q - g.int_lengths[p][q] + 0.5,2.0) / (2 * delta_r[r] * delta_r[r]));
+                    double gamma_r = acos(1 - pow(l_p + l_q - g.int_lengths[p][q] + 0.5,2) / (2 * delta_r[r] * delta_r[r]));
 
                     // cout << "r " << r << " l_p " << l_p << " l_q " << l_q << " alpha_p " << alpha_p << " alpha_q " << alpha_q << " gamma_r " << gamma_r << " deltar " << delta_r[r] << " g.lengths[r][q] " << g.lengths[r][q] << " alpha_p arg " << (l_q * l_q - delta_r[r] * delta_r[r] - g.lengths[r][q] * g.lengths[r][q]) / (2 * delta_r[r] * g.lengths[r][q]) << endl;
 
                     if(gamma_r > max(alpha_p,alpha_q)){
                         potential_points.push_back(r);
                         // updates dist_to_mid
-                        dist_to_mid.push_back(sqrt(pow(mid_point[0] - g.points[r].x(),2) + pow(mid_point[1] - g.points[r].y(),2.0)));
+                        dist_to_mid.push_back(sqrt(pow(mid_point[0] - g.points[r].x(),2) + pow(mid_point[1] - g.points[r].y(),2)));
                     }
                 }
             }
@@ -275,7 +282,7 @@ bool set_contains(int r, int s, int q, int p, double lq, double lp, Graph & g, d
   // Check if s \in R_p \cup R_q
   vector<double> s_r; 
   circle_proj(r, s, deltar, g, s_r);
-  return sqrt(pow(g.points[q][0] - s_r[0],2.0) + pow(g.points[q][1] - s_r[1],2.0)) >= lq || sqrt(pow(g.points[p][0] - s_r[0], 2.0) + pow(g.points[p][1] - s_r[1], 2.0)) >= lp;
+  return sqrt(pow(g.points[q][0] - s_r[0],2) + pow(g.points[q][1] - s_r[1],2)) >= lq || sqrt(pow(g.points[p][0] - s_r[0], 2) + pow(g.points[p][1] - s_r[1], 2)) >= lp;
   //    return find(R1.begin(), R1.end(), s) != R1.end() || find(R2.begin(), R2.end(), s) != R2.end();
 /*  vector<int> intersect, singleton;
 singleton.push_back(s);

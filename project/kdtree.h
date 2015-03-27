@@ -23,10 +23,10 @@ class KdTree {
 
   double dist(int i, int j);
 
-  int find_closest_point(const Point2D &point, double &dist);
+  int find_closest_point(const Point2D &point, double &dist, double min_dist = 0);
   int nearest_neighbor(int j);
 
-  void out_of_tree_nn(KdNode *p, const Point2D &targetp, int &nnptnum, double &nndist);
+  void out_of_tree_nn(KdNode *p, const Point2D &targetp, double min_dist, int &nnptnum, double &nndist);
   void in_tree_nn(KdNode *p, int &nntarget, int &nnptnum, double &nndist);
 
   double px(int i, int j); 

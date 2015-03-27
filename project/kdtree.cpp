@@ -25,21 +25,23 @@ double KdTree::dist(int i, int j) {
   return (*mLengths)[i][j];
 }
 
-int KdTree::find_closest_point(const Point2D &point, double &dist) {
+//Function returns the index of the point closest to &point that is at least min_dist away.
+//dist stores the resulting distance to the point.
+int KdTree::find_closest_point(const Point2D &point, double &dist, double min_dist) {
   double nndist = numeric_limits<double>::infinity();
   int nnptnum = 0;
 
-  out_of_tree_nn(mRoot, point, nnptnum, nndist);
+  out_of_tree_nn(mRoot, point, min_dist, nnptnum, nndist);
   dist = nndist;
 
   return nnptnum;
 }
 
-void KdTree::out_of_tree_nn(KdNode *p, const Point2D &targetp, int &nnptnum, double &nndist) {
+void KdTree::out_of_tree_nn(KdNode *p, const Point2D &targetp, double min_dist, int &nnptnum, double &nndist) {
   if(p->bucket) {
     for(int i = p->lopt; i <= p->hipt; i++) {
       double thisdist = ((*mPoints)[mPerm[i]] - targetp).length();
-      if(thisdist < nndist) {
+      if(thisdist < nndist && thisdist > min_dist) {
         nndist = thisdist;
         nnptnum = mPerm[i];
       }
@@ -49,15 +51,15 @@ void KdTree::out_of_tree_nn(KdNode *p, const Point2D &targetp, int &nnptnum, dou
     double val = p->cutval;
     double thisx = targetp[p->cutdim];
     if(thisx < val) {
-      out_of_tree_nn(p->loson, targetp, nnptnum, nndist);
+      out_of_tree_nn(p->loson, targetp, min_dist, nnptnum, nndist);
       if(thisx + nndist > val) {
-        out_of_tree_nn(p->hison, targetp, nnptnum, nndist);
+        out_of_tree_nn(p->hison, targetp, min_dist, nnptnum, nndist);
       }
     }
     else {
-      out_of_tree_nn(p->hison, targetp, nnptnum, nndist);
+      out_of_tree_nn(p->hison, targetp, min_dist, nnptnum, nndist);
       if(thisx - nndist < val) {
-        out_of_tree_nn(p->loson, targetp, nnptnum, nndist);
+        out_of_tree_nn(p->loson, targetp, min_dist, nnptnum, nndist);
       }
     }
   }
