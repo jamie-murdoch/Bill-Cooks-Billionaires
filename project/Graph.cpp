@@ -31,19 +31,10 @@ Graph::Graph(const char *tsp_file) {
 
 
     //test
-    num_points = 50;
-    vector<double> x(num_points);
-    vector<double> y(num_points);
-    CO759_build_xy(num_points, x, y, 100);
-    points.reserve(num_points);
-    for(int i = 0; i < num_points; i++) {
-        int index;
-        double x, y;
-        fin >> index >> x >> y;
-        points.push_back(Point2D(x,y));
-    }
-
-    //
+    // num_points = 50;
+    // vector<double> x(num_points);
+    // vector<double> y(num_points);
+    // CO759_build_xy(num_points, x, y, 100);
     // points.reserve(num_points);
     // for(int i = 0; i < num_points; i++) {
     //     int index;
@@ -51,6 +42,15 @@ Graph::Graph(const char *tsp_file) {
     //     fin >> index >> x >> y;
     //     points.push_back(Point2D(x,y));
     // }
+
+    //
+    points.reserve(num_points);
+    for(int i = 0; i < num_points; i++) {
+        int index;
+        double x, y;
+        fin >> index >> x >> y;
+        points.push_back(Point2D(x,y));
+    }
 
     fin.close();
 
