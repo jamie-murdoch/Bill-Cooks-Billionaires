@@ -12,7 +12,7 @@
 #include "Graph.h"
 #include "TSP_Solver.h"
 
-#define USE_GRAPHICS true
+#define USE_GRAPHICS false
 
 #if USE_GRAPHICS
 #include <SDL2/SDL.h>
