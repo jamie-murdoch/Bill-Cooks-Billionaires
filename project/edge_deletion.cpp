@@ -12,6 +12,12 @@
 #include "Graph.h"
 #include "TSP_Solver.h"
 
+#define USE_GRAPHICS true
+
+#if USE_GRAPHICS
+#include <SDL2/SDL.h>
+#endif
+
 using namespace std;
 
 static void usage (char *f);
@@ -21,22 +27,47 @@ bool set_contains(int s, vector<int> R1, vector<int> R2);
 
 bool compare_results = false;
 
+#if USE_GRAPHICS
+void setup_sdl() {
+    SDL_Window *window;                    // Declare a pointer
+    SDL_Init(SDL_INIT_VIDEO);              // Initialize SDL2
+    // Create an application window with the following settings:
+    window = SDL_CreateWindow(
+        "TSP Edge Elimination",                  // window title
+        SDL_WINDOWPOS_UNDEFINED,           // initial x position
+        SDL_WINDOWPOS_UNDEFINED,           // initial y position
+        800,                               // width, in pixels
+        800,                               // height, in pixels
+        SDL_WINDOW_OPENGL                  // flags - see below
+    );
+    // Check that the window was successfully made
+    if (window == NULL) {
+        // In the event that the window could not be made...
+        printf("Could not create window: %s\n", SDL_GetError());
+    }
+}
+#endif
+
 int main(int argc, char* argv[]) {
+    #if USE_GRAPHICS
+    setup_sdl();
+    SDL_Delay(3000);
+    #endif
+
     //Initialize the problem
     //Must always pass in a .tsp file in first arg for now
     Graph graph(argv[1]);
-    // cout << graph.points[0] << endl;
-    // cout << graph.points[1] << endl;
 
-    // int node = 5;
+    // int node = 12;
     // int close = graph.kd_tree->nn(node);
     // double length = graph.lengths[node][close];
+    // cout << "nodes: " << node << " " << close << endl;
     // cout << length<< endl;
 
     // sort(graph.lengths[node].begin(), graph.lengths[node].end());
     // cout << graph.lengths[node][0] << endl;
     // exit(1);
-    vector<int> tour_indices;
+    // vector<int> tour_indices;
 
     cout << "Entering delete graph" << endl;
 

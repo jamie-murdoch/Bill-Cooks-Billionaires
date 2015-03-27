@@ -1,6 +1,6 @@
 TARGET = edge_deletion
-INCLUDES = -I /Users/lawson/Applications/IBM/ILOG/CPLEX_Studio1261/cplex/include/ilcplex/
-LIBS = /Users/lawson/Applications/IBM/ILOG/CPLEX_Studio1261/cplex/lib/x86-64_osx/static_pic/libcplex.a
+INCLUDES = -I /Users/lawson/Applications/IBM/ILOG/CPLEX_Studio1261/cplex/include/ilcplex/ -I /usr/local/Cellar/sdl2/2.0.3/include/
+LIBS = /Users/lawson/Applications/IBM/ILOG/CPLEX_Studio1261/cplex/lib/x86-64_osx/static_pic/libcplex.a -L /usr/local/Cellar/sdl2/2.0.3/lib/ -lSDL2
 CC = g++
 CFLAGS =  -g -Wall -pedantic -Wno-long-long -ggdb -O3
 #-O3
