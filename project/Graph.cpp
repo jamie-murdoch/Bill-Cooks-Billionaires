@@ -103,3 +103,18 @@ int Graph::count_useless() {
     }
     return sum;
 }
+
+void Graph::get_bounding_box(double &minX, double &minY, double &maxX, double &maxY) const{
+    minX = minY = numeric_limits<double>::infinity();
+    maxX = maxY = -numeric_limits<double>::infinity();
+
+    for(int i = 0; i < (int)points.size(); i++) {
+        const Point2D &p = points[i];
+        minX = min(p.x(), minX);
+        minY = min(p.y(), minY);
+        maxX = max(p.x(), maxX);
+        maxY = max(p.y(), maxY);
+    }
+}
+
+

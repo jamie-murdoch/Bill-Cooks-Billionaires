@@ -12,10 +12,11 @@
 #include "Graph.h"
 #include "TSP_Solver.h"
 
-#define USE_GRAPHICS false
+#define USE_GRAPHICS true
+
 
 #if USE_GRAPHICS
-#include <SDL2/SDL.h>
+#include "graphics.h"
 #endif
 
 using namespace std;
@@ -30,47 +31,25 @@ bool set_contains(int r, int s, int q, int p, double lq, double lp, Graph & g, d
 
 bool compare_results = false;
 
-#if USE_GRAPHICS
-void setup_sdl() {
-    SDL_Window *window;                    // Declare a pointer
-    SDL_Init(SDL_INIT_VIDEO);              // Initialize SDL2
-    // Create an application window with the following settings:
-    window = SDL_CreateWindow(
-        "TSP Edge Elimination",                  // window title
-        SDL_WINDOWPOS_UNDEFINED,           // initial x position
-        SDL_WINDOWPOS_UNDEFINED,           // initial y position
-        800,                               // width, in pixels
-        800,                               // height, in pixels
-        SDL_WINDOW_OPENGL                  // flags - see below
-    );
-    // Check that the window was successfully made
-    if (window == NULL) {
-        // In the event that the window could not be made...
-        printf("Could not create window: %s\n", SDL_GetError());
-    }
-}
-#endif
-
 int main(int argc, char* argv[]) {
-    #if USE_GRAPHICS
-    setup_sdl();
-    SDL_Delay(3000);
-    #endif
-
     //Initialize the problem
     //Must always pass in a .tsp file in first arg for now
     Graph graph(argv[1]);
 
-    // int node = 12;
-    // int close = graph.kd_tree->nn(node);
-    // double length = graph.lengths[node][close];
-    // cout << "nodes: " << node << " " << close << endl;
-    // cout << length<< endl;
+    #if USE_GRAPHICS
+    setup_sdl(graph);
+    draw_points(graph.points, 0, 0, 255);
+    #endif
 
-    // sort(graph.lengths[node].begin(), graph.lengths[node].end());
-    // cout << graph.lengths[node][0] << endl;
-    // exit(1);
-    // vector<int> tour_indices;
+    int node = 12;
+    int close = graph.kd_tree->nn(node);
+    double length = graph.lengths[node][close];
+    cout << "nodes: " << node << " " << close << endl;
+    cout << length<< endl;
+
+    sort(graph.lengths[node].begin(), graph.lengths[node].end());
+    cout << graph.lengths[node][0] << endl;
+    exit(1);
 
     cout << "Entering delete graph" << endl;
 
@@ -103,6 +82,10 @@ int main(int argc, char* argv[]) {
         }
     }
 
+    #ifdef USE_GRAPHICS
+    SDL_Delay(3000);
+    SDL_Quit();
+    #endif
     return 0;
 }
 

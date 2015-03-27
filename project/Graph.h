@@ -31,6 +31,8 @@ struct Graph {
     int node_count() { return points.size(); }
     int edge_count() { return edges.size(); }
 
+    void get_bounding_box(double &minX, double &minY, double &maxX, double &maxY) const;
+
     vector<Point2D> points;
     vector<Edge> edges;
     vector<vector<int> > int_lengths;

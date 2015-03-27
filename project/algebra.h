@@ -38,8 +38,8 @@ public:
     return *this;
   }
 
-  const double &x() { return v_[0]; }
-  const double &y() { return v_[1]; }
+  const double &x() const { return v_[0]; }
+  const double &y() const { return v_[1]; }
 
   double length2() {
     return v_[0]*v_[0] + v_[1] * v_[1];
