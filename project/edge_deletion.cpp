@@ -145,6 +145,9 @@ void circle_proj(int r, int s, double deltar, Graph g, vector<double>& result)
 
 double compute_lemma_8(int p, int q, int r, double deltar, double lp, double lq, Graph g)
 {
+  double cos_eps_q = (g.lengths[p][q] * g.lengths[p][q] + g.lengths[q][r] * g.lengths[q][r] - g.lengths[p][r] * g.lengths[p][r]) / (2 * g.lengths[p][q] * g.lengths[q][r]),\
+    cos_theta_q = (lq * lq + g.lengths[q][r] * g.lengths[q][r] - deltar * deltar) / (2 * lq * g.lengths[q][r]);
+  return deltar - 1 - sqrt(g.lengths[p][q] * g.lengths[p][q] + lq * lq - 2 * g.lengths[p][q]  * lq * (cos_eps_q * cos_theta_q - sqrt(1 - cos_eps_q * cos_eps_q) * sqrt(1 - cos_theta_q * cos_theta_q)));
     vector<double> max_vec;
     vector<double> t_r;
 
@@ -250,7 +253,7 @@ static int delete_edges(Graph &g)
 		  if(!set_contains(*r, *s, q, p, l_q_r, l_p_r, g, delta_r[*r]) && !set_contains(*s, *r, q, p, l_q_s, l_p_s, g, delta_r[*s])){
                     
                     pq->useless = true;
-                    cout << "Deleted edge: " << pq->end[0] << " " << pq->end[1] <<endl;
+                    //cout << "Deleted edge: " << pq->end[0] << " " << pq->end[1] <<endl;
 
                     all_break = true;
                     break;
