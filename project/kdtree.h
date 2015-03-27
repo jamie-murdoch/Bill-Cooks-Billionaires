@@ -2,6 +2,7 @@
 #define KDTREE_H
 
 #include <vector>
+#include "algebra.h"
 
 #define BUCKETSIZE 3
 
@@ -10,22 +11,6 @@
 
 using namespace std;
 
-struct Point {
-  double x, y;
-};
-
-class PointSet {
- public:
-  void addpt(Point newpt);
-  int numpts(void);
-
-  
-  float x(int i, int j);
-  float dist(int i, int j);
-
- private:
-  vector<Point> ptvec;
-};
 
 struct KdNode {
   char bucket;
@@ -37,7 +22,8 @@ struct KdNode {
 
 class KdTree {
  public:
-  KdTree(PointSet *ptset);
+  KdTree(const vector<Point2D> &points);
+
   float px(int i, int j); 
   int findmaxspread(int l, int u);
   bool pt_less(int i, int j, int dim);
@@ -47,9 +33,9 @@ class KdTree {
   void print_tree(KdNode *node);
 
  private:
-  vector<int> perm;
-  PointSet *source_ptset;
-  KdNode *root;
+  vector<int> mPerm;
+  const vector<Point2D> *mPoints;
+  KdNode *mRoot;
 };
 
 #endif

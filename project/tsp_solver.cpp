@@ -13,7 +13,7 @@ TSP_Solver::TSP_Solver(Graph &graph) : m_graph(graph), m_min_tour_value(INFINITY
     CO759lp_create (&m_lp, "subtour");
 
     /* Build a row for each degree equation */
-    for(int i = 0; i < graph.node_count; i++) {
+    for(int i = 0; i < graph.node_count(); i++) {
         CO759lp_new_row (&m_lp, 'E', 2.0);
     }
 
@@ -22,7 +22,7 @@ TSP_Solver::TSP_Solver(Graph &graph) : m_graph(graph), m_min_tour_value(INFINITY
     double coefficients[2] = {1.0, 1.0};
     double lower_bound = 0.0;
     double upper_bound = 1.0;
-    for(int j = 0; j < graph.edge_count; j++) {
+    for(int j = 0; j < graph.edge_count(); j++) {
         int *nodes = (int*)graph.edges[j].end;
         double objective_val = (double)graph.edges[j].len;
         CO759lp_addcols (&m_lp, num_vars, num_non_zero, &objective_val,
@@ -33,13 +33,13 @@ TSP_Solver::TSP_Solver(Graph &graph) : m_graph(graph), m_min_tour_value(INFINITY
 
     //Moving some stuff for the DFS up here to save malloc calls
     init_graph (&G);
-    island = (int *) malloc (m_graph.node_count * sizeof (int));
-    delta  = (int *) malloc (m_graph.edge_count * sizeof(int));
-    edge_marks  = (int *) malloc (m_graph.node_count * sizeof(int));
+    island = (int *) malloc (m_graph.node_count() * sizeof (int));
+    delta  = (int *) malloc (m_graph.edge_count() * sizeof(int));
+    edge_marks  = (int *) malloc (m_graph.node_count() * sizeof(int));
     if (!island || !delta || !edge_marks) {
         fprintf (stderr, "out of memory for x, island, delta, or edge_marks\n");
     }
-    build_graph (m_graph.node_count, m_graph.edge_count, m_graph.edges, &G);
+    build_graph (m_graph.node_count(), m_graph.edge_count(), m_graph.edges, &G);
 }
 
 TSP_Solver::~TSP_Solver() {
@@ -54,7 +54,7 @@ TSP_Solver::~TSP_Solver() {
 
 bool TSP_Solver::find_min_tour(vector<int> &tour_indices) {
     //Make sure we have room for the tour
-    tour_indices.resize(m_graph.node_count, 0);
+    tour_indices.resize(m_graph.node_count(), 0);
 
     //Use try to catch any errors from CPLEX
 	try {
@@ -160,14 +160,14 @@ int TSP_Solver::add_subtour_inequalities() {
     double *x = get_edges();
     while (!connected (&G, x, &icount, island, 0)) {
 
-        get_delta (icount, island, m_graph.edge_count, m_graph.edges, &deltacount, delta, edge_marks);
+        get_delta (icount, island, m_graph.edge_count(), m_graph.edges, &deltacount, delta, edge_marks);
         rval = add_subtour(deltacount, delta);
 
         
-        for(int i = 1; i < m_graph.node_count; i++) {
+        for(int i = 1; i < m_graph.node_count(); i++) {
             if(G.nodelist[i].mark == 0) { //Not yet traversed by dfs
                 if(!connected(&G, x, &icount, island, i)) {
-                    get_delta (icount, island, m_graph.edge_count, m_graph.edges, &deltacount, delta, edge_marks);
+                    get_delta (icount, island, m_graph.edge_count(), m_graph.edges, &deltacount, delta, edge_marks);
                     rval = add_subtour(deltacount, delta);
                 }
                 else {
@@ -202,7 +202,7 @@ int TSP_Solver::compute_branch_edge() {
     double *x = get_edges();
     double max_dist = 0.0;
     int branching_edge = 0;
-    for (int edge = 0; edge < m_graph.edge_count; edge++) {
+    for (int edge = 0; edge < m_graph.edge_count(); edge++) {
         double dist_from_int = min(x[edge], 1.0 - x[edge]);
         if (dist_from_int > max_dist){
            max_dist = dist_from_int;
@@ -216,13 +216,13 @@ int TSP_Solver::compute_branch_edge() {
 //Return false if not a tour
 bool TSP_Solver::update_current_tour_indices(vector<int> &tour_indices) {
     int index = 0;
-    for (int j = 0; j < m_graph.edge_count; j++){
+    for (int j = 0; j < m_graph.edge_count(); j++){
         if (m_lp_edges[j] > LP_EPSILON){
             tour_indices[index++] = j;
         }
     }
 
-    return index == m_graph.node_count;
+    return index == m_graph.node_count();
 }
 
 int TSP_Solver::connected (ComponentGraph *G, double *x, int *icount, int *island, int starting_node)
@@ -329,7 +329,7 @@ void TSP_Solver::get_delta (int nsize, int *nlist, int edge_count, vector<Edge> 
     int i, k = 0;
 
     //Better way?
-    for (i = 0; i < m_graph.node_count; i++) edge_marks[i] = 0;
+    for (i = 0; i < m_graph.node_count(); i++) edge_marks[i] = 0;
 
     for (i = 0; i < nsize; i++) edge_marks[nlist[i]] = 1;
 
@@ -393,7 +393,7 @@ double TSP_Solver::get_obj_val() {
 }
 
 double* TSP_Solver::get_edges() {
-    if(m_lp_edges.size() < m_graph.edge_count) m_lp_edges.resize(m_graph.edge_count);
+    if(m_lp_edges.size() < m_graph.edge_count()) m_lp_edges.resize(m_graph.edge_count());
 
     CO759lp_x (&m_lp, &m_lp_edges[0]);
     
@@ -404,7 +404,7 @@ int TSP_Solver::get_num_edges() {
     double *x = get_edges();
 
     int i = 0;
-    for (int j = 0; j < m_graph.edge_count; j++) {
+    for (int j = 0; j < m_graph.edge_count(); j++) {
         if (x[j] > LP_EPSILON) i++;
     }
 
@@ -417,21 +417,21 @@ void TSP_Solver::print_num_edges() {
 }
 
 
-  //   //for (i = 0; i < m_graph.node_count; i++) edge_marks[i] = 0;
+  //   //for (i = 0; i < m_graph.node_count(); i++) edge_marks[i] = 0;
 
   //   double *x = get_edges();
 
   // //  while (!connected (&G, x, &icount, island, 0)) {
   //       /*  just add one subtour; better to add one for each component */
 
-  //     //  get_delta (icount, island, m_graph.edge_count, m_graph.edges, &deltacount, delta, edge_marks);
+  //     //  get_delta (icount, island, m_graph.edge_count(), m_graph.edges, &deltacount, delta, edge_marks);
   //       //rval = add_subtour(deltacount, delta);
 
   //       //
-  //       for(int i = 0; i < m_graph.node_count; i++) {
+  //       for(int i = 0; i < m_graph.node_count(); i++) {
   //           if(G.nodelist[i].mark == 0) { //Not yet traversed by dfs
   //               if(!connected(&G, x, &icount, island, i)) {
-  //                   get_delta (icount, island, m_graph.edge_count, m_graph.edges, &deltacount, delta, edge_marks);
+  //                   get_delta (icount, island, m_graph.edge_count(), m_graph.edges, &deltacount, delta, edge_marks);
   //                   rval = add_subtour(deltacount, delta);
   //               }
   //           }

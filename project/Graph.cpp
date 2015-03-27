@@ -2,67 +2,81 @@
 #include <iostream>
 
 #include "Graph.h"
+#include "util.h"
 
 
-Edge::Edge(int e0, int e1, int _len) {
+Edge::Edge(int e0, int e1, double length) {
     end[0] = e0;
     end[1] = e1;
-    len = _len;
+    len = length;
+    int_len = nint(len);
     useless = false;
 }
 
-bool Edge::ptr_compare(Edge *e0, Edge *e1) {
-    return *e0 < *e1;
-}
-
 //Load a graph from a file
-Graph::Graph(const char *filename) {
-    // fstream fin;
-    // fin.open(filename);
+Graph::Graph(const char *tsp_file) {
+    fstream fin;
+    fin.open(tsp_file);
 
-    // fin >> node_count >> edge_count;
+    string temp;
+    getline(fin, temp); //Skip name
+    getline(fin, temp); //Skip comment
+    getline(fin, temp); //Skip type
 
-    // edges.reserve(edge_count);
+    int num_points;
+    fin >> temp >> temp >> num_points; //Read edge count
+    getline(fin, temp); //Skip weight type
+    getline(fin, temp); //Skip weight type
+    getline(fin, temp); //Skip section type
 
-    // Edge edge;
-    // for(int i = 0; i < edge_count; i++) {
-    //     fin >> edge.end[0] >> edge.end[1] >> edge.len;
-    //     edges.push_back(edge);
+
+    //test
+    num_points = 50;
+    vector<double> x(num_points);
+    vector<double> y(num_points);
+    CO759_build_xy(num_points, x, y, 100);
+    points.reserve(num_points);
+    for(int i = 0; i < num_points; i++) {
+        int index;
+        double x, y;
+        fin >> index >> x >> y;
+        points.push_back(Point2D(x,y));
+    }
+
+    //
+    // points.reserve(num_points);
+    // for(int i = 0; i < num_points; i++) {
+    //     int index;
+    //     double x, y;
+    //     fin >> index >> x >> y;
+    //     points.push_back(Point2D(x,y));
     // }
 
+    fin.close();
 
-    //-------------------
-    FILE *f = (FILE *) NULL;
-    int i, end1, end2, w, rval = 0, ncount, ecount;
-
-    if ((f = fopen (filename, "r")) == NULL) {
-    fprintf (stderr, "Unable to open %s for input\n",filename);
-        rval = 1;  goto CLEANUP;
+    //Assume it is a complete graph
+    edges.reserve(num_points * (num_points - 1) / 2);
+    int_lengths.resize(num_points);
+    lengths.resize(num_points);
+    for(int i = 0; i < num_points; i++) {
+        int_lengths[i].resize(num_points, 0);
+        lengths[i].resize(num_points, 0.0);
     }
 
-    if (fscanf (f, "%d %d", &ncount, &ecount) != 2) {
-    fprintf (stderr, "Input file %s has invalid format\n",filename);
-        rval = 1;  goto CLEANUP;
+    for(int i = 0; i < num_points; i++) {
+        for(int j = i; j < num_points; j++) {
+            if(i != j) {
+                double len = (points[i] - points[j]).length();
+                edges.push_back(Edge(i, j, len));
+                int_lengths[i][j] = nint(len); int_lengths[j][i] = nint(len);
+                lengths[i][j] = len; lengths[j][i] = len;
+                // cout << num_points << endl;
+                // cout << edge_count() << endl;
+            }
+        }
     }
 
-    printf ("Nodes: %d  Edges: %d\n", ncount, ecount);
-    fflush (stdout);
-
-    edge_count = ecount;
-    node_count = ncount;
-    edges.resize(ecount);
-    for (i = 0; i < ecount; i++) {
-    if (fscanf(f,"%d %d %d",&end1, &end2, &w) != 3) {
-        fprintf (stderr, "%s has invalid input format\n",filename);
-            rval = 1;  goto CLEANUP;
-    }
-    edges[i].end[0] = end1;
-    edges[i].end[1] = end2;
-    edges[i].len = w;
-    }
-
-CLEANUP:
-    if (f) fclose (f);
+    kd_tree = new KdTree(points);
 }
 
 unsigned long Graph::sum_edge_weights(vector<int> &edge_indices) {
@@ -77,57 +91,14 @@ unsigned long Graph::sum_edge_weights(vector<int> &edge_indices) {
 void Graph::print_edges() {
     for (int i = 0; i < edges.size(); ++i)
     {
-        cout << edges[i].end[0] << ", " << edges[i].end[1] << endl;
+        cout << edges[i].end[0] << ", " << edges[i].end[1] << ": " << edges[i].int_len<< endl;
     }
 }
 
 int Graph::count_useless() {
     int sum = 0;
-    for(int i = 0; i < edge_count; i++) {
+    for(int i = 0; i < (int)edges.size(); i++) {
         if(edges[i].useless) sum++;
     }
     return sum;
 }
-
-// Node::Node(){
-//     parent = this;
-//     rank = 0;
-// }
-
-
-// Node* Node::find_canonical() {
-//     Node* p;
-//     for (p = this; p->parent != p; p = p->parent);
-
-//     return p;
-// }
-
-// Node* Node::find_canonical_with_compression() {
-//     if(parent == this) {
-//         return this;
-//     }
-//     else {
-//         Node* new_parent = parent->find_canonical_with_compression();
-//         parent = new_parent;
-//         return parent;
-//     }
-// }
-
-// Node* Node::link(Node* x, Node* y){
-//     if (x->rank > y->rank) {
-//         Node::swap(x, y);
-//     }
-//     else if (x->rank == y->rank) {
-//         y->rank += 1;  
-//     }
-
-//     x->parent = y;
-
-//     return y;
-// }
-
-// void Node::swap(Node*& x, Node*& y){
-//     Node* temp = x;
-//     x = y;
-//     y = temp;
-// }

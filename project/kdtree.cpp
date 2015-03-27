@@ -1,56 +1,39 @@
-#include<fstream>
-#include<iostream>
-#include<cmath>
-
 #include "kdtree.h"
 
+#include <fstream>
+#include <iostream>
+#include <cmath>
 
-
-void PointSet::addpt(Point newpt){
-  ptvec.push_back(newpt);
-}
-
-//returns the jth coord of ptvec[i]
-float PointSet::x(int i, int j){
-  return (j == 0) ? ptvec[i].x : ptvec[i].y;
-}
-
-float PointSet::dist(int i, int j){
-  return sqrt(pow((x(i, 0) - x(j, 0)), 2) + pow((x(i, 1) - x(j, 1)), 2));
-}
-
-int PointSet::numpts(void){
-  return ptvec.size();
-}
 
 // builds a kdtree from a given pointset
-KdTree::KdTree(PointSet *ptset){
-  int n = ptset->numpts();
-  perm.resize(n);
-  source_ptset = ptset;
+KdTree::KdTree(const vector<Point2D> &points){
+  int n = points.size();
+  mPerm.resize(n);
+  mPoints = &points;
 
-  for(int i = 0; i < n; i++)
-    perm[i] = i;
+  for(int i = 0; i < n; i++) {
+    mPerm[i] = i;
+  }
 
-  root = build(0, n - 1);
+  mRoot = build(0, n - 1);
 }
 
-//accesses jth coord of perm[i]
+//accesses jth coord of mPerm[i]
 float KdTree::px(int i, int j){
-  return source_ptset->x(perm[i], j);
+  return (*mPoints)[mPerm[i]][j];
 }
 
-//prints the point perm[i] in the format (x, y)-
+//prints the point mPerm[i] in the format (x, y)-
 void KdTree::print_point(int i){
   cout << "(" << px(i, 0) << "," << px(i, 1) << ")-";
 }
 
-//comparison operator to test if perm[i] has dimth coordinate less than perm[j]
+//comparison operator to test if mPerm[i] has dimth coordinate less than mPerm[j]
 bool KdTree::pt_less(const int i, const int j, const int dim){
   return px(i, dim) < px(j, dim);
 }
 
-//searches perm[l...u] and returns int corresponding to dimension with greatest
+//searches mPerm[l...u] and returns int corresponding to dimension with greatest
 // range of vals
 int KdTree::findmaxspread(int l, int u){
   float x_min = px(l, 0); float x_max = px(l, 1);
@@ -72,7 +55,7 @@ int KdTree::findmaxspread(int l, int u){
 }
 
 
-// rearranges perm[l...u] (in practice m = (l+u)/2) such that perm[m] has dimth
+// rearranges mPerm[l...u] (in practice m = (l+u)/2) such that mPerm[m] has dimth
 // coordinate no greater than any point to its left, and no less than any point to
 // its right...without sorting the array! yay!
 void KdTree::select(int l, int u, int m, int dim){
@@ -80,21 +63,21 @@ void KdTree::select(int l, int u, int m, int dim){
   int temp;
   while(again){
     again = 0;
-    // tests if perm[m] has dimth coordinate greater than any pt to its left
+    // tests if mPerm[m] has dimth coordinate greater than any pt to its left
     for(int i = l; i <= m; i++){
       if(pt_less(i, m, dim)){
-	  temp = perm[m];
-	  perm[m] = perm[i];
-	  perm[i] = temp;
+	  temp = mPerm[m];
+	  mPerm[m] = mPerm[i];
+	  mPerm[i] = temp;
 	  again = 1;
 	}
     }
-    //tests if perm[m] has dimth coordinate less than any pt to its right
+    //tests if mPerm[m] has dimth coordinate less than any pt to its right
     for(int i = m; i <= u; i++){
       if(pt_less(m, i, dim)){
-	  temp = perm[m];
-	  perm[m] = perm[i];
-	  perm[i] = temp;
+	  temp = mPerm[m];
+	  mPerm[m] = mPerm[i];
+	  mPerm[i] = temp;
 	  again = 1;
       }
     }
@@ -122,7 +105,7 @@ KdNode* KdTree::build(int l, int u){
 
 void KdTree::print_tree(KdNode *node){
   int low, high;
-  if (node == NULL) node = root;
+  if (node == NULL) node = mRoot;
   if (node->bucket){
     cout << "bucket node:" << endl;
     low = node->lopt; high = node->hipt;
@@ -136,27 +119,5 @@ void KdTree::print_tree(KdNode *node){
     print_tree(node->loson);
     print_tree(node->hison);
   }
-}
-
-int main(void){
-  PointSet *ptset = new PointSet;
-  int x, y;
-  Point newpt;
-  int num;
-  cout << "How many points to enter ";
-  cin >> num;
-  for(; num > 0; num--){
-    cout << "Enter two points for an x-y coord " << num << "remaining ";
-    cin >> x >> y;
-    newpt.x = x; newpt.y = y;
-    ptset->addpt(newpt);
-  }
-
-  KdTree *kdt;
-  kdt = new KdTree(ptset);
-  kdt->print_tree(NULL);
-  
-
-  return 0;
 }
 

@@ -16,8 +16,6 @@ using namespace std;
 
 static void usage (char *f);
 static int load_graph (Graph &graph, int ac, char** av);
-static double euclid_edgelen (int i, int j, vector<double> x, vector<double> y);
-static int rounded_euclid_edgelen(int i, int j, vector<double> x, vector<double> y);
 static int delete_edges(Graph &g);
 bool set_contains(int s, vector<int> R1, vector<int> R2);
 
@@ -25,14 +23,11 @@ bool compare_results = false;
 
 int main(int argc, char* argv[]) {
     //Initialize the problem
-    Graph graph;
+    //Must always pass in a .tsp file in first arg for now
+    Graph graph(argv[1]);
+
     vector<int> tour_indices;
 
-    //Load/generate the problem
-    if(load_graph(graph, argc, argv)) {
-        cerr << "Problem creating graph." << endl;
-        exit(1);
-    }
     cout << "Entering delete graph" << endl;
 
     double running_time = CO759_zeit();
@@ -75,34 +70,34 @@ void circle_proj(int r, int s, double deltar, Graph g, vector<double>& result)
     It may not be a bad idea to write some tests for this bad boy :)
     */
     //  cout << "Entered circle proj " << endl;
-    if(g.x[s] == g.x[r]){
+    if(g.points[s].x() == g.points[r].x()){
         // We can't define a line y=mx + b in this case
-        if(g.y[s] > g.y[r]){
-            result.push_back(g.x[r]); result.push_back(deltar + g.y[r]);
+        if(g.points[s].y() > g.points[r].y()){
+            result.push_back(g.points[r].x()); result.push_back(deltar + g.points[r].y());
         //cout << "Exitted circle_proj" << endl;
             return;
         }
         else{
-            result.push_back(g.x[r]); result.push_back(g.y[r] - deltar);
+            result.push_back(g.points[r].x()); result.push_back(g.points[r].y() - deltar);
         //cout << "Exitted circle_proj" << endl;
             return;
         }
     }
-    double m = (g.y[s] - g.y[r]) / (g.x[s] - g.x[r]);
-    double x1 = deltar / (m * m + 1) + g.x[r], x2 = g.x[r] - deltar / (m * m + 1);
-    //cout << "r = " << r << " " << g.x[r] << " " << g.y[r] << " s = " << s << " " << g.x[s] << " " << g.y[s] << " x1 " << x1 << " x2 " << x2 << " deltar " << deltar << " distance between r and s: " << sqrt(pow(g.y[s] - g.y[r], 2.0) + pow(g.x[s] - g.x[r], 2.0)) << endl;
-    //cout << "X1 " << g.x[1] << endl;
-    if(g.x[s] > g.x[r]){
-        result.push_back(x1); result.push_back(m * (x1 - g.x[r]) + g.y[r]);
+    double m = (g.points[s].y() - g.points[r].y()) / (g.points[s].x() - g.points[r].x());
+    double x1 = deltar / (m * m + 1) + g.points[r].x(), x2 = g.points[r].x() - deltar / (m * m + 1);
+    //cout << "r = " << r << " " << g.points[r].x() << " " << g.points[r].y() << " s = " << s << " " << g.points[s].x() << " " << g.points[s].y() << " x1 " << x1 << " x2 " << x2 << " deltar " << deltar << " distance between r and s: " << sqrt(pow(g.points[s].y() - g.points[r].y(), 2.0) + pow(g.points[s].x() - g.points[r].x(), 2.0)) << endl;
+    //cout << "X1 " << g.points[1].x() << endl;
+    if(g.points[s].x() > g.points[r].x()){
+        result.push_back(x1); result.push_back(m * (x1 - g.points[r].x()) + g.points[r].y());
         //cout << "Exitted circle_proj" << endl;
-        //cout << g.x[1] << endl;
+        //cout << g.points[1].x() << endl;
         return;
     }
     else {
-        result.push_back(x2); result.push_back(m * (x2 - g.x[r]) + g.y[r]);
+        result.push_back(x2); result.push_back(m * (x2 - g.points[r].x()) + g.points[r].y());
         //    cout << "Exited circle_proj" << endl;
         //cout << result[0] << " " << result[1] << endl;
-        //    cout << "X1 " << g.x[1] << endl;
+        //    cout << "X1 " << g.points[1].x() << endl;
         return;
     }
 }
@@ -112,15 +107,15 @@ double compute_lemma_8(int p, int q, int r, double deltar, double lp, double lq,
     vector<double> max_vec;
     vector<double> t_r;
 
-    for(int t = 0; t < g.node_count; t++){
+    for(int t = 0; t < g.node_count(); t++){
         if(t != r || true ){
             circle_proj(r, t, deltar, g, t_r);
-            //cout << "first out X1 " << g.x[1] << endl;
-            if(sqrt(pow(g.x[q] - t_r[0],2.0) + pow(g.y[q] - t_r[1],2.0)) >= lq)
+            //cout << "first out X1 " << g.points[1].x() << endl;
+            if(sqrt(pow(g.points[q].x() - t_r[0],2.0) + pow(g.points[q].y() - t_r[1],2.0)) >= lq)
             {
                 //cout << "Added q " << t << endl;
                 R_p.push_back(t);
-                max_vec.push_back(sqrt(pow(g.x[p] - t_r[0],2.0) + pow(g.y[p] - t_r[1],2.0)));
+                max_vec.push_back(sqrt(pow(g.points[p].x() - t_r[0],2.0) + pow(g.points[p].y() - t_r[1],2.0)));
             }
             t_r.clear();
         }
@@ -138,22 +133,9 @@ double compute_lemma_8(int p, int q, int r, double deltar, double lp, double lq,
 static int delete_edges(Graph &g)
 {
     vector<double> delta_r;
-    vector<vector<double> > rounded_len, len; // Using 2d vectors allows constant access, as opposed to walking through an edge list
-    rounded_len.resize(g.node_count); len.resize(g.node_count);
 
-    for(int i = 0; i < g.node_count; i++){
-        rounded_len[i].resize(g.node_count); len[i].resize(g.node_count);
-        rounded_len[i][i] = numeric_limits<int>::max();
-        len[i][i] = numeric_limits<double>::infinity();
-    }
-
-    for(vector<Edge>::iterator e = g.edges.begin(); e != g.edges.end(); ++e){
-        len[e->end[0]][e->end[1]] = e->len; len[e->end[1]][e->end[0]] = e->len;
-        rounded_len[e->end[0]][e->end[1]] = e->rounded_len; rounded_len[e->end[1]][e->end[0]] = e->rounded_len;
-    }
-
-    for(int i = 0; i < g.node_count; i++){
-        delta_r.push_back(0.5 + *min_element(rounded_len[i].begin(), rounded_len[i].end()) - 1);
+    for(int i = 0; i < g.node_count(); i++){
+        delta_r.push_back(0.5 + *min_element(g.int_lengths[i].begin(), g.int_lengths[i].end()) - 1);
     }
 
     for(vector<Edge>::iterator pq = g.edges.begin(); pq != g.edges.end(); ++pq){
@@ -162,23 +144,23 @@ static int delete_edges(Graph &g)
         vector<double> dist_to_mid;
         vector<int> potential_points;
 
-        mid_point.push_back(((double)g.x[p] + g.x[q]) / 2); mid_point.push_back(((double)g.y[p] + g.y[q]) / 2);
+        mid_point.push_back(((double)g.points[p].x() + g.points[q].x()) / 2); mid_point.push_back(((double)g.points[p].y() + g.points[q].y()) / 2);
 
-        for(int r = 0; r < g.node_count; r++){
+        for(int r = 0; r < g.node_count(); r++){
             if(r != p && r != q){
-                double l_p = delta_r[r] + rounded_len[p][q] - rounded_len[q][r] - 1, l_q = delta_r[r] + rounded_len[p][q] - rounded_len[p][r] - 1;
+                double l_p = delta_r[r] + g.int_lengths[p][q] - g.int_lengths[q][r] - 1, l_q = delta_r[r] + g.int_lengths[p][q] - g.int_lengths[p][r] - 1;
 
-                if(l_p + l_q >= rounded_len[p][q] - 0.5){
-                    double alpha_p = 2 * acos( (l_q * l_q - delta_r[r] * delta_r[r] - len[r][q] * len[r][q]) / (2 * delta_r[r] * len[r][q]));
-                    double alpha_q = 2 * acos( (l_p * l_p - delta_r[r] * delta_r[r] - len[r][p] * len[r][p]) / (2 * delta_r[r] * len[r][p]));
-                    double gamma_r = acos(1 - pow(l_p + l_q - rounded_len[p][q] + 0.5,2.0) / (2 * delta_r[r] * delta_r[r]));
+                if(l_p + l_q >= g.int_lengths[p][q] - 0.5){
+                    double alpha_p = 2 * acos( (l_q * l_q - delta_r[r] * delta_r[r] - g.lengths[r][q] * g.lengths[r][q]) / (2 * delta_r[r] * g.lengths[r][q]));
+                    double alpha_q = 2 * acos( (l_p * l_p - delta_r[r] * delta_r[r] - g.lengths[r][p] * g.lengths[r][p]) / (2 * delta_r[r] * g.lengths[r][p]));
+                    double gamma_r = acos(1 - pow(l_p + l_q - g.int_lengths[p][q] + 0.5,2.0) / (2 * delta_r[r] * delta_r[r]));
 
-                    // cout << "r " << r << " l_p " << l_p << " l_q " << l_q << " alpha_p " << alpha_p << " alpha_q " << alpha_q << " gamma_r " << gamma_r << " deltar " << delta_r[r] << " len[r][q] " << len[r][q] << " alpha_p arg " << (l_q * l_q - delta_r[r] * delta_r[r] - len[r][q] * len[r][q]) / (2 * delta_r[r] * len[r][q]) << endl;
+                    // cout << "r " << r << " l_p " << l_p << " l_q " << l_q << " alpha_p " << alpha_p << " alpha_q " << alpha_q << " gamma_r " << gamma_r << " deltar " << delta_r[r] << " g.lengths[r][q] " << g.lengths[r][q] << " alpha_p arg " << (l_q * l_q - delta_r[r] * delta_r[r] - g.lengths[r][q] * g.lengths[r][q]) / (2 * delta_r[r] * g.lengths[r][q]) << endl;
 
                     if(gamma_r > max(alpha_p,alpha_q)){
                         potential_points.push_back(r);
                         // updates dist_to_mid
-                        dist_to_mid.push_back(sqrt(pow(mid_point[0] - g.x[r],2) + pow(mid_point[1] - g.y[r],2.0)));
+                        dist_to_mid.push_back(sqrt(pow(mid_point[0] - g.points[r].x(),2) + pow(mid_point[1] - g.points[r].y(),2.0)));
                     }
                 }
             }
@@ -209,7 +191,7 @@ static int delete_edges(Graph &g)
 
         int i = 0;
         for(vector<int>::iterator it = points_to_check.begin(); it != points_to_check.end(); ++it, i++){
-            double l_p = delta_r[*it] + rounded_len[p][q] - rounded_len[q][*it] - 1, l_q = delta_r[*it] + rounded_len[p][q] - rounded_len[p][*it] - 1;
+            double l_p = delta_r[*it] + g.int_lengths[p][q] - g.int_lengths[q][*it] - 1, l_q = delta_r[*it] + g.int_lengths[p][q] - g.int_lengths[p][*it] - 1;
             eq_19[i] = compute_lemma_8(p, q, *it, delta_r[*it], l_p, l_q, g, temp);
             R_p[i] = temp; temp.clear();
 
@@ -226,8 +208,8 @@ static int delete_edges(Graph &g)
             j = 0;
 
             for(vector<int>::iterator s = points_to_check.begin(); s != points_to_check.end(); ++s, j++){
-                if(*s != *r && rounded_len[p][q] - rounded_len[*r][*s] + eq_19[j] + eq_20[i] > 0
-                    && rounded_len[p][q] - rounded_len[*r][*s] + eq_19[i] + eq_20[j] > 0 && \
+                if(*s != *r && g.int_lengths[p][q] - g.int_lengths[*r][*s] + eq_19[j] + eq_20[i] > 0
+                    && g.int_lengths[p][q] - g.int_lengths[*r][*s] + eq_19[i] + eq_20[j] > 0 && \
                     !set_contains(*r, R_q[j], R_p[j]) && !set_contains(*s, R_q[i], R_p[i])){
                     
                     pq->useless = true;
@@ -264,170 +246,3 @@ return false;*/
 
 }
 
-static void usage (char *f)
-{
-    //TODO update this
-    // fprintf (stderr, "Usage: %s [-see below-] [prob_file]\n", f);
-    // fprintf (stderr, "   -b d  gridsize d for random problems\n");
-    // fprintf (stderr, "   -g    prob_file has x-y coordinates\n");
-    // fprintf (stderr, "   -k d  generate problem with d cities\n");
-    // fprintf (stderr, "   -s d  random seed\n");
-}
-
-static int load_graph (Graph &graph, int ac, char** av) {
-    char *fname = (char *) NULL;
-    int geometric_data = 0;
-    int random_city_count = 0;
-    int gridsize_rand = 100;
-    int rval = 0;
-
-//Parse args
-    int c;
-    int seed = (int) CO759_real_zeit ();
-
-    if (ac == 1) {
-        usage (av[0]);
-        return 1;
-    }
-
-    while ((c = getopt (ac, av, "ab:gk:s:")) != EOF) {
-        switch (c) {
-            case 'b':
-            gridsize_rand = atoi (optarg); 
-            break;
-            case 'g':
-            geometric_data = 1;
-            break;
-            case 'k':
-            random_city_count = atoi (optarg);
-            break;
-            case 's':
-            seed = atoi (optarg);
-            break;
-            case '?':
-            default:
-            usage (av[0]);
-            return 1;
-        }
-    }
-
-    if (optind < ac) fname = av[optind++];
-
-    if (optind != ac) {
-        usage (av[0]);
-        return 1;
-    }
-
-    if (!fname && !random_city_count) {
-        printf ("Must specify a problem file or use -k for random prob\n");
-        return 1;
-    }
-
-    printf ("Seed = %d\n", seed);
-    srandom (seed);
-//Done parsing args
-
-
-    FILE *f = (FILE *) NULL;
-    int i, j, end1, end2, w, node_count, edge_count;
-    vector<double> x, y;
-
-    if (fname) {
-        if ((f = fopen (fname, "r")) == NULL) {
-            fprintf (stderr, "Unable to open %s for input\n",fname);
-            rval = 1;  goto CLEANUP;
-        }
-    }
-
-    if (fname && geometric_data == 0) {
-        cout << "ERROR! ERROR! DON'T GO HERE! BAD THINGS MAY HAPPEN" << endl;
-        if (fscanf (f, "%d %d", &node_count, &edge_count) != 2) {
-            fprintf (stderr, "Input file %s has invalid format\n",fname);
-            rval = 1;  goto CLEANUP;
-        }
-
-        graph.edges.resize(edge_count);
-
-        printf ("Nodes: %d  Edges: %d\n", node_count, edge_count);
-        fflush (stdout);
-
-        for (i = 0; i < edge_count; i++) {
-            if (fscanf(f,"%d %d %d",&end1, &end2, &w) != 3) {
-                fprintf (stderr, "%s has invalid input format\n", fname);
-                rval = 1;  goto CLEANUP;
-            }
-            graph.edges[i].end[0] = end1;
-            graph.edges[i].end[1] = end2;
-            graph.edges[i].len = w;
-        }
-    } else {
-        if (fname) {
-            if (fscanf (f, "%d", &node_count) != 1) {
-                fprintf (stderr, "Input file %s has invalid format\n",fname);
-                rval = 1;  goto CLEANUP;
-            }
-        } else {
-            node_count = random_city_count;
-        }
-
-        x.resize(node_count);
-        y.resize(node_count);
-
-        if (fname) {
-            for (i = 0; i < node_count; i++) {
-                if (fscanf(f,"%lf %lf",&x[i], &y[i]) != 2) {
-                    fprintf (stderr, "%s has invalid input format\n", fname);
-                    rval = 1;  goto CLEANUP;
-                }
-            }
-        } else {
-            rval = CO759_build_xy (node_count, x, y, gridsize_rand);
-            if (rval) {
-                fprintf (stderr, "CO759_build_xy failed\n");
-                goto CLEANUP;
-            }
-
-            printf ("%d\n", node_count);
-            for (i = 0; i < node_count; i++) {
-                printf ("%.0f %.0f\n", x[i], y[i]);
-            }
-            printf ("\n");
-        }
-
-        edge_count = (node_count * (node_count - 1)) / 2;
-        printf ("Complete Graph: %d nodes, %d edges\n", node_count, edge_count);
-
-        graph.edges.resize(edge_count);
-
-        edge_count = 0;
-        for (i = 0; i < node_count; i++) {
-            for (j = i+1; j < node_count; j++) {
-                graph.edges[edge_count].end[0] = i;
-                graph.edges[edge_count].end[1] = j;
-                graph.edges[edge_count].rounded_len = rounded_euclid_edgelen (i, j, x, y);
-                graph.edges[edge_count].len = euclid_edgelen(i,j,x,y);
-                edge_count++;
-            }
-        }
-    }
-
-    graph.node_count = node_count;
-    graph.edge_count = edge_count;
-    graph.x = x;
-    graph.y = y;
-    CLEANUP:
-    if (f) fclose (f);
-    return rval;
-}
-
-static int rounded_euclid_edgelen (int i, int j, vector<double> x, vector<double> y)
-{
-    double t1 = x[i] - x[j], t2 = y[i] - y[j];
-    return (int) (sqrt (t1 * t1 + t2 * t2) + 0.5);
-}
-
-static double euclid_edgelen(int i, int j, vector<double> x, vector<double> y)
-{
-    double t1 = x[i] - x[j], t2 = y[i] - y[j];
-    return sqrt(t1 * t1 + t2 * t2);
-}
