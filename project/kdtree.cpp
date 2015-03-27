@@ -20,6 +20,10 @@ KdTree::KdTree(const vector<Point2D> &points){
 
 //accesses jth coord of mPerm[i]
 float KdTree::px(int i, int j){
+  if(i >= mPerm.size() || mPerm[i] >= mPoints->size() || j >= 2) {
+    cout << "OUT OF BOUNDS" << endl;
+    exit(1);
+  }
   return (*mPoints)[mPerm[i]][j];
 }
 
@@ -70,6 +74,11 @@ void KdTree::select(int l, int u, int m, int dim){
 	  mPerm[m] = mPerm[i];
 	  mPerm[i] = temp;
 	  again = 1;
+
+    if(m >= mPerm.size() || i >= mPerm.size() || m < 0 || i < 0) {
+      cout << "OUT OF BOUNDS" << endl;
+      exit(1);
+    }
 	}
     }
     //tests if mPerm[m] has dimth coordinate less than any pt to its right
@@ -79,6 +88,10 @@ void KdTree::select(int l, int u, int m, int dim){
 	  mPerm[m] = mPerm[i];
 	  mPerm[i] = temp;
 	  again = 1;
+    if(m >= mPerm.size() || i >= mPerm.size() || m < 0 || i < 0) {
+      cout << "OUT OF BOUNDS" << endl;
+      exit(1);
+    }
       }
     }
   }
@@ -86,7 +99,7 @@ void KdTree::select(int l, int u, int m, int dim){
 
 // recursive function used to partition the points
 KdNode* KdTree::build(int l, int u){
-  KdNode *p = new KdNode;
+  KdNode *p = new KdNode();
   if (u - l + 1 <= BUCKETSIZE){
     p->bucket = 1;
     p->lopt = l;

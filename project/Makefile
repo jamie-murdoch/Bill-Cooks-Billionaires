@@ -2,7 +2,7 @@ TARGET = edge_deletion
 INCLUDES = -I /Users/lawson/Applications/IBM/ILOG/CPLEX_Studio1261/cplex/include/ilcplex/
 LIBS = /Users/lawson/Applications/IBM/ILOG/CPLEX_Studio1261/cplex/lib/x86-64_osx/static_pic/libcplex.a
 CC = g++
-CFLAGS =  -g -Wall -pedantic -Wno-long-long -ggdb -O3
+CFLAGS =  -g -Wall -pedantic -Wno-long-long -ggdb
 #-O3
 #-O3
 .PHONY: default all clean

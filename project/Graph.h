@@ -19,10 +19,10 @@ struct Edge {
 };
 
 struct Graph {
-    Graph() {}
+    Graph() : kd_tree(NULL) {}
     Graph(const char *tsp_file);
 
-    ~Graph() { delete kd_tree; }
+    ~Graph() { }
 
     unsigned long sum_edge_weights(vector<int> &edge_indices);
     void print_edges();

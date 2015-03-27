@@ -14,7 +14,7 @@ Edge::Edge(int e0, int e1, double length) {
 }
 
 //Load a graph from a file
-Graph::Graph(const char *tsp_file) {
+Graph::Graph(const char *tsp_file) : kd_tree(NULL) {
     fstream fin;
     fin.open(tsp_file);
 
@@ -59,8 +59,8 @@ Graph::Graph(const char *tsp_file) {
     int_lengths.resize(num_points);
     lengths.resize(num_points);
     for(int i = 0; i < num_points; i++) {
-        int_lengths[i].resize(num_points, 0);
-        lengths[i].resize(num_points, 0.0);
+        int_lengths[i].resize(num_points,  numeric_limits<int>::max());
+        lengths[i].resize(num_points, numeric_limits<double>::infinity());
     }
 
     for(int i = 0; i < num_points; i++) {
