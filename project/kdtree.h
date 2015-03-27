@@ -4,7 +4,7 @@
 #include <vector>
 #include "algebra.h"
 
-#define BUCKETSIZE 3
+#define BUCKETSIZE 5
 
 using namespace std;
 
