@@ -25,7 +25,17 @@ int main(int argc, char* argv[]) {
     //Initialize the problem
     //Must always pass in a .tsp file in first arg for now
     Graph graph(argv[1]);
+    // cout << graph.points[0] << endl;
+    // cout << graph.points[1] << endl;
 
+    // int node = 5;
+    // int close = graph.kd_tree->nn(node);
+    // double length = graph.lengths[node][close];
+    // cout << length<< endl;
+
+    // sort(graph.lengths[node].begin(), graph.lengths[node].end());
+    // cout << graph.lengths[node][0] << endl;
+    // exit(1);
     vector<int> tour_indices;
 
     cout << "Entering delete graph" << endl;

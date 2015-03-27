@@ -6,25 +6,27 @@
 
 #define BUCKETSIZE 3
 
-//used to initialize the nearest-neighbor search
-//#define HUGE 9999
-
 using namespace std;
 
 
 struct KdNode {
   char bucket;
   int cutdim;
-  float cutval;
+  double cutval;
   KdNode *loson, *hison;
   int lopt, hipt;
 };
 
 class KdTree {
  public:
-  KdTree(const vector<Point2D> &points);
+  KdTree(const vector<Point2D> &points, const vector<vector<double> > &lengths);
 
-  float px(int i, int j); 
+  double dist(int i, int j);
+
+  int nn(int j);
+  void rnn(KdNode *p, int &nntarget, int &nnptnum, double &nndist);
+
+  double px(int i, int j); 
   int findmaxspread(int l, int u);
   bool pt_less(int i, int j, int dim);
   void select(int l, int u, int m, int dim);
@@ -35,6 +37,7 @@ class KdTree {
  private:
   vector<int> mPerm;
   const vector<Point2D> *mPoints;
+  const vector<vector<double> > *mLengths;
   KdNode *mRoot;
 };
 

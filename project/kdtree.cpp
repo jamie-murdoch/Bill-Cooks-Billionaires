@@ -6,10 +6,11 @@
 
 
 // builds a kdtree from a given pointset
-KdTree::KdTree(const vector<Point2D> &points){
+KdTree::KdTree(const vector<Point2D> &points, const vector<vector<double> > &lengths){
   int n = points.size();
   mPerm.resize(n);
   mPoints = &points;
+  mLengths = &lengths;
 
   for(int i = 0; i < n; i++) {
     mPerm[i] = i;
@@ -18,8 +19,52 @@ KdTree::KdTree(const vector<Point2D> &points){
   mRoot = build(0, n - 1);
 }
 
+double KdTree::dist(int i, int j) {
+  return (*mLengths)[i][j];
+}
+
+int KdTree::nn(int j) {
+  int nntarget = j;
+  double nndist = numeric_limits<double>::infinity();
+  int nnptnum = 0;
+
+  rnn(mRoot, nntarget, nnptnum, nndist);
+
+  return nnptnum;
+}
+
+void KdTree::rnn(KdNode *p, int &nntarget, int &nnptnum, double &nndist) {
+  if(p->bucket) {
+    for(int i = p->lopt; i <= p->hipt; i++) {
+      double thisdist = dist(mPerm[i], nntarget);
+
+      if(thisdist < nndist) {
+        nndist = thisdist;
+        nnptnum = mPerm[i];
+      }
+    }
+  }
+  else {
+    double val = p->cutval;
+    double thisx = px(nntarget, p->cutdim);
+
+    if(thisx < val) {
+      rnn(p->loson, nntarget, nnptnum, nndist);
+      if(thisx + nndist > val) {
+        rnn(p->hison, nntarget, nnptnum, nndist);
+      }
+    }
+    else {
+      rnn(p->hison, nntarget, nnptnum, nndist);
+      if(thisx - nndist < val) {
+        rnn(p->loson, nntarget, nnptnum, nndist);
+      }
+    }
+  }
+}
+
 //accesses jth coord of mPerm[i]
-float KdTree::px(int i, int j){
+double KdTree::px(int i, int j){
   if(i >= mPerm.size() || mPerm[i] >= mPoints->size() || j >= 2) {
     cout << "OUT OF BOUNDS" << endl;
     exit(1);
@@ -40,8 +85,8 @@ bool KdTree::pt_less(const int i, const int j, const int dim){
 //searches mPerm[l...u] and returns int corresponding to dimension with greatest
 // range of vals
 int KdTree::findmaxspread(int l, int u){
-  float x_min = px(l, 0); float x_max = px(l, 1);
-  float y_min = px(l, 1); float y_max = px(l, 1);
+  double x_min = px(l, 0); double x_max = px(l, 1);
+  double y_min = px(l, 1); double y_max = px(l, 1);
   for(int i = l; i <= u; i++){
     if (px(i, 0) < x_min){
       x_min = px(i, 0);

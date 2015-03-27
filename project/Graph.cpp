@@ -76,7 +76,7 @@ Graph::Graph(const char *tsp_file) : kd_tree(NULL) {
         }
     }
 
-    kd_tree = new KdTree(points);
+    kd_tree = new KdTree(points, lengths);
 }
 
 unsigned long Graph::sum_edge_weights(vector<int> &edge_indices) {
@@ -91,7 +91,7 @@ unsigned long Graph::sum_edge_weights(vector<int> &edge_indices) {
 void Graph::print_edges() {
     for (int i = 0; i < edges.size(); ++i)
     {
-        cout << edges[i].end[0] << ", " << edges[i].end[1] << ": " << edges[i].int_len<< endl;
+        cout << "Edge " << i <<": " << "ends = (" << edges[i].end[0] << ", " << edges[i].end[1] << ") len = " << edges[i].int_len<< endl;
     }
 }
 
