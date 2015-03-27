@@ -25,21 +25,20 @@ double KdTree::dist(int i, int j) {
   return (*mLengths)[i][j];
 }
 
-int KdTree::nn(int j) {
-  int nntarget = j;
+int KdTree::find_closest_point(const Point2D &point, double &dist) {
   double nndist = numeric_limits<double>::infinity();
   int nnptnum = 0;
 
-  rnn(mRoot, nntarget, nnptnum, nndist);
+  out_of_tree_nn(mRoot, point, nnptnum, nndist);
+  dist = nndist;
 
   return nnptnum;
 }
 
-void KdTree::rnn(KdNode *p, int &nntarget, int &nnptnum, double &nndist) {
+void KdTree::out_of_tree_nn(KdNode *p, const Point2D &targetp, int &nnptnum, double &nndist) {
   if(p->bucket) {
     for(int i = p->lopt; i <= p->hipt; i++) {
-      double thisdist = dist(mPerm[i], nntarget);
-
+      double thisdist = ((*mPoints)[mPerm[i]] - targetp).length();
       if(thisdist < nndist) {
         nndist = thisdist;
         nnptnum = mPerm[i];
@@ -48,18 +47,55 @@ void KdTree::rnn(KdNode *p, int &nntarget, int &nnptnum, double &nndist) {
   }
   else {
     double val = p->cutval;
-    double thisx = px(nntarget, p->cutdim);
-
+    double thisx = targetp[p->cutdim];
     if(thisx < val) {
-      rnn(p->loson, nntarget, nnptnum, nndist);
+      out_of_tree_nn(p->loson, targetp, nnptnum, nndist);
       if(thisx + nndist > val) {
-        rnn(p->hison, nntarget, nnptnum, nndist);
+        out_of_tree_nn(p->hison, targetp, nnptnum, nndist);
       }
     }
     else {
-      rnn(p->hison, nntarget, nnptnum, nndist);
+      out_of_tree_nn(p->hison, targetp, nnptnum, nndist);
       if(thisx - nndist < val) {
-        rnn(p->loson, nntarget, nnptnum, nndist);
+        out_of_tree_nn(p->loson, targetp, nnptnum, nndist);
+      }
+    }
+  }
+}
+
+int KdTree::nearest_neighbor(int j) {
+  int nntarget = j;
+  double nndist = numeric_limits<double>::infinity();
+  int nnptnum = 0;
+
+  in_tree_nn(mRoot, nntarget, nnptnum, nndist);
+
+  return nnptnum;
+}
+
+void KdTree::in_tree_nn(KdNode *p, int &nntarget, int &nnptnum, double &nndist) {
+  if(p->bucket) {
+    for(int i = p->lopt; i <= p->hipt; i++) {
+      double thisdist = dist(mPerm[i], nntarget);
+      if(thisdist < nndist) {
+        nndist = thisdist;
+        nnptnum = mPerm[i];
+      }
+    }
+  }
+  else {
+    double val = p->cutval;
+    double thisx = (*mPoints)[nntarget][p->cutdim];
+    if(thisx < val) {
+      in_tree_nn(p->loson, nntarget, nnptnum, nndist);
+      if(thisx + nndist > val) {
+        in_tree_nn(p->hison, nntarget, nnptnum, nndist);
+      }
+    }
+    else {
+      in_tree_nn(p->hison, nntarget, nnptnum, nndist);
+      if(thisx - nndist < val) {
+        in_tree_nn(p->loson, nntarget, nnptnum, nndist);
       }
     }
   }
@@ -159,6 +195,7 @@ KdNode* KdTree::build(int l, int u){
     p->cutval = px(m, p->cutdim);
     p->loson = build(l, m);
     p->hison = build(m + 1, u);
+    //cout << "dim " << p->cutdim << endl;
   }
   return p;
 }

@@ -12,7 +12,7 @@
 #include "Graph.h"
 #include "TSP_Solver.h"
 
-#define USE_GRAPHICS true
+#define USE_GRAPHICS false
 
 
 #if USE_GRAPHICS
@@ -34,22 +34,35 @@ bool compare_results = false;
 int main(int argc, char* argv[]) {
     //Initialize the problem
     //Must always pass in a .tsp file in first arg for now
+    cout << "Loading graph..." << flush;
     Graph graph(argv[1]);
+    cout << "done." << endl;
 
     #if USE_GRAPHICS
-    setup_sdl(graph);
-    draw_points(graph.points, 0, 0, 255);
+        setup_sdl(graph);
+        draw_points(graph.points, 0, 0, 255, false);
+        draw_tree(graph.kd_tree->mRoot);
+        SDL_RenderPresent(renderer);
     #endif
 
-    int node = 12;
-    int close = graph.kd_tree->nn(node);
-    double length = graph.lengths[node][close];
-    cout << "nodes: " << node << " " << close << endl;
-    cout << length<< endl;
+    //Test code for Kd_tree
+    // for(int j = 0; j < 100; j++) {
+    //     Point2D p(1000 + rand() %4000, 1000 + rand() % 4000);
+    //     double dist;
+    //     int close = graph.kd_tree->find_closest_point(p, dist);
 
-    sort(graph.lengths[node].begin(), graph.lengths[node].end());
-    cout << graph.lengths[node][0] << endl;
-    exit(1);
+    //     vector<double> dists(graph.node_count());
+    //     for(int i = 0; i < graph.node_count(); i++) {
+    //         dists[i] = (p - graph.points[i]).length();
+    //     }
+
+    //     sort(dists.begin(), dists.end());
+    //     cout << close << endl;
+    //     cout << "actual: " << dists[0] << " nn: " << dist << endl;
+    //     if(dists[0] != dist) {
+    //         cout << "FAILED! " << endl;
+    //     }
+    // }
 
     cout << "Entering delete graph" << endl;
 
@@ -82,10 +95,11 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    #ifdef USE_GRAPHICS
-    SDL_Delay(3000);
-    SDL_Quit();
+    #if USE_GRAPHICS
+        getchar();
+        SDL_Quit();
     #endif
+
     return 0;
 }
 
