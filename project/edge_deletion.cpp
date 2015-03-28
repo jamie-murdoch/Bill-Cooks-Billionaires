@@ -78,7 +78,7 @@ int main(int argc, char* argv[]) {
     running_time = CO759_zeit() - running_time;
 
     cout << "Removed " << graph.count_useless() << " out of " << graph.edges.size() << " edges in " << running_time << "s" << endl;
-    
+    cout << "Now there are " << graph.edges.size() - graph.count_useless() << " edges left." << endl;
     //Run a test by comparing the removed edges to the ones in the optimal tour
     if(compare_results) {
         cout << "Running the TSP solver to compare results." << endl;
