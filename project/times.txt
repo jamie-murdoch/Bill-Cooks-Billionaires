@@ -11,3 +11,13 @@ Loading graph...done.
 Entering delete graph
 Done edge deletions!
 Removed 8141 out of 16110 edges in 0.07873s
+
+./edge_deletion data/d18512.tsp
+Loading graph...done.
+Entering delete graph
+Done edge deletions!
+Removed 170197589 out of 171337816 edges in 1636.4s
+Now there are 1140227 edges left.
+
+working:
+commit a347eba0220bd62b59a4373f8a3b1659c8c122eb

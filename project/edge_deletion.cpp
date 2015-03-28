@@ -221,9 +221,12 @@ static int delete_edges(Graph &g)
 {
     vector<double> delta_r;
 
+    double running_time = CO759_zeit();
     for(int i = 0; i < g.node_count(); i++){
-        delta_r.push_back(0.5 + *min_element(g.int_lengths[i].begin(), g.int_lengths[i].end()) - 1);
+        delta_r.push_back(0.5 + (*min_element(g.int_lengths[i].begin(), g.int_lengths[i].end() - 1)));
     }
+    running_time = CO759_zeit() - running_time;
+    cout << "Took " << running_time << " to build delta." << endl;
 
     for(vector<Edge>::iterator pq = g.edges.begin(); pq != g.edges.end(); ++pq){
         int p = pq->end[0];
