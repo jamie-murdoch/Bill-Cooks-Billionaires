@@ -25,11 +25,14 @@ static void usage (char *f);
 static int load_graph (Graph &graph, int ac, char** av);
 
 static int delete_edges(Graph &g);
+static int delete_edges2(Graph &g);
+bool are_compatible(int p, int q, int x, int y, Graph &g);
+bool is_edge(int p, int q, Graph &g);
 //bool set_contains(int s, vector<int> R1, vector<int> R2);
 bool set_contains(int r, int s, int q, int p, double lq, double lp, Graph & g, double deltar);
 
 
-bool compare_results = false;
+bool compare_results = true;
 
 int main(int argc, char* argv[]) {
     //Initialize the problem
@@ -79,6 +82,15 @@ int main(int argc, char* argv[]) {
 
     cout << "Removed " << graph.count_useless() << " out of " << graph.edges.size() << " edges in " << running_time << "s" << endl;
     cout << "Now there are " << graph.edges.size() - graph.count_useless() << " edges left." << endl;
+
+    cout << "Let's try step 2... WARNING: CURRENTLY REMOVING INCORRECT EDGES" << endl;
+    running_time = CO759_zeit();
+    delete_edges2(graph);
+    running_time = CO759_zeit() - running_time;
+
+    cout << "Removed " << graph.count_useless() << " out of " << graph.edges.size() << " edges in " << running_time << "s" << endl;
+    cout << "Now there are " << graph.edges.size() - graph.count_useless() << " edges left." << endl;
+    
     //Run a test by comparing the removed edges to the ones in the optimal tour
     if(compare_results) {
         cout << "Running the TSP solver to compare results." << endl;
@@ -263,6 +275,8 @@ static int delete_edges(Graph &g)
 		  if(!set_contains(*r, *s, q, p, l_q_r, l_p_r, g, delta_r[*r]) && !set_contains(*s, *r, q, p, l_q_s, l_p_s, g, delta_r[*s])){
                     
                     pq->useless = true;
+		    g.int_lengths[p][q] = numeric_limits<int>::max();
+		    g.int_lengths[q][p] = numeric_limits<int>::max();
                     //cout << "Deleted edge: " << pq->end[0] << " " << pq->end[1] <<endl;
 
                     all_break = true;
@@ -279,6 +293,43 @@ static int delete_edges(Graph &g)
     return 0;
 }
 
+
+
+static int delete_edges2(Graph &g){
+  for(vector<Edge>::iterator pq = g.edges.begin(); pq != g.edges.end(); ++pq){
+    int p = pq->end[0]; int q = pq->end[1];
+    if (pq->useless) continue;
+    bool found_violated_r_inequality = false;
+    for(int r = 0; r < g.node_count(); r++){
+      if (r == p || r == q) continue;
+      for(int x = 0; x < g.node_count(); x++){
+	if (!is_edge(r, x, g) || !are_compatible(p, q, r, x, g)) continue;
+	for(int y = 0; y < g.node_count(); y++){
+	  if (!is_edge(r, y, g) || !are_compatible(p, q, r, y, g) || y == x) continue;
+	  if (g.int_lengths[x][y] + g.int_lengths[p][r] + g.int_lengths[q][r] >= g.int_lengths[p][q] + g.int_lengths[x][r] + g.int_lengths[y][r]){
+	    found_violated_r_inequality = true;
+	  }
+	}
+      }
+      if (!found_violated_r_inequality){
+	pq->useless = true;
+	break;
+      }
+    }
+  }
+
+  cout << "Done Step2 deletions!" << endl;
+  return 0;
+}
+
+//tests whether pq~xy according to equation (1) in the paper
+bool are_compatible(int p, int q, int x, int y, Graph &g){
+  return max(g.int_lengths[p][x] + g.int_lengths[q][y], g.int_lengths[p][y] + g.int_lengths[q][x]) >= g.int_lengths[p][q] + g.int_lengths[x][y];
+}
+
+bool is_edge(int p, int q, Graph &g){
+  return g.int_lengths[p][q] != numeric_limits<int>::max();
+}
 
 bool set_contains(int r, int s, int q, int p, double lq, double lp, Graph & g, double deltar)
 {
