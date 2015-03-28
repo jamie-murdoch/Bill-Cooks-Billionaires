@@ -338,7 +338,7 @@ bool set_contains(int r, int s, int q, int p, double lq, double lp, Graph & g, d
 {
   // Check if s \in R_p \cup R_q
   vector<double> s_r; 
-  s_r.reserve(10);
+  s_r.reserve(2);
   circle_proj(r, s, deltar, g, s_r);
   return sqrt(pow(g.points[q][0] - s_r[0],2) + pow(g.points[q][1] - s_r[1],2)) >= lq || sqrt(pow(g.points[p][0] - s_r[0], 2) + pow(g.points[p][1] - s_r[1], 2)) >= lp;
   //    return find(R1.begin(), R1.end(), s) != R1.end() || find(R2.begin(), R2.end(), s) != R2.end();
