@@ -307,7 +307,7 @@ static int delete_edges2(Graph &g){
       for(int x = 0; x < g.node_count(); x++){
 	if (!is_edge(r, x, g) || !are_compatible(p, q, r, x, g)) continue;
 	for(int y = 0; y < g.node_count(); y++){
-	  if (!is_edge(r, y, g) || !are_compatible(p, q, r, y, g) || y == x) continue;
+	  if (!is_edge(r, y, g) || !are_compatible(p, q, r, y, g) || y == x || (p == x && q == y) || (p == y && q == x)) continue;
 	  if (g.int_lengths[x][y] + g.int_lengths[p][r] + g.int_lengths[q][r] >= g.int_lengths[p][q] + g.int_lengths[x][r] + g.int_lengths[y][r]){
 	    found_violated_r_inequality = true;
 	  }
@@ -315,6 +315,7 @@ static int delete_edges2(Graph &g){
       }
       if (!found_violated_r_inequality){
 	pq->useless = true;
+	g.lengths[p][q] = numeric_limits<double>::infinity();
 	break;
       }
     }
@@ -326,7 +327,7 @@ static int delete_edges2(Graph &g){
 
 //tests whether pq~xy according to equation (1) in the paper
 bool are_compatible(int p, int q, int x, int y, Graph &g){
-  return max(g.lengths[p][x] + g.lengths[q][y], g.lengths[p][y] + g.lengths[q][x]) >= g.lengths[p][q] + g.lengths[x][y];
+  return max(g.int_lengths[p][x] + g.int_lengths[q][y], g.int_lengths[p][y] + g.int_lengths[q][x]) >= g.int_lengths[p][q] + g.int_lengths[x][y];
 }
 
 bool is_edge(int p, int q, Graph &g){
