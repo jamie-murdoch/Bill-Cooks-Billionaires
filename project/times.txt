@@ -5,3 +5,9 @@ Done edge deletions!
 Removed 1335 out of 3160 edges in 1.48235s
 
 iprofiler -T 100 -timeprofiler ./edge_deletion data/a180.tsp
+
+./edge_deletion data/a180.tsp
+Loading graph...done.
+Entering delete graph
+Done edge deletions!
+Removed 8141 out of 16110 edges in 0.07873s

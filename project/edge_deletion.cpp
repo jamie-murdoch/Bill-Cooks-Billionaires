@@ -29,7 +29,7 @@ static int delete_edges(Graph &g);
 bool set_contains(int r, int s, int q, int p, double lq, double lp, Graph & g, double deltar);
 
 
-bool compare_results = true;
+bool compare_results = false;
 
 int main(int argc, char* argv[]) {
     //Initialize the problem
@@ -186,23 +186,14 @@ void find_potential(Graph &g, int p, int q, const vector<double> &delta_r, vecto
 
     int num_potential = 0;
     double last_dist = 0.0;
-    //cout << "p: " << p << " q: " << q << endl;
-    for(int i = 0; i < 10; i++){
-        //cout << "b" << endl;            
+
+    for(int i = 0; i < 10; i++){    
         double dist_to_midpoint;
 
         int r = g.kd_tree->find_closest_point(midpoint, dist_to_midpoint, last_dist);
-        //cout << "i: " <<  i << " r: " << r << "dist_to_midpoint: " << dist_to_midpoint << endl;
-        // if(r == p || r == q) {
-        //     //cout << "gotchya " << endl;
-        // }
-        //if(r >= g.node_count()) cout << "little devil" << endl;
-        
         last_dist = dist_to_midpoint;
-        //SDL_Delay(1000);
         
         const Point2D &pnt_r = g.points[r];
-
 
         if(r != p && r != q){
             double l_p = delta_r[r] + g.int_lengths[p][q] - g.int_lengths[q][r] - 1;
@@ -213,18 +204,13 @@ void find_potential(Graph &g, int p, int q, const vector<double> &delta_r, vecto
                 double alpha_q = 2 * acos( (l_p * l_p - delta_r[r] * delta_r[r] - g.lengths[r][p] * g.lengths[r][p]) / (2 * delta_r[r] * g.lengths[r][p]));
                 double gamma_r = acos(1 - pow(l_p + l_q - g.int_lengths[p][q] + 0.5,2) / (2 * delta_r[r] * delta_r[r]));
 
-                //// cout << "r " << r << " l_p " << l_p << " l_q " << l_q << " alpha_p " << alpha_p << " alpha_q " << alpha_q << " gamma_r " << gamma_r << " deltar " << delta_r[r] << " g.lengths[r][q] " << g.lengths[r][q] << " alpha_p arg " << (l_q * l_q - delta_r[r] * delta_r[r] - g.lengths[r][q] * g.lengths[r][q]) / (2 * delta_r[r] * g.lengths[r][q]) << endl;
-
                 if(gamma_r > max(alpha_p,alpha_q)){
                     potential_points.push_back(r);
                     num_potential++;
-                    //cout << num_potential << endl;
+
                     if(num_potential >= 10) {
-                        //cout << i << endl;
                         break; 
                     }
-                    // updates dist_to_mid
-                    //dist_to_mid.push_back(dist_to_midpoint);
                 }
             }
         }
@@ -247,28 +233,11 @@ static int delete_edges(Graph &g)
         potential_points.reserve(10);
 
         find_potential(g, p, q, delta_r, potential_points);
-        
-        // vector<int> points_to_check;
-        // if(potential_points.size() < 2) {
-        //     continue;
-        // }
-        // else if(potential_points.size() < 10) {
-        //     points_to_check = potential_points;
-        // }
-        // else {
-        //     for(int i = 0; i < 10; i++){
-        //         int new_r_ind = distance(dist_to_mid.begin(), min_element(dist_to_mid.begin(), dist_to_mid.end()));
-        //         int new_r = potential_points[new_r_ind];
-
-        //         potential_points.erase(potential_points.begin() + new_r_ind); dist_to_mid.erase(dist_to_mid.begin() + new_r_ind);
-        //         points_to_check.push_back(new_r);
-        //     }
-        // }
 
         // Compute eq_19, eq_20 for those chosen edges
         vector<double> eq_19, eq_20;
-	eq_19.resize(potential_points.size());
-    eq_20.resize(potential_points.size()); 
+    	eq_19.resize(potential_points.size());
+        eq_20.resize(potential_points.size()); 
 
         int i = 0;
         for(vector<int>::iterator it = potential_points.begin(); it != potential_points.end(); ++it, i++){
