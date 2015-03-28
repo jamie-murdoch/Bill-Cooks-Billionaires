@@ -19,6 +19,7 @@ KdTree::KdTree(const vector<Point2D> &points, const vector<vector<double> > &len
   }
 
   mRoot = build(0, n - 1);
+
 }
 
 double KdTree::dist(int i, int j) {

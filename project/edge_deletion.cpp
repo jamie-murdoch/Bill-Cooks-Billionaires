@@ -40,8 +40,8 @@ int main(int argc, char* argv[]) {
 
     #if USE_GRAPHICS
         setup_sdl(graph);
-        draw_points(graph.points, 0, 0, 255, false);
-        draw_tree(graph.kd_tree->mRoot);
+        draw_points(graph.points, 0, 0, 255, true);
+        //draw_tree(graph.kd_tree->mRoot);
         SDL_RenderPresent(renderer);
     #endif
 
@@ -188,56 +188,113 @@ static int delete_edges(Graph &g)
     }
 
     for(vector<Edge>::iterator pq = g.edges.begin(); pq != g.edges.end(); ++pq){
-        int p = pq->end[0], q = pq->end[1];
-        vector<double> mid_point;
-        vector<double> dist_to_mid;
+        int p = pq->end[0];
+        int q = pq->end[1];
+        const Point2D &pnt_p = g.points[p];
+        const Point2D &pnt_q = g.points[q];
+
+        Point2D midpoint((pnt_p + pnt_q) / 2.0);
+
+        //vector<double> dist_to_mid;
+        int num_potential = 0;
         vector<int> potential_points;
+        potential_points.reserve(10);
 
-        mid_point.push_back(((double)g.points[p].x() + g.points[q].x()) / 2); mid_point.push_back(((double)g.points[p].y() + g.points[q].y()) / 2);
+        //vector<double> mid_point;
+        //mid_point.push_back(((double)g.points[p].x() + g.points[q].x()) / 2); mid_point.push_back(((double)g.points[p].y() + g.points[q].y()) / 2);
 
-        for(int r = 0; r < g.node_count(); r++){
+        // for(int r = 0; r < g.node_count(); r++){
+        //     const Point2D &pnt_r = g.points[r];
+
+        //     if(r != p && r != q){
+        //         double l_p = delta_r[r] + g.int_lengths[p][q] - g.int_lengths[q][r] - 1, l_q = delta_r[r] + g.int_lengths[p][q] - g.int_lengths[p][r] - 1;
+
+        //         if(l_p + l_q >= g.int_lengths[p][q] - 0.5){
+        //             double alpha_p = 2 * acos( (l_q * l_q - delta_r[r] * delta_r[r] - g.lengths[r][q] * g.lengths[r][q]) / (2 * delta_r[r] * g.lengths[r][q]));
+        //             double alpha_q = 2 * acos( (l_p * l_p - delta_r[r] * delta_r[r] - g.lengths[r][p] * g.lengths[r][p]) / (2 * delta_r[r] * g.lengths[r][p]));
+        //             double gamma_r = acos(1 - pow(l_p + l_q - g.int_lengths[p][q] + 0.5,2) / (2 * delta_r[r] * delta_r[r]));
+
+        //             // cout << "r " << r << " l_p " << l_p << " l_q " << l_q << " alpha_p " << alpha_p << " alpha_q " << alpha_q << " gamma_r " << gamma_r << " deltar " << delta_r[r] << " g.lengths[r][q] " << g.lengths[r][q] << " alpha_p arg " << (l_q * l_q - delta_r[r] * delta_r[r] - g.lengths[r][q] * g.lengths[r][q]) / (2 * delta_r[r] * g.lengths[r][q]) << endl;
+
+        //             if(gamma_r > max(alpha_p,alpha_q)){
+        //                 potential_points.push_back(r);
+        //                 // updates dist_to_mid
+        //                 dist_to_mid.push_back((midpoint - pnt_r).length());
+        //             }
+        //         }
+        //     }
+        // }
+
+        double last_dist = 0.0;
+        //cout << "p: " << p << " q: " << q << endl;
+        for(int i = 0; i < g.node_count() - 1; i++){
+            //cout << "b" << endl;            
+            double dist_to_midpoint;
+
+            int r = g.kd_tree->find_closest_point(midpoint, dist_to_midpoint, last_dist);
+            //cout << "i: " <<  i << " r: " << r << "dist_to_midpoint: " << dist_to_midpoint << endl;
+            // if(r == p || r == q) {
+            //     //cout << "gotchya " << endl;
+            // }
+            //if(r >= g.node_count()) cout << "little devil" << endl;
+            
+            last_dist = dist_to_midpoint;
+            //SDL_Delay(1000);
+            
+            const Point2D &pnt_r = g.points[r];
+
+
             if(r != p && r != q){
-                double l_p = delta_r[r] + g.int_lengths[p][q] - g.int_lengths[q][r] - 1, l_q = delta_r[r] + g.int_lengths[p][q] - g.int_lengths[p][r] - 1;
+                double l_p = delta_r[r] + g.int_lengths[p][q] - g.int_lengths[q][r] - 1;
+                double l_q = delta_r[r] + g.int_lengths[p][q] - g.int_lengths[p][r] - 1;
 
                 if(l_p + l_q >= g.int_lengths[p][q] - 0.5){
                     double alpha_p = 2 * acos( (l_q * l_q - delta_r[r] * delta_r[r] - g.lengths[r][q] * g.lengths[r][q]) / (2 * delta_r[r] * g.lengths[r][q]));
                     double alpha_q = 2 * acos( (l_p * l_p - delta_r[r] * delta_r[r] - g.lengths[r][p] * g.lengths[r][p]) / (2 * delta_r[r] * g.lengths[r][p]));
                     double gamma_r = acos(1 - pow(l_p + l_q - g.int_lengths[p][q] + 0.5,2) / (2 * delta_r[r] * delta_r[r]));
 
-                    // cout << "r " << r << " l_p " << l_p << " l_q " << l_q << " alpha_p " << alpha_p << " alpha_q " << alpha_q << " gamma_r " << gamma_r << " deltar " << delta_r[r] << " g.lengths[r][q] " << g.lengths[r][q] << " alpha_p arg " << (l_q * l_q - delta_r[r] * delta_r[r] - g.lengths[r][q] * g.lengths[r][q]) / (2 * delta_r[r] * g.lengths[r][q]) << endl;
+                    //// cout << "r " << r << " l_p " << l_p << " l_q " << l_q << " alpha_p " << alpha_p << " alpha_q " << alpha_q << " gamma_r " << gamma_r << " deltar " << delta_r[r] << " g.lengths[r][q] " << g.lengths[r][q] << " alpha_p arg " << (l_q * l_q - delta_r[r] * delta_r[r] - g.lengths[r][q] * g.lengths[r][q]) / (2 * delta_r[r] * g.lengths[r][q]) << endl;
 
                     if(gamma_r > max(alpha_p,alpha_q)){
                         potential_points.push_back(r);
+                        num_potential++;
+                        //cout << num_potential << endl;
+                        if(num_potential >= 10) {
+                            //cout << i << endl;
+                            break; 
+                        }
                         // updates dist_to_mid
-                        dist_to_mid.push_back(sqrt(pow(mid_point[0] - g.points[r].x(),2) + pow(mid_point[1] - g.points[r].y(),2)));
+                        //dist_to_mid.push_back(dist_to_midpoint);
                     }
                 }
             }
+            //cout << potential_points.size()<< endl;
         }
 
-        vector<int> points_to_check;
-        if(potential_points.size() < 2) {
-            continue;
-        }
-        else if(potential_points.size() < 10) {
-            points_to_check = potential_points;
-        }
-        else {
-            for(int i = 0; i < 10; i++){
-                int new_r_ind = distance(dist_to_mid.begin(), min_element(dist_to_mid.begin(), dist_to_mid.end()));
-                int new_r = potential_points[new_r_ind];
+        // vector<int> points_to_check;
+        // if(potential_points.size() < 2) {
+        //     continue;
+        // }
+        // else if(potential_points.size() < 10) {
+        //     points_to_check = potential_points;
+        // }
+        // else {
+        //     for(int i = 0; i < 10; i++){
+        //         int new_r_ind = distance(dist_to_mid.begin(), min_element(dist_to_mid.begin(), dist_to_mid.end()));
+        //         int new_r = potential_points[new_r_ind];
 
-                potential_points.erase(potential_points.begin() + new_r_ind); dist_to_mid.erase(dist_to_mid.begin() + new_r_ind);
-                points_to_check.push_back(new_r);
-            }
-        }
+        //         potential_points.erase(potential_points.begin() + new_r_ind); dist_to_mid.erase(dist_to_mid.begin() + new_r_ind);
+        //         points_to_check.push_back(new_r);
+        //     }
+        // }
 
         // Compute eq_19, eq_20 for those chosen edges
         vector<double> eq_19, eq_20;
-	eq_19.resize(points_to_check.size()); eq_20.resize(points_to_check.size()); 
+	eq_19.resize(potential_points.size());
+    eq_20.resize(potential_points.size()); 
 
         int i = 0;
-        for(vector<int>::iterator it = points_to_check.begin(); it != points_to_check.end(); ++it, i++){
+        for(vector<int>::iterator it = potential_points.begin(); it != potential_points.end(); ++it, i++){
             double l_p = delta_r[*it] + g.int_lengths[p][q] - g.int_lengths[q][*it] - 1, l_q = delta_r[*it] + g.int_lengths[p][q] - g.int_lengths[p][*it] - 1;
             eq_19[i] = compute_lemma_8(p, q, *it, delta_r[*it], l_p, l_q, g);
 
@@ -249,10 +306,10 @@ static int delete_edges(Graph &g)
         int j;
         i = 0;
 
-        for(vector<int>::iterator r = points_to_check.begin(); r != points_to_check.end(); ++r, i++){
+        for(vector<int>::iterator r = potential_points.begin(); r != potential_points.end(); ++r, i++){
             j = 0;
 
-            for(vector<int>::iterator s = points_to_check.begin(); s != points_to_check.end(); ++s, j++){
+            for(vector<int>::iterator s = potential_points.begin(); s != potential_points.end(); ++s, j++){
                 if(*s != *r && g.int_lengths[p][q] - g.int_lengths[*r][*s] + eq_19[j] + eq_20[i] > 0
                     && g.int_lengths[p][q] - g.int_lengths[*r][*s] + eq_19[i] + eq_20[j] > 0){
 		  double l_p_s = delta_r[*s] + g.int_lengths[p][q] - g.int_lengths[q][*s] - 1, l_q_s = delta_r[*s] + g.int_lengths[p][q] - g.int_lengths[p][*s] - 1; // we could probably cache these... 

@@ -42,6 +42,7 @@ class KdTree {
   const vector<Point2D> *mPoints;
   const vector<vector<double> > *mLengths;
   KdNode *mRoot;
+
 };
 
 #endif

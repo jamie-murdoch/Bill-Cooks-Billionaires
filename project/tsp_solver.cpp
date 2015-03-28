@@ -61,10 +61,14 @@ bool TSP_Solver::find_min_tour(vector<int> &tour_indices) {
 		//Run it the first time to check if it is feasible
 		int infeasible = run_lp();
         if(infeasible) {
+            #if USE_DEBUG
             cout << "Initial LP is infeasible." << endl;
+            #endif
             return false;
         } else {
+            #if USE_DEBUG
             cout << "Degree-Equation LP Value: " << get_obj_val() << endl;    
+            #endif
         }
 		
         //Run the main solver code
@@ -84,7 +88,9 @@ int TSP_Solver::tsp_branch_and_bound(vector<int> &tour_indices) {
 
     infeasible = run_lp();
     if(infeasible) {
+        #if USE_DEBUG
         cout << "LP is infeasible, exitting." << endl;
+        #endif
         return rval;
     }
     print_num_edges();
@@ -96,15 +102,21 @@ int TSP_Solver::tsp_branch_and_bound(vector<int> &tour_indices) {
     //Run and check if the new LP is feasible
 	infeasible = run_lp();
 	if(infeasible) {
-		cout << "LP is infeasible, exitting." << endl;
+		#if USE_DEBUG
+        cout << "LP is infeasible, exitting." << endl;
+        #endif
 		return rval;
 	}
 
     //Quit if LP val got worse
 	objval = get_obj_val();
-	cout << "Current LP Value: " << objval << endl;
+	#if USE_DEBUG
+    cout << "Current LP Value: " << objval << endl;
+    #endif
     if (objval >= m_min_tour_value){ //Can I mike this >=? Testing says yes...
+      #if USE_DEBUG
       cout << "Current LP value is higher than min tour value, exitting" << endl;
+      #endif
       return rval;
     }
     
@@ -115,20 +127,28 @@ int TSP_Solver::tsp_branch_and_bound(vector<int> &tour_indices) {
     double branch_edge_val = m_lp_edges[branching_edge];
 
     if (is_almost_integral(branch_edge_val)) {
+        #if USE_DEBUG
         cout << "LP solution is integral." << endl;
+        #endif
 
     	//if (objval < m_min_tour_value){ //TODO do we really need this check? Only if objval == m_min_tour_val
-    	    cout << "NEW OPTIMAL TOUR VALUE: " << objval << endl;
+    	    #if USE_DEBUG
+            cout << "NEW OPTIMAL TOUR VALUE: " << objval << endl;
+            #endif
     	    m_min_tour_value = objval;
 
             //Update the tour
             if(!update_current_tour_indices(tour_indices)) {
+                #if USE_DEBUG
                 cout << "Computed tour isn't a tour" << endl;
+                #endif
                 return rval;
             } 
     	//}
     } else {
+        #if USE_DEBUG
         cout << "Branching on edge " << branching_edge << endl;
+        #endif
 
         //Clamp it to 0
 		CO759lp_setbnd(&m_lp, branching_edge, 'U', 0.0);
@@ -187,7 +207,9 @@ int TSP_Solver::add_subtour_inequalities() {
         rval = CO759lp_objval (&m_lp, &objval);
         if (rval) { fprintf (stderr, "CO759lp_objval failed\n"); goto CLEANUP; }
 
+        #if USE_DEBUG
         cout << "Round " << round++ << " LP: " << objval << "  (added subtour of size " << icount << ")" << endl;
+        #endif
 
         rval = CO759lp_x (&m_lp, x);
         if (rval) { fprintf (stderr, "CO759lp_x failed\n"); goto CLEANUP; }
@@ -413,7 +435,9 @@ int TSP_Solver::get_num_edges() {
 
 void TSP_Solver::print_num_edges() {
 	int num_tour_edges = get_num_edges();
-	cout << "LP Graph has " << num_tour_edges << " edges" << endl;
+	#if USE_DEBUG
+    cout << "LP Graph has " << num_tour_edges << " edges" << endl;
+    #endif
 }
 
 
@@ -448,7 +472,9 @@ void TSP_Solver::print_num_edges() {
   //   //     rval = CO759lp_objval (&m_lp, &objval);
   //   //     if (rval) { fprintf (stderr, "CO759lp_objval failed\n"); goto CLEANUP; }
 
-  //   //     cout << "Round " << round++ << " LP: " << objval << "  (added subtour of size " << icount << ")" << endl;
+#if USE_DEBUG  //   //     
+cout << "Round " << round++ << " LP: " << objval << "  (added subtour of size " << icount << ")" << endl;
+#endif
 
   //   //     rval = CO759lp_x (&m_lp, x);
   //   //     if (rval) { fprintf (stderr, "CO759lp_x failed\n"); goto CLEANUP; }
