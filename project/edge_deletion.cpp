@@ -32,14 +32,14 @@ bool is_edge(int p, int q, Graph &g);
 bool set_contains(int r, int s, int q, int p, double lq, double lp, Graph & g, double deltar);
 
 
-bool compare_results = true;
+bool compare_results = false;
 
 int main(int argc, char* argv[]) {
     //Initialize the problem
     //Must always pass in a .tsp file in first arg for now
     cout << "Loading graph..." << flush;
     Graph graph(argv[1]);
-    cout << "done." << endl;
+    cout << "done." << endl << endl;
 
     #if USE_GRAPHICS
         setup_sdl(graph);
@@ -74,22 +74,28 @@ int main(int argc, char* argv[]) {
     //     }
     // }
 
-    cout << "Entering delete graph" << endl;
 
+    cout << "Running Step 1..." << flush;
     double running_time = CO759_zeit();
     delete_edges(graph);
     running_time = CO759_zeit() - running_time;
+    cout << "done." << endl;
 
-    cout << "Removed " << graph.count_useless() << " out of " << graph.edges.size() << " edges in " << running_time << "s" << endl;
-    cout << "Now there are " << graph.edges.size() - graph.count_useless() << " edges left." << endl;
+    int step1_removed = graph.count_useless();
+    cout << "Removed " << step1_removed << " out of " << graph.edges.size() << " edges in " << running_time << "s" << endl;
+    cout << "Now there are " << graph.edges.size() - step1_removed << " edges left." << endl;
 
-    cout << "Let's try step 2... WARNING: CURRENTLY REMOVING INCORRECT EDGES" << endl;
+    cout << endl;
+
+    cout << "Running Step 2..." << flush;
     running_time = CO759_zeit();
     delete_edges2(graph);
     running_time = CO759_zeit() - running_time;
+    cout << "done." << endl;
 
-    cout << "Removed " << graph.count_useless() << " out of " << graph.edges.size() << " edges in " << running_time << "s" << endl;
-    cout << "Now there are " << graph.edges.size() - graph.count_useless() << " edges left." << endl;
+    int step2_removed = graph.count_useless() - step1_removed;
+    cout << "Removed " << step2_removed << " out of " << graph.edges.size() - step1_removed << " edges in " << running_time << "s" << endl;
+    cout << "Now there are " << graph.edges.size() - (step2_removed + step1_removed) << " edges left." << endl << endl;
     
     //Run a test by comparing the removed edges to the ones in the optimal tour
     if(compare_results) {
@@ -233,12 +239,12 @@ static int delete_edges(Graph &g)
 {
     vector<double> delta_r;
 
-    double running_time = CO759_zeit();
+    //double running_time = CO759_zeit();
     for(int i = 0; i < g.node_count(); i++){
         delta_r.push_back(0.5 + (*min_element(g.int_lengths[i].begin(), g.int_lengths[i].end() - 1)));
     }
-    running_time = CO759_zeit() - running_time;
-    cout << "Took " << running_time << " to build delta." << endl;
+    //running_time = CO759_zeit() - running_time;
+    //cout << "Took " << running_time << " to build delta." << endl;
 
     for(vector<Edge>::iterator pq = g.edges.begin(); pq != g.edges.end(); ++pq){
         int p = pq->end[0];
@@ -278,10 +284,12 @@ static int delete_edges(Graph &g)
 		  if(!set_contains(*r, *s, q, p, l_q_r, l_p_r, g, delta_r[*r]) && !set_contains(*s, *r, q, p, l_q_s, l_p_s, g, delta_r[*s])){
                     
                     pq->useless = true;
-		    g.int_lengths[p][q] = numeric_limits<int>::max();
-		    g.int_lengths[q][p] = numeric_limits<int>::max();
-		    g.lengths[p][q] = numeric_limits<double>::infinity();
-		    g.lengths[q][p] = numeric_limits<double>::infinity();
+                    g.useless[p][q] = true;
+                    g.useless[q][p] = true;
+		    // g.int_lengths[p][q] = numeric_limits<int>::max();
+		    // g.int_lengths[q][p] = numeric_limits<int>::max();
+		    // g.lengths[p][q] = numeric_limits<double>::infinity();
+		    // g.lengths[q][p] = numeric_limits<double>::infinity();
                     //cout << "Deleted edge: " << pq->end[0] << " " << pq->end[1] <<endl;
 
                     all_break = true;
@@ -294,46 +302,74 @@ static int delete_edges(Graph &g)
         }
     }
 
-    cout << "Done edge deletions!" << endl;
     return 0;
 }
 
+bool thm2_holds_for_all_xy(int p, int q, int r, Graph &g) {
+    for(int x = 0; x < g.node_count(); x++){
+        if (is_edge(r, x, g) && are_compatible(p, q, r, x, g)){ //x in R
 
+            for(int y = 0; y < g.node_count(); y++){
+                if (x != y && is_edge(r, y, g) && are_compatible(p, q, r, y, g)){ //y in R and y != x
+                            
+                    if(!((x==p && y==q) || (x==q && y==p))){ //{x,y} != {p,q}
+                        //Doesn't satisify (7)
+                        if(g.int_lengths[x][y] + g.int_lengths[p][r] + g.int_lengths[q][r] >= g.int_lengths[p][q] + g.int_lengths[x][r] + g.int_lengths[y][r]){
+                            //cout << "x: " << x << " y: " << y << " p: " << p << " q: " << q << endl;
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    return true;
+}
+
+bool fails_close_point_elim(int p, int q, Graph &g) {
+    for(int r = 0; r < g.node_count(); r++){
+        if (r != p && r != q) { //R in V\{p,q}
+
+            if(thm2_holds_for_all_xy(p, q, r, g)){
+                //cout << r << endl;
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
 
 static int delete_edges2(Graph &g){
-  for(vector<Edge>::iterator pq = g.edges.begin(); pq != g.edges.end(); ++pq){
-    int p = pq->end[0]; int q = pq->end[1];
-    if (pq->useless) continue;
-    bool found_violated_r_inequality = false;
-    for(int r = 0; r < g.node_count(); r++){
-      if (r == p || r == q) continue;
-      for(int x = 0; x < g.node_count(); x++){
-	if (!is_edge(r, x, g) || !are_compatible(p, q, r, x, g)) continue;
-	for(int y = 0; y < g.node_count(); y++){
-	  if (!is_edge(r, y, g) || !are_compatible(p, q, r, y, g) || y == x) continue;
-	  if (g.int_lengths[x][y] + g.int_lengths[p][r] + g.int_lengths[q][r] >= g.int_lengths[p][q] + g.int_lengths[x][r] + g.int_lengths[y][r]){
-	    found_violated_r_inequality = true;
-	  }
-	}
-      }
-      if (!found_violated_r_inequality){
-	pq->useless = true;
-	break;
-      }
-    }
-  }
+    for(vector<Edge>::iterator pq = g.edges.begin(); pq != g.edges.end(); ++pq){
+        if (!pq->useless) {
+            int p = pq->end[0];
+            int q = pq->end[1];
 
-  cout << "Done Step2 deletions!" << endl;
-  return 0;
+            if(fails_close_point_elim(p,q,g)){
+                pq->useless = true;
+                g.useless[p][q] = true;
+                g.useless[q][p] = true;
+                // g.int_lengths[p][q] = numeric_limits<int>::max();
+                // g.int_lengths[q][p] = numeric_limits<int>::max();
+                // g.lengths[p][q] = numeric_limits<double>::infinity();
+                // g.lengths[q][p] = numeric_limits<double>::infinity();
+            }
+        }
+    }
+
+    return 0;
 }
 
 //tests whether pq~xy according to equation (1) in the paper
 bool are_compatible(int p, int q, int x, int y, Graph &g){
-  return max(g.lengths[p][x] + g.lengths[q][y], g.lengths[p][y] + g.lengths[q][x]) >= g.lengths[p][q] + g.lengths[x][y];
+  return max(g.int_lengths[p][x] + g.int_lengths[q][y], g.int_lengths[p][y] + g.int_lengths[q][x]) >= g.int_lengths[p][q] + g.int_lengths[x][y];
 }
 
 bool is_edge(int p, int q, Graph &g){
-  return g.lengths[p][q] != numeric_limits<double>::infinity();
+    //cout << !g.useless[p][q] << endl;
+  return !g.useless[p][q];
 }
 
 bool set_contains(int r, int s, int q, int p, double lq, double lp, Graph & g, double deltar)
