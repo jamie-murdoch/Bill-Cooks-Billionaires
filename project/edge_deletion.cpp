@@ -29,7 +29,7 @@ static int delete_edges(Graph &g);
 bool set_contains(int r, int s, int q, int p, double lq, double lp, Graph & g, double deltar);
 
 
-bool compare_results = false;
+bool compare_results = true;
 
 int main(int argc, char* argv[]) {
     //Initialize the problem
@@ -110,7 +110,7 @@ int main(int argc, char* argv[]) {
     return 0;
 }
 
-void circle_proj(int r, int s, double deltar, Graph g, vector<double>& result)
+void circle_proj(int r, int s, double deltar, Graph &g, vector<double>& result)
 {
     /* This is the function for computing s_r, as described in the paper. That is, given vertices s and r, this function
     computes s_r on the line rs such that |rs_r| = delta_r. This can be solved by writing out the euclidean norm for lines between r and s,
@@ -150,7 +150,7 @@ void circle_proj(int r, int s, double deltar, Graph g, vector<double>& result)
     }
 }
 
-double compute_lemma_8(int p, int q, int r, double deltar, double lp, double lq, Graph g)
+double compute_lemma_8(int p, int q, int r, double deltar, double lp, double lq, Graph &g)
 {
   double cos_eps_q = (g.lengths[p][q] * g.lengths[p][q] + g.lengths[q][r] * g.lengths[q][r] - g.lengths[p][r] * g.lengths[p][r]) / (2 * g.lengths[p][q] * g.lengths[q][r]),\
     cos_theta_q = (lq * lq + g.lengths[q][r] * g.lengths[q][r] - deltar * deltar) / (2 * lq * g.lengths[q][r]);
@@ -179,6 +179,58 @@ double compute_lemma_8(int p, int q, int r, double deltar, double lp, double lq,
     return deltar - 1 - *max_element(max_vec.begin(), max_vec.end());
 }
 
+void find_potential(Graph &g, int p, int q, const vector<double> &delta_r, vector<int> &potential_points) {
+    const Point2D &pnt_p = g.points[p];
+    const Point2D &pnt_q = g.points[q];
+    Point2D midpoint((pnt_p + pnt_q) / 2.0);
+
+    int num_potential = 0;
+    double last_dist = 0.0;
+    //cout << "p: " << p << " q: " << q << endl;
+    for(int i = 0; i < 10; i++){
+        //cout << "b" << endl;            
+        double dist_to_midpoint;
+
+        int r = g.kd_tree->find_closest_point(midpoint, dist_to_midpoint, last_dist);
+        //cout << "i: " <<  i << " r: " << r << "dist_to_midpoint: " << dist_to_midpoint << endl;
+        // if(r == p || r == q) {
+        //     //cout << "gotchya " << endl;
+        // }
+        //if(r >= g.node_count()) cout << "little devil" << endl;
+        
+        last_dist = dist_to_midpoint;
+        //SDL_Delay(1000);
+        
+        const Point2D &pnt_r = g.points[r];
+
+
+        if(r != p && r != q){
+            double l_p = delta_r[r] + g.int_lengths[p][q] - g.int_lengths[q][r] - 1;
+            double l_q = delta_r[r] + g.int_lengths[p][q] - g.int_lengths[p][r] - 1;
+
+            if(l_p + l_q >= g.int_lengths[p][q] - 0.5){
+                double alpha_p = 2 * acos( (l_q * l_q - delta_r[r] * delta_r[r] - g.lengths[r][q] * g.lengths[r][q]) / (2 * delta_r[r] * g.lengths[r][q]));
+                double alpha_q = 2 * acos( (l_p * l_p - delta_r[r] * delta_r[r] - g.lengths[r][p] * g.lengths[r][p]) / (2 * delta_r[r] * g.lengths[r][p]));
+                double gamma_r = acos(1 - pow(l_p + l_q - g.int_lengths[p][q] + 0.5,2) / (2 * delta_r[r] * delta_r[r]));
+
+                //// cout << "r " << r << " l_p " << l_p << " l_q " << l_q << " alpha_p " << alpha_p << " alpha_q " << alpha_q << " gamma_r " << gamma_r << " deltar " << delta_r[r] << " g.lengths[r][q] " << g.lengths[r][q] << " alpha_p arg " << (l_q * l_q - delta_r[r] * delta_r[r] - g.lengths[r][q] * g.lengths[r][q]) / (2 * delta_r[r] * g.lengths[r][q]) << endl;
+
+                if(gamma_r > max(alpha_p,alpha_q)){
+                    potential_points.push_back(r);
+                    num_potential++;
+                    //cout << num_potential << endl;
+                    if(num_potential >= 10) {
+                        //cout << i << endl;
+                        break; 
+                    }
+                    // updates dist_to_mid
+                    //dist_to_mid.push_back(dist_to_midpoint);
+                }
+            }
+        }
+    }
+
+}
 static int delete_edges(Graph &g)
 {
     vector<double> delta_r;
@@ -190,87 +242,12 @@ static int delete_edges(Graph &g)
     for(vector<Edge>::iterator pq = g.edges.begin(); pq != g.edges.end(); ++pq){
         int p = pq->end[0];
         int q = pq->end[1];
-        const Point2D &pnt_p = g.points[p];
-        const Point2D &pnt_q = g.points[q];
-
-        Point2D midpoint((pnt_p + pnt_q) / 2.0);
-
-        //vector<double> dist_to_mid;
-        int num_potential = 0;
+        
         vector<int> potential_points;
         potential_points.reserve(10);
 
-        //vector<double> mid_point;
-        //mid_point.push_back(((double)g.points[p].x() + g.points[q].x()) / 2); mid_point.push_back(((double)g.points[p].y() + g.points[q].y()) / 2);
-
-        // for(int r = 0; r < g.node_count(); r++){
-        //     const Point2D &pnt_r = g.points[r];
-
-        //     if(r != p && r != q){
-        //         double l_p = delta_r[r] + g.int_lengths[p][q] - g.int_lengths[q][r] - 1, l_q = delta_r[r] + g.int_lengths[p][q] - g.int_lengths[p][r] - 1;
-
-        //         if(l_p + l_q >= g.int_lengths[p][q] - 0.5){
-        //             double alpha_p = 2 * acos( (l_q * l_q - delta_r[r] * delta_r[r] - g.lengths[r][q] * g.lengths[r][q]) / (2 * delta_r[r] * g.lengths[r][q]));
-        //             double alpha_q = 2 * acos( (l_p * l_p - delta_r[r] * delta_r[r] - g.lengths[r][p] * g.lengths[r][p]) / (2 * delta_r[r] * g.lengths[r][p]));
-        //             double gamma_r = acos(1 - pow(l_p + l_q - g.int_lengths[p][q] + 0.5,2) / (2 * delta_r[r] * delta_r[r]));
-
-        //             // cout << "r " << r << " l_p " << l_p << " l_q " << l_q << " alpha_p " << alpha_p << " alpha_q " << alpha_q << " gamma_r " << gamma_r << " deltar " << delta_r[r] << " g.lengths[r][q] " << g.lengths[r][q] << " alpha_p arg " << (l_q * l_q - delta_r[r] * delta_r[r] - g.lengths[r][q] * g.lengths[r][q]) / (2 * delta_r[r] * g.lengths[r][q]) << endl;
-
-        //             if(gamma_r > max(alpha_p,alpha_q)){
-        //                 potential_points.push_back(r);
-        //                 // updates dist_to_mid
-        //                 dist_to_mid.push_back((midpoint - pnt_r).length());
-        //             }
-        //         }
-        //     }
-        // }
-
-        double last_dist = 0.0;
-        //cout << "p: " << p << " q: " << q << endl;
-        for(int i = 0; i < g.node_count() - 1; i++){
-            //cout << "b" << endl;            
-            double dist_to_midpoint;
-
-            int r = g.kd_tree->find_closest_point(midpoint, dist_to_midpoint, last_dist);
-            //cout << "i: " <<  i << " r: " << r << "dist_to_midpoint: " << dist_to_midpoint << endl;
-            // if(r == p || r == q) {
-            //     //cout << "gotchya " << endl;
-            // }
-            //if(r >= g.node_count()) cout << "little devil" << endl;
-            
-            last_dist = dist_to_midpoint;
-            //SDL_Delay(1000);
-            
-            const Point2D &pnt_r = g.points[r];
-
-
-            if(r != p && r != q){
-                double l_p = delta_r[r] + g.int_lengths[p][q] - g.int_lengths[q][r] - 1;
-                double l_q = delta_r[r] + g.int_lengths[p][q] - g.int_lengths[p][r] - 1;
-
-                if(l_p + l_q >= g.int_lengths[p][q] - 0.5){
-                    double alpha_p = 2 * acos( (l_q * l_q - delta_r[r] * delta_r[r] - g.lengths[r][q] * g.lengths[r][q]) / (2 * delta_r[r] * g.lengths[r][q]));
-                    double alpha_q = 2 * acos( (l_p * l_p - delta_r[r] * delta_r[r] - g.lengths[r][p] * g.lengths[r][p]) / (2 * delta_r[r] * g.lengths[r][p]));
-                    double gamma_r = acos(1 - pow(l_p + l_q - g.int_lengths[p][q] + 0.5,2) / (2 * delta_r[r] * delta_r[r]));
-
-                    //// cout << "r " << r << " l_p " << l_p << " l_q " << l_q << " alpha_p " << alpha_p << " alpha_q " << alpha_q << " gamma_r " << gamma_r << " deltar " << delta_r[r] << " g.lengths[r][q] " << g.lengths[r][q] << " alpha_p arg " << (l_q * l_q - delta_r[r] * delta_r[r] - g.lengths[r][q] * g.lengths[r][q]) / (2 * delta_r[r] * g.lengths[r][q]) << endl;
-
-                    if(gamma_r > max(alpha_p,alpha_q)){
-                        potential_points.push_back(r);
-                        num_potential++;
-                        //cout << num_potential << endl;
-                        if(num_potential >= 10) {
-                            //cout << i << endl;
-                            break; 
-                        }
-                        // updates dist_to_mid
-                        //dist_to_mid.push_back(dist_to_midpoint);
-                    }
-                }
-            }
-            //cout << potential_points.size()<< endl;
-        }
-
+        find_potential(g, p, q, delta_r, potential_points);
+        
         // vector<int> points_to_check;
         // if(potential_points.size() < 2) {
         //     continue;
@@ -338,6 +315,7 @@ bool set_contains(int r, int s, int q, int p, double lq, double lp, Graph & g, d
 {
   // Check if s \in R_p \cup R_q
   vector<double> s_r; 
+  s_r.reserve(10);
   circle_proj(r, s, deltar, g, s_r);
   return sqrt(pow(g.points[q][0] - s_r[0],2) + pow(g.points[q][1] - s_r[1],2)) >= lq || sqrt(pow(g.points[p][0] - s_r[0], 2) + pow(g.points[p][1] - s_r[1], 2)) >= lp;
   //    return find(R1.begin(), R1.end(), s) != R1.end() || find(R2.begin(), R2.end(), s) != R2.end();
