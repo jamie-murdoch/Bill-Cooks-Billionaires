@@ -275,8 +275,8 @@ static int delete_edges(Graph &g)
 		  if(!set_contains(*r, *s, q, p, l_q_r, l_p_r, g, delta_r[*r]) && !set_contains(*s, *r, q, p, l_q_s, l_p_s, g, delta_r[*s])){
                     
                     pq->useless = true;
-		    g.int_lengths[p][q] = numeric_limits<int>::max();
-		    g.int_lengths[q][p] = numeric_limits<int>::max();
+		    /*g.int_lengths[p][q] = numeric_limits<int>::max();
+		      g.int_lengths[q][p] = numeric_limits<int>::max();*/
 		    g.lengths[p][q] = numeric_limits<double>::infinity();
 		    g.lengths[q][p] = numeric_limits<double>::infinity();
                     //cout << "Deleted edge: " << pq->end[0] << " " << pq->end[1] <<endl;
@@ -300,23 +300,54 @@ static int delete_edges(Graph &g)
 static int delete_edges2(Graph &g){
   for(vector<Edge>::iterator pq = g.edges.begin(); pq != g.edges.end(); ++pq){
     int p = pq->end[0]; int q = pq->end[1];
+    vector<vector<Point2D> > edge_pairs; edge_pairs.resize(g.node_count());
     if (pq->useless) continue;
     bool found_violated_r_inequality = false;
     for(int r = 0; r < g.node_count(); r++){
       if (r == p || r == q) continue;
       for(int x = 0; x < g.node_count(); x++){
 	if (!is_edge(r, x, g) || !are_compatible(p, q, r, x, g)) continue;
-	for(int y = 0; y < g.node_count(); y++){
+	for(int y = x + 1; y < g.node_count(); y++){
 	  if (!is_edge(r, y, g) || !are_compatible(p, q, r, y, g) || y == x || (p == x && q == y) || (p == y && q == x)) continue;
 	  if (g.int_lengths[x][y] + g.int_lengths[p][r] + g.int_lengths[q][r] >= g.int_lengths[p][q] + g.int_lengths[x][r] + g.int_lengths[y][r]){
-	    found_violated_r_inequality = true;
+	    edge_pairs[r].push_back(Point2D(x,y));
+	    //found_violated_r_inequality = true;
 	  }
 	}
       }
-      if (!found_violated_r_inequality){
+      if (edge_pairs[r].size() == 0){
 	pq->useless = true;
 	g.lengths[p][q] = numeric_limits<double>::infinity();
+	g.lengths[q][p] = numeric_limits<double>::infinity();
 	break;
+      }
+    }
+
+    if(!pq->useless){
+      for(int r = 0; r < g.node_count(); r++){
+	bool abort = false;
+	if(r == p || r == q) continue;
+	for(int s = 0; s < g.node_count(); s++){
+	  if(r == s || s == q || s == p) continue;
+	  bool all_break = false;
+	  for(int i = 0; i < edge_pairs[r].size(); i++){
+	    for(int j = 0; j < edge_pairs[s].size(); j++){
+	    
+	      if(g.int_lengths[p][q] - g.int_lengths[r][s] + g.int_lengths[s][edge_pairs[s][j][0]] - g.int_lengths[p][edge_pairs[s][j][0]] + g.int_lengths[r][edge_pairs[r][i][1]] - g.int_lengths[q][edge_pairs[r][i][1]] <= 0 ||
+		 g.int_lengths[p][q] - g.int_lengths[r][s] + g.int_lengths[r][edge_pairs[r][i][0]] - g.int_lengths[p][edge_pairs[r][i][0]] + g.int_lengths[s][edge_pairs[s][j][1]] - g.int_lengths[q][edge_pairs[s][j][1]] <= 0){
+		all_break = true; break;
+	      }
+	    }
+	    if(all_break) break;
+	  }
+	  if(!all_break){
+	    pq->useless = true;
+	    g.lengths[p][q] = numeric_limits<double>::infinity();
+	    g.lengths[q][p] = numeric_limits<double>::infinity();
+	    abort = true; break;
+	  }
+	}
+	if(abort) break;
       }
     }
   }
