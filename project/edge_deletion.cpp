@@ -127,37 +127,27 @@ void circle_proj(int r, int s, double deltar, Graph &g, vector<double>& result)
     /* This is the function for computing s_r, as described in the paper. That is, given vertices s and r, this function
     computes s_r on the line rs such that |rs_r| = delta_r. This can be solved by writing out the euclidean norm for lines between r and s,
     which is quadratic and can be solved using the quadratic formula. 
-    It may not be a bad idea to write some tests for this bad boy :)
-    */
-    //  cout << "Entered circle proj " << endl;
+    */ 
     if(g.points[s].x() == g.points[r].x()){
         // We can't define a line y=mx + b in this case
         if(g.points[s].y() > g.points[r].y()){
             result.push_back(g.points[r].x()); result.push_back(deltar + g.points[r].y());
-        //cout << "Exitted circle_proj" << endl;
             return;
         }
         else{
             result.push_back(g.points[r].x()); result.push_back(g.points[r].y() - deltar);
-        //cout << "Exitted circle_proj" << endl;
             return;
         }
     }
     double m = (g.points[s].y() - g.points[r].y()) / (g.points[s].x() - g.points[r].x());
     double x1 = deltar / (m * m + 1) + g.points[r].x(), x2 = g.points[r].x() - deltar / (m * m + 1);
-    //cout << "r = " << r << " " << g.points[r].x() << " " << g.points[r].y() << " s = " << s << " " << g.points[s].x() << " " << g.points[s].y() << " x1 " << x1 << " x2 " << x2 << " deltar " << deltar << " distance between r and s: " << sqrt(pow(g.points[s].y() - g.points[r].y(), 2.0) + pow(g.points[s].x() - g.points[r].x(), 2.0)) << endl;
-    //cout << "X1 " << g.points[1].x() << endl;
+
     if(g.points[s].x() > g.points[r].x()){
         result.push_back(x1); result.push_back(m * (x1 - g.points[r].x()) + g.points[r].y());
-        //cout << "Exitted circle_proj" << endl;
-        //cout << g.points[1].x() << endl;
         return;
     }
     else {
         result.push_back(x2); result.push_back(m * (x2 - g.points[r].x()) + g.points[r].y());
-        //    cout << "Exited circle_proj" << endl;
-        //cout << result[0] << " " << result[1] << endl;
-        //    cout << "X1 " << g.points[1].x() << endl;
         return;
     }
 }
@@ -167,28 +157,6 @@ double compute_lemma_8(int p, int q, int r, double deltar, double lp, double lq,
   double cos_eps_q = (g.lengths[p][q] * g.lengths[p][q] + g.lengths[q][r] * g.lengths[q][r] - g.lengths[p][r] * g.lengths[p][r]) / (2 * g.lengths[p][q] * g.lengths[q][r]),\
     cos_theta_q = (lq * lq + g.lengths[q][r] * g.lengths[q][r] - deltar * deltar) / (2 * lq * g.lengths[q][r]);
   return deltar - 1 - sqrt(g.lengths[p][q] * g.lengths[p][q] + lq * lq - 2 * g.lengths[p][q]  * lq * (cos_eps_q * cos_theta_q - sqrt(1 - cos_eps_q * cos_eps_q) * sqrt(1 - cos_theta_q * cos_theta_q)));
-    vector<double> max_vec;
-    vector<double> t_r;
-
-    for(int t = 0; t < g.node_count(); t++){
-        if(t != r || true ){
-            circle_proj(r, t, deltar, g, t_r);
-            //cout << "first out X1 " << g.points[1].x() << endl;
-            if(sqrt(pow(g.points[q].x() - t_r[0],2) + pow(g.points[q].y() - t_r[1],2)) >= lq)
-            {
-                //cout << "Added q " << t << endl;
-                max_vec.push_back(sqrt(pow(g.points[p].x() - t_r[0],2) + pow(g.points[p].y() - t_r[1],2)));
-            }
-            t_r.clear();
-        }
-    }
-
-
-    if(max_vec.size() == 0) {
-        return 0; // I'm not really sure if this is the right behaviour here, but it seems to make sense - if R_p is empty, then don't make any moves, and so there's no change in the tree's value
-    }
-
-    return deltar - 1 - *max_element(max_vec.begin(), max_vec.end());
 }
 
 void find_potential(Graph &g, int p, int q, const vector<double> &delta_r, vector<int> &potential_points) {
@@ -372,18 +340,5 @@ bool set_contains(int r, int s, int q, int p, double lq, double lp, Graph & g, d
   s_r.reserve(2);
   circle_proj(r, s, deltar, g, s_r);
   return sqrt(pow(g.points[q][0] - s_r[0],2) + pow(g.points[q][1] - s_r[1],2)) >= lq || sqrt(pow(g.points[p][0] - s_r[0], 2) + pow(g.points[p][1] - s_r[1], 2)) >= lp;
-  //    return find(R1.begin(), R1.end(), s) != R1.end() || find(R2.begin(), R2.end(), s) != R2.end();
-/*  vector<int> intersect, singleton;
-singleton.push_back(s);
-intersect.resize(max(R1.size(), R2.size())); intersect[0] = -1;
-
-set_intersection(singleton.begin(), singleton.end(), R1.begin(), R1.end(), intersect.begin());
-if(intersect[0] != -1) return true;
-
-set_intersection(singleton.begin(), singleton.end(), R2.begin(), R2.end(), intersect.begin());
-if(intersect[0] != -1) return true;
-
-return false;*/
-
 }
 
