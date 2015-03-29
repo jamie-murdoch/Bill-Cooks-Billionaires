@@ -284,14 +284,17 @@ static int delete_edges2(Graph &g){
       int r = g.kd_tree->find_closest_point(midpoint, dist_to_midpoint, last_dist);
       r_vec[i] = r;
       last_dist = dist_to_midpoint;
-        
+
       if (r == p || r == q) {i--; continue;}
-      for(int x = 0; x < g.node_count(); x++){
-	if (!is_edge(r, x, g) || !are_compatible(p, q, r, x, g)) continue;
-	for(int y = x + 1; y < g.node_count(); y++){
-	  if (!is_edge(r, y, g) || !are_compatible(p, q, r, y, g) || (p == x && q == y) || (p == y && q == x)) continue;
-	  if (g.int_lengths[x][y] + g.int_lengths[p][r] + g.int_lengths[q][r] >= g.int_lengths[p][q] + g.int_lengths[x][r] + g.int_lengths[y][r]){
-	    edge_pairs[i].push_back(Point2D(x,y));
+
+      vector<int> compatible_points;
+      for(int x = 0; x < g.node_count(); x++)
+	if(is_edge(r, x, g) && are_compatible(p, q, r, x, g)) compatible_points.push_back(x);
+      for(vector<int>::iterator x = compatible_points.begin(); x != compatible_points.end(); ++x){
+	for(vector<int>::iterator y = x; y != compatible_points.end(); ++y){
+	  if ((p == *x && q == *y) || (p == *y && q == *x)) continue;
+	  if (g.int_lengths[*x][*y] + g.int_lengths[p][r] + g.int_lengths[q][r] >= g.int_lengths[p][q] + g.int_lengths[*x][r] + g.int_lengths[*y][r]){
+	    edge_pairs[i].push_back(Point2D(*x,*y));
 	    //found_violated_r_inequality = true;
 	  }
 	}
