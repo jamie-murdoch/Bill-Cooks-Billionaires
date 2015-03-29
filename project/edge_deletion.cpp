@@ -275,7 +275,7 @@ static int delete_edges2(Graph &g){
     const Point2D &pnt_q = g.points[q];
     Point2D midpoint((pnt_p + pnt_q) / 2.0);
 
-    double last_dist = 0.1;
+    double last_dist = 0.0;
 
     vector<int> r_vec; r_vec.resize(10);
     for(int i = 0; i < 10; i++){    
@@ -288,7 +288,7 @@ static int delete_edges2(Graph &g){
       if (r == p || r == q) {i--; continue;}
       for(int x = 0; x < g.node_count(); x++){
 	if (!is_edge(r, x, g) || !are_compatible(p, q, r, x, g)) continue;
-	for(int y = 0; y < g.node_count(); y++){
+	for(int y = x + 1; y < g.node_count(); y++){
 	  if (!is_edge(r, y, g) || !are_compatible(p, q, r, y, g) || (p == x && q == y) || (p == y && q == x)) continue;
 	  if (g.int_lengths[x][y] + g.int_lengths[p][r] + g.int_lengths[q][r] >= g.int_lengths[p][q] + g.int_lengths[x][r] + g.int_lengths[y][r]){
 	    edge_pairs[i].push_back(Point2D(x,y));
