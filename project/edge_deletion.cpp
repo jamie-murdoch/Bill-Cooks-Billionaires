@@ -270,53 +270,73 @@ static int delete_edges2(Graph &g){
     int p = pq->end[0]; int q = pq->end[1];
     vector<vector<Point2D> > edge_pairs; edge_pairs.resize(g.node_count());
     if (pq->useless) continue;
-    bool found_violated_r_inequality = false;
-    for(int r = 0; r < g.node_count(); r++){
-      if (r == p || r == q) continue;
+
+    const Point2D &pnt_p = g.points[p];
+    const Point2D &pnt_q = g.points[q];
+    Point2D midpoint((pnt_p + pnt_q) / 2.0);
+
+    double last_dist = 0.1;
+
+    vector<int> r_vec; r_vec.resize(10);
+    for(int i = 0; i < 10; i++){    
+      double dist_to_midpoint;
+
+      int r = g.kd_tree->find_closest_point(midpoint, dist_to_midpoint, last_dist);
+      r_vec[i] = r;
+      last_dist = dist_to_midpoint;
+        
+      if (r == p || r == q) {i--; continue;}
       for(int x = 0; x < g.node_count(); x++){
 	if (!is_edge(r, x, g) || !are_compatible(p, q, r, x, g)) continue;
-	for(int y = x + 1; y < g.node_count(); y++){
-	  if (!is_edge(r, y, g) || !are_compatible(p, q, r, y, g) || y == x || (p == x && q == y) || (p == y && q == x)) continue;
+	for(int y = 0; y < g.node_count(); y++){
+	  if (!is_edge(r, y, g) || !are_compatible(p, q, r, y, g) || (p == x && q == y) || (p == y && q == x)) continue;
 	  if (g.int_lengths[x][y] + g.int_lengths[p][r] + g.int_lengths[q][r] >= g.int_lengths[p][q] + g.int_lengths[x][r] + g.int_lengths[y][r]){
-	    edge_pairs[r].push_back(Point2D(x,y));
+	    edge_pairs[i].push_back(Point2D(x,y));
 	    //found_violated_r_inequality = true;
 	  }
 	}
       }
-      if (edge_pairs[r].size() == 0){
+      if (edge_pairs[i].size() == 0){
 	pq->useless = true;
 	g.lengths[p][q] = numeric_limits<double>::infinity();
 	g.lengths[q][p] = numeric_limits<double>::infinity();
 	break;
       }
-    }
+    
 
-    if(!pq->useless){
-      for(int r = 0; r < g.node_count(); r++){
-	bool abort = false;
-	if(r == p || r == q) continue;
-	for(int s = 0; s < g.node_count(); s++){
-	  if(r == s || s == q || s == p) continue;
-	  bool all_break = false;
-	  for(int i = 0; i < edge_pairs[r].size(); i++){
-	    for(int j = 0; j < edge_pairs[s].size(); j++){
-	    
-	      if(g.int_lengths[p][q] - g.int_lengths[r][s] + g.int_lengths[s][edge_pairs[s][j][0]] - g.int_lengths[p][edge_pairs[s][j][0]] + g.int_lengths[r][edge_pairs[r][i][1]] - g.int_lengths[q][edge_pairs[r][i][1]] <= 0 ||
-		 g.int_lengths[p][q] - g.int_lengths[r][s] + g.int_lengths[r][edge_pairs[r][i][0]] - g.int_lengths[p][edge_pairs[r][i][0]] + g.int_lengths[s][edge_pairs[s][j][1]] - g.int_lengths[q][edge_pairs[s][j][1]] <= 0){
-		all_break = true; break;
+      bool abort = false;
+      for(int j = i - 1; j >= 0; j--){
+	int s = r_vec[j];
+
+	bool all_break = false;
+	for(int x = 0; x < edge_pairs[i].size(); x++){
+	  for(int y = 0; y < edge_pairs[j].size(); y++){
+
+	    // Sorry team... but I swear its better this way!
+	    if(g.int_lengths[p][q] - g.int_lengths[r][s] + g.int_lengths[s][edge_pairs[j][y][0]] - g.int_lengths[p][edge_pairs[j][y][0]] + g.int_lengths[r][edge_pairs[i][x][1]] - g.int_lengths[q][edge_pairs[i][x][1]] <= 0 ||
+	       g.int_lengths[p][q] - g.int_lengths[r][s] + g.int_lengths[r][edge_pairs[i][x][0]] - g.int_lengths[p][edge_pairs[i][x][0]] + g.int_lengths[s][edge_pairs[j][y][1]] - g.int_lengths[q][edge_pairs[j][y][1]] <= 0){
+	      if(g.int_lengths[p][q] - g.int_lengths[r][s] + g.int_lengths[s][edge_pairs[j][y][1]] - g.int_lengths[p][edge_pairs[j][y][1]] + g.int_lengths[r][edge_pairs[i][x][1]] - g.int_lengths[q][edge_pairs[i][x][1]] <= 0 ||
+	       g.int_lengths[p][q] - g.int_lengths[r][s] + g.int_lengths[r][edge_pairs[i][x][0]] - g.int_lengths[p][edge_pairs[i][x][0]] + g.int_lengths[s][edge_pairs[j][y][0]] - g.int_lengths[q][edge_pairs[j][y][0]] <= 0){
+		if(g.int_lengths[p][q] - g.int_lengths[r][s] + g.int_lengths[s][edge_pairs[j][y][1]] - g.int_lengths[p][edge_pairs[j][y][1]] + g.int_lengths[r][edge_pairs[i][x][0]] - g.int_lengths[q][edge_pairs[i][x][0]] <= 0 ||
+	       g.int_lengths[p][q] - g.int_lengths[r][s] + g.int_lengths[r][edge_pairs[i][x][1]] - g.int_lengths[p][edge_pairs[i][x][1]] + g.int_lengths[s][edge_pairs[j][y][0]] - g.int_lengths[q][edge_pairs[j][y][0]] <= 0){
+		  if(g.int_lengths[p][q] - g.int_lengths[r][s] + g.int_lengths[s][edge_pairs[j][y][0]] - g.int_lengths[p][edge_pairs[j][y][0]] + g.int_lengths[r][edge_pairs[i][x][0]] - g.int_lengths[q][edge_pairs[i][x][0]] <= 0 ||
+	       g.int_lengths[p][q] - g.int_lengths[r][s] + g.int_lengths[r][edge_pairs[i][x][1]] - g.int_lengths[p][edge_pairs[i][x][1]] + g.int_lengths[s][edge_pairs[j][y][1]] - g.int_lengths[q][edge_pairs[j][y][1]] <= 0){
+	      all_break = true; break;
+		  }
+		}
 	      }
 	    }
-	    if(all_break) break;
 	  }
-	  if(!all_break){
-	    pq->useless = true;
-	    g.lengths[p][q] = numeric_limits<double>::infinity();
-	    g.lengths[q][p] = numeric_limits<double>::infinity();
-	    abort = true; break;
-	  }
+	  if(all_break) break;
 	}
-	if(abort) break;
+	if(!all_break){
+	  pq->useless = true;
+	  g.lengths[p][q] = numeric_limits<double>::infinity();
+	  g.lengths[q][p] = numeric_limits<double>::infinity();
+	  abort = true; break;
+	}
       }
+      if(abort) break;
     }
   }
 
