@@ -243,11 +243,8 @@ static int delete_edges(Graph &g)
 		  if(!set_contains(*r, *s, q, p, l_q_r, l_p_r, g, delta_r[*r]) && !set_contains(*s, *r, q, p, l_q_s, l_p_s, g, delta_r[*s])){
                     
                     pq->useless = true;
-		    /*g.int_lengths[p][q] = numeric_limits<int>::max();
-		      g.int_lengths[q][p] = numeric_limits<int>::max();*/
-		    g.lengths[p][q] = numeric_limits<double>::infinity();
-		    g.lengths[q][p] = numeric_limits<double>::infinity();
-                    //cout << "Deleted edge: " << pq->end[0] << " " << pq->end[1] <<endl;
+		    g.useless[p][q] = true;
+		    g.useless[q][p] = true;
 
                     all_break = true;
                     break;
@@ -301,8 +298,8 @@ static int delete_edges2(Graph &g){
       }
       if (edge_pairs[i].size() == 0){
 	pq->useless = true;
-	g.lengths[p][q] = numeric_limits<double>::infinity();
-	g.lengths[q][p] = numeric_limits<double>::infinity();
+	g.useless[p][q] = true;
+	g.useless[q][p] = true;
 	break;
       }
     
@@ -353,7 +350,7 @@ bool are_compatible(int p, int q, int x, int y, Graph &g){
 }
 
 bool is_edge(int p, int q, Graph &g){
-  return g.lengths[p][q] != numeric_limits<double>::infinity();
+  return !g.useless[p][q];
 }
 
 bool set_contains(int r, int s, int q, int p, double lq, double lp, Graph & g, double deltar)

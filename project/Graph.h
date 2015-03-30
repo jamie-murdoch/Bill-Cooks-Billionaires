@@ -37,6 +37,7 @@ struct Graph {
     vector<Edge> edges;
     vector<vector<int> > int_lengths;
     vector<vector<double> > lengths;
+    vector<vector<bool> > useless;
 
     KdTree *kd_tree;
 
