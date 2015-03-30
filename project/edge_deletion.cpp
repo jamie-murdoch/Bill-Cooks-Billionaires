@@ -274,8 +274,8 @@ static int delete_edges2(Graph &g){
 
     double last_dist = 0.0;
 
-    vector<int> r_vec; r_vec.resize(10);
-    for(int i = 0; i < 10; i++){    
+    vector<int> r_vec; r_vec.resize(100);
+    for(int i = 0; i < 100; i++){    
       double dist_to_midpoint;
 
       int r = g.kd_tree->find_closest_point(midpoint, dist_to_midpoint, last_dist);
@@ -308,6 +308,8 @@ static int delete_edges2(Graph &g){
       for(int j = i - 1; j >= 0; j--){
 	int s = r_vec[j];
 
+	if(are_compatible(p, q, r, s, g)) continue;
+	
 	bool all_break = false;
 	for(int x = 0; x < edge_pairs[i].size(); x++){
 	  for(int y = 0; y < edge_pairs[j].size(); y++){
