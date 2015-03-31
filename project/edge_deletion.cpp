@@ -205,7 +205,9 @@ static int delete_edges(Graph &g)
         delta_r.push_back(0.5 + *min_element(g.int_lengths[i].begin(), g.int_lengths[i].end()) - 1);
     }
 
-    for(vector<Edge>::iterator pq = g.edges.begin(); pq != g.edges.end(); ++pq){
+#pragma omp parallel for schedule(dynamic)
+    for(int h = 0; h < g.edges.size(); h++){
+        Edge *pq = &g.edges[h];
         int p = pq->end[0];
         int q = pq->end[1];
         
