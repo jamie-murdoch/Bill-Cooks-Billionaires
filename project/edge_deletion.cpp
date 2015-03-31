@@ -263,9 +263,13 @@ static int delete_edges(Graph &g)
 
 
 static int delete_edges2(Graph &g){
-  for(vector<Edge>::iterator pq = g.edges.begin(); pq != g.edges.end(); ++pq){
+  const int num_points = 500;
+
+#pragma omp parallel for schedule(dynamic)
+  for(int h = 0; h < g.edges.size(); h++){
+    Edge *pq = &g.edges[h];
     int p = pq->end[0]; int q = pq->end[1];
-    vector<vector<Point2D> > edge_pairs; edge_pairs.resize(g.node_count());
+    vector<vector<Point2D> > edge_pairs; edge_pairs.resize(num_points);
     if (pq->useless) continue;
 
     const Point2D &pnt_p = g.points[p];
@@ -274,8 +278,8 @@ static int delete_edges2(Graph &g){
 
     double last_dist = 0.0;
 
-    vector<int> r_vec; r_vec.resize(100);
-    for(int i = 0; i < 100; i++){    
+    vector<int> r_vec; r_vec.resize(num_points);
+    for(int i = 0; i < num_points; i++){    
       double dist_to_midpoint;
 
       int r = g.kd_tree->find_closest_point(midpoint, dist_to_midpoint, last_dist);
@@ -286,7 +290,8 @@ static int delete_edges2(Graph &g){
 
       vector<int> compatible_points;
       for(int x = 0; x < g.node_count(); x++)
-	if(is_edge(r, x, g) && are_compatible(p, q, r, x, g)) compatible_points.push_back(x);
+	if(x != p && x != q && is_edge(r, x, g) && are_compatible(p, q, r, x, g)) compatible_points.push_back(x);
+      
       for(vector<int>::iterator x = compatible_points.begin(); x != compatible_points.end(); ++x){
 	for(vector<int>::iterator y = x; y != compatible_points.end(); ++y){
 	  if ((p == *x && q == *y) || (p == *y && q == *x)) continue;
@@ -308,12 +313,15 @@ static int delete_edges2(Graph &g){
       for(int j = i - 1; j >= 0; j--){
 	int s = r_vec[j];
 
-	if(are_compatible(p, q, r, s, g)) continue;
+	//	if(are_compatible(p, q, r, s, g)) continue;
 	
 	bool all_break = false;
 	for(int x = 0; x < edge_pairs[i].size(); x++){
 	  for(int y = 0; y < edge_pairs[j].size(); y++){
-
+	    if(edge_pairs[j][y][0] == r || edge_pairs[j][y][1] == r || edge_pairs[i][x][0] == s || edge_pairs[i][x][1] == s){
+	      all_break = true; break; // main EE theorem can't be used here
+	    }
+	      
 	    // Sorry team... but I swear its better this way!
 	    if(g.int_lengths[p][q] - g.int_lengths[r][s] + g.int_lengths[s][edge_pairs[j][y][0]] - g.int_lengths[p][edge_pairs[j][y][0]] + g.int_lengths[r][edge_pairs[i][x][1]] - g.int_lengths[q][edge_pairs[i][x][1]] <= 0 ||
 	       g.int_lengths[p][q] - g.int_lengths[r][s] + g.int_lengths[r][edge_pairs[i][x][0]] - g.int_lengths[p][edge_pairs[i][x][0]] + g.int_lengths[s][edge_pairs[j][y][1]] - g.int_lengths[q][edge_pairs[j][y][1]] <= 0){
