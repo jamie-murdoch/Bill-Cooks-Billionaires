@@ -31,14 +31,14 @@ bool is_edge(int p, int q, Graph &g);
 //bool set_contains(int s, vector<int> R1, vector<int> R2);
 bool set_contains(int r, int s, int q, int p, double lq, double lp, Graph & g, double deltar);
 
-
-bool compare_results = true;
+bool compare_results = false;
 
 int main(int argc, char* argv[]) {
     //Initialize the problem
     //Must always pass in a .tsp file in first arg for now
+    char *input_file = argv[1];
     cout << "Loading graph..." << flush;
-    Graph graph(argv[1]);
+    Graph graph(input_file);
     cout << "done." << endl;
 
     #if USE_GRAPHICS
@@ -113,6 +113,18 @@ int main(int argc, char* argv[]) {
             cout << "Passed the test. Optimal tour contains none of the removed edges." << endl;
         }
     }
+
+    //Save files
+    string pruned_fnam = string(input_file) + "-pruned.edg";
+    string orig_fnam = string(input_file) + "-orig.edg";
+    //strip path
+    pruned_fnam = pruned_fnam.substr(pruned_fnam.find_last_of("\\/") + 1, pruned_fnam.size());
+    orig_fnam = orig_fnam.substr(orig_fnam.find_last_of("\\/") + 1, orig_fnam.size());
+
+    graph.save_edges(pruned_fnam, false);
+    graph.save_edges(orig_fnam, true);
+
+    cout << "Saved edge files to " << pruned_fnam << " and " << orig_fnam << endl;
 
     #if USE_GRAPHICS
         getchar();
@@ -261,7 +273,7 @@ static int delete_edges(Graph &g)
 
 
 static int delete_edges2(Graph &g){
-  const int num_points = 50;
+  int num_points = min(50, g.node_count() - 2);
 
 #pragma omp parallel for schedule(dynamic)
   for(int h = 0; h < g.edges.size(); h++){

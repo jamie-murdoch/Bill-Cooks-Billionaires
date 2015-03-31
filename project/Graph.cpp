@@ -120,3 +120,33 @@ void Graph::get_bounding_box(double &minX, double &minY, double &maxX, double &m
 }
 
 
+void Graph::save_edges(string fname, bool output_useless) {
+    ofstream fout;
+    fout.open(fname);
+
+    fout << node_count() << " ";
+
+    if(output_useless) {
+        fout << edge_count() << endl;
+    }
+    else {
+        fout << edge_count() - count_useless() << endl;
+    }
+
+    for(int i = 0; i < edge_count(); i++) {
+        Edge &e = edges[i];
+        if(!e.useless || output_useless) {
+            fout << e.end[0] << " " << e.end[1] << " " << e.int_len << endl;
+        }
+    }
+
+    fout.close();
+}
+
+
+
+
+
+
+
+
