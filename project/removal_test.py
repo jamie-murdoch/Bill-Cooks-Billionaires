@@ -21,7 +21,7 @@ def main():
 		print "Try again!"
 
 	print
-	print "Removed a total of %d edges out of %d. (%%%f)" % (useless_edge_count, total_edge_count, useless_edge_count/float(total_edge_count) * 100)
+	print "Removed a total of %d edges out of %d. (%f%%)" % (useless_edge_count, total_edge_count, useless_edge_count/float(total_edge_count) * 100)
 	print "There are %d edges remaining." % (total_edge_count - useless_edge_count, )
 
 def run_solvers(problem_file):
