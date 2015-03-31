@@ -159,21 +159,16 @@ double compute_lemma_8(int p, int q, int r, double deltar, double lp, double lq,
   return deltar - 1 - sqrt(g.lengths[p][q] * g.lengths[p][q] + lq * lq - 2 * g.lengths[p][q]  * lq * (cos_eps_q * cos_theta_q - sqrt(1 - cos_eps_q * cos_eps_q) * sqrt(1 - cos_theta_q * cos_theta_q)));
 }
 
-void find_potential(Graph &g, int p, int q, const vector<double> &delta_r, vector<int> &potential_points) {
+int find_potential(Graph &g, int p, int q, const vector<double> &delta_r, int &i, double &last_dist) {
     const Point2D &pnt_p = g.points[p];
     const Point2D &pnt_q = g.points[q];
     Point2D midpoint((pnt_p + pnt_q) / 2.0);
 
-    int num_potential = 0;
-    double last_dist = 0.0;
-
-    for(int i = 0; i < 10; i++){    
+    for(int k = i; k < 10; i++, k++){    
         double dist_to_midpoint;
 
         int r = g.kd_tree->find_closest_point(midpoint, dist_to_midpoint, last_dist);
         last_dist = dist_to_midpoint;
-        
-        const Point2D &pnt_r = g.points[r];
 
         if(r != p && r != q){
             double l_p = delta_r[r] + g.int_lengths[p][q] - g.int_lengths[q][r] - 1;
@@ -185,16 +180,12 @@ void find_potential(Graph &g, int p, int q, const vector<double> &delta_r, vecto
                 double gamma_r = acos(1 - pow(l_p + l_q - g.int_lengths[p][q] + 0.5,2) / (2 * delta_r[r] * delta_r[r]));
 
                 if(gamma_r > max(alpha_p,alpha_q)){
-                    potential_points.push_back(r);
-                    num_potential++;
-
-                    if(num_potential >= 10) {
-                        break; 
-                    }
+    		    return r;
                 }
             }
         }
     }
+    return -1;
 
 }
 static int delete_edges(Graph &g)
@@ -205,7 +196,7 @@ static int delete_edges(Graph &g)
         delta_r.push_back(0.5 + *min_element(g.int_lengths[i].begin(), g.int_lengths[i].end()) - 1);
     }
 
-#pragma omp parallel for schedule(dynamic)
+    #pragma omp parallel for schedule(dynamic)
     for(int h = 0; h < g.edges.size(); h++){
         Edge *pq = &g.edges[h];
         int p = pq->end[0];
@@ -214,47 +205,45 @@ static int delete_edges(Graph &g)
         vector<int> potential_points;
         potential_points.reserve(10);
 
-        find_potential(g, p, q, delta_r, potential_points);
+	vector<double> eq_19, eq_20;
+    	eq_19.reserve(10);
+        eq_20.reserve(10);
+	
+	int i = 0;
+	double last_dist = 0.0;
+	for(int u = 0; u < 10; u++){
+	  int r = find_potential(g, p, q, delta_r, u, last_dist);
+	  // cout << "i = " << i << " r = " << new_r << " last_dist = " << last_dist << " potential points size = " << potential_points.size() << endl;
+	  if(r != -1) {potential_points.push_back(r); i++;}
+	  else break; 
+   
+	  double l_p = delta_r[r] + g.int_lengths[p][q] - g.int_lengths[q][r] - 1, l_q = delta_r[r] + g.int_lengths[p][q] - g.int_lengths[p][r] - 1;
+	  eq_19.push_back(compute_lemma_8(p, q, r, delta_r[r], l_p, l_q, g));
+	  eq_20.push_back(compute_lemma_8(q, p, r, delta_r[r], l_q, l_p, g));
+        
 
-        // Compute eq_19, eq_20 for those chosen edges
-        vector<double> eq_19, eq_20;
-    	eq_19.resize(potential_points.size());
-        eq_20.resize(potential_points.size()); 
+	  // check to see if we can eliminate the edge
+	  bool all_break = false;
 
-        int i = 0;
-        for(vector<int>::iterator it = potential_points.begin(); it != potential_points.end(); ++it, i++){
-            double l_p = delta_r[*it] + g.int_lengths[p][q] - g.int_lengths[q][*it] - 1, l_q = delta_r[*it] + g.int_lengths[p][q] - g.int_lengths[p][*it] - 1;
-            eq_19[i] = compute_lemma_8(p, q, *it, delta_r[*it], l_p, l_q, g);
-
-            eq_20[i] = compute_lemma_8(q, p, *it, delta_r[*it], l_q, l_p, g);
-        }
-
-        // check to see if we can eliminate the edge
-        bool all_break = false;
-        int j;
-        i = 0;
-
-        for(vector<int>::iterator r = potential_points.begin(); r != potential_points.end(); ++r, i++){
-            j = 0;
-
-            for(vector<int>::iterator s = potential_points.begin(); s != potential_points.end(); ++s, j++){
-                if(*s != *r && g.int_lengths[p][q] - g.int_lengths[*r][*s] + eq_19[j] + eq_20[i] > 0
-                    && g.int_lengths[p][q] - g.int_lengths[*r][*s] + eq_19[i] + eq_20[j] > 0){
-		  double l_p_s = delta_r[*s] + g.int_lengths[p][q] - g.int_lengths[q][*s] - 1, l_q_s = delta_r[*s] + g.int_lengths[p][q] - g.int_lengths[p][*s] - 1; // we could probably cache these... 
-		  double l_p_r = delta_r[*r] + g.int_lengths[p][q] - g.int_lengths[q][*r] - 1, l_q_r = delta_r[*r] + g.int_lengths[p][q] - g.int_lengths[p][*r] - 1; // we could probably cache these...
-		  if(!set_contains(*r, *s, q, p, l_q_r, l_p_r, g, delta_r[*r]) && !set_contains(*s, *r, q, p, l_q_s, l_p_s, g, delta_r[*s])){
+	  for(int j = 0; j < i; j++){
+	    int s = potential_points[j];
+	    if(g.int_lengths[p][q] - g.int_lengths[r][s] + eq_19[j] + eq_20[i] > 0
+	       && g.int_lengths[p][q] - g.int_lengths[r][s] + eq_19[i] + eq_20[j] > 0){
+	      double l_p_s = delta_r[s] + g.int_lengths[p][q] - g.int_lengths[q][s] - 1, l_q_s = delta_r[s] + g.int_lengths[p][q] - g.int_lengths[p][s] - 1; // we could probably cache these 
+	      double l_p_r = delta_r[r] + g.int_lengths[p][q] - g.int_lengths[q][r] - 1, l_q_r = delta_r[r] + g.int_lengths[p][q] - g.int_lengths[p][r] - 1; // we could probably cache these
+	      
+	      if(!set_contains(r, s, q, p, l_q_r, l_p_r, g, delta_r[r]) && !set_contains(s, r, q, p, l_q_s, l_p_s, g, delta_r[s])){
                     
-                    pq->useless = true;
-		    g.useless[p][q] = true;
-		    g.useless[q][p] = true;
+		pq->useless = true;
+		g.useless[p][q] = true;
+		g.useless[q][p] = true;
 
-                    all_break = true;
-                    break;
-		  }
-		}
-            }
-
-            if(all_break) break;
+		all_break = true;
+		break;
+	      }
+	    }
+	  }
+	  if(all_break) break;
         }
     }
 
@@ -265,7 +254,7 @@ static int delete_edges(Graph &g)
 
 
 static int delete_edges2(Graph &g){
-  const int num_points = 500;
+  const int num_points = 50;
 
 #pragma omp parallel for schedule(dynamic)
   for(int h = 0; h < g.edges.size(); h++){
