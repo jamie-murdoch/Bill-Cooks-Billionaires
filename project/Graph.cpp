@@ -122,7 +122,7 @@ void Graph::get_bounding_box(double &minX, double &minY, double &maxX, double &m
 
 void Graph::save_edges(string fname, bool output_useless) {
     ofstream fout;
-    fout.open(fname);
+    fout.open(fname.c_str());
 
     fout << node_count() << " ";
 
