@@ -262,10 +262,11 @@ static int delete_edges(Graph &g)
 
 
 
-static int delete_edges2(Graph &g){
+static int delete_edges2(Graph &g){  
+  const int num_points = 20; 
   for(vector<Edge>::iterator pq = g.edges.begin(); pq != g.edges.end(); ++pq){
     int p = pq->end[0]; int q = pq->end[1];
-    vector<vector<Point2D> > edge_pairs; edge_pairs.resize(g.node_count());
+    vector<vector<Point2D> > edge_pairs; edge_pairs.resize(num_points);
     if (pq->useless) continue;
 
     const Point2D &pnt_p = g.points[p];
@@ -274,8 +275,8 @@ static int delete_edges2(Graph &g){
 
     double last_dist = 0.0;
 
-    vector<int> r_vec; r_vec.resize(100);
-    for(int i = 0; i < 100; i++){    
+    vector<int> r_vec; r_vec.resize(num_points);
+    for(int i = 0; i < num_points; i++){    
       double dist_to_midpoint;
 
       int r = g.kd_tree->find_closest_point(midpoint, dist_to_midpoint, last_dist);
@@ -283,12 +284,59 @@ static int delete_edges2(Graph &g){
       last_dist = dist_to_midpoint;
 
       if (r == p || r == q) {i--; continue;}
+    }
 
-      vector<int> compatible_points;
+    vector<vector<int> > compatible_points; compatible_points.resize(num_points);
+    for(int i = 0; i < num_points; i++){
       for(int x = 0; x < g.node_count(); x++)
-	if(is_edge(r, x, g) && are_compatible(p, q, r, x, g)) compatible_points.push_back(x);
-      for(vector<int>::iterator x = compatible_points.begin(); x != compatible_points.end(); ++x){
-	for(vector<int>::iterator y = x; y != compatible_points.end(); ++y){
+	if(x != p && x != q && is_edge(r_vec[i], x, g) && are_compatible(p, q, r_vec[i], x, g)) compatible_points[i].push_back(x);
+    }
+    
+    for(int i = 0; i < num_points; i++){
+      int r = r_vec[i]; 
+
+      vector<double> metric_excess; metric_excess.resize(num_points);
+      vector<bool> computed_metric_excess; computed_metric_excess.resize(num_points, false);
+      for(int j = 0; j < 2; j++){
+	int end = pq->end[j];
+	int other_end = pq->end[(j + 1) % 2];
+
+	if(!is_edge(r, end, g)) continue;
+	
+	for(vector<int>::iterator x = compatible_points[i].begin(); x != compatible_points[i].end(); ++x){
+	  bool ignore_rx = false;
+	  if(g.int_lengths[*x][end] + g.int_lengths[p][r] + g.int_lengths[q][r] < g.int_lengths[p][q] + g.int_lengths[*x][r] + g.int_lengths[end][r]) ignore_rx = true;
+	  for(int z = 0; z < num_points && !ignore_rx; z++){
+	    if(z == i) continue;
+	    if(!computed_metric_excess[z]){
+	      double current_min = numeric_limits<double>::infinity();
+	      for(vector<int>::iterator u = compatible_points[z].begin(); u != compatible_points[z].end(); ++u){
+		if(*u == p || *u == q) continue;
+	      
+		for(vector<int>::iterator v = u; v != compatible_points[z].end(); v++){
+		  if(*v == p || *v == q) continue;
+		
+		  double current_val = max(g.int_lengths[*u][r_vec[z]] + g.int_lengths[r_vec[z]][p] - g.int_lengths[*u][p], max(g.int_lengths[*v][r_vec[z]] + g.int_lengths[r_vec[z]][p] - g.int_lengths[*v][p], max(g.int_lengths[*u][r_vec[z]] + g.int_lengths[r_vec[z]][q] - g.int_lengths[*u][q], g.int_lengths[*v][r_vec[z]] + g.int_lengths[r_vec[z]][q] - g.int_lengths[*v][q])));
+
+		  if(current_val < current_min) current_min = current_val;
+		}
+	      }
+	      computed_metric_excess[z] = true;
+	      metric_excess[z] = current_min;
+	    }
+	    if(g.int_lengths[*x][other_end] + g.int_lengths[r][r_vec[z]] + g.int_lengths[r_vec[z]][end] - metric_excess[z] < g.int_lengths[p][q] + g.int_lengths[r][*x]){
+	      ignore_rx = true;
+	      }
+	  }
+	  if(!ignore_rx) edge_pairs[i].push_back(Point2D(end, *x));
+	}
+      }
+    
+      // compute metric excess
+
+      // Loop over some number of z's, check if we can remove edge pairs of the form pr, rx
+      for(vector<int>::iterator x = compatible_points[i].begin(); x != compatible_points[i].end(); ++x){
+	for(vector<int>::iterator y = x; y != compatible_points[i].end(); ++y){
 	  if ((p == *x && q == *y) || (p == *y && q == *x)) continue;
 	  if (g.int_lengths[*x][*y] + g.int_lengths[p][r] + g.int_lengths[q][r] >= g.int_lengths[p][q] + g.int_lengths[*x][r] + g.int_lengths[*y][r]){
 	    edge_pairs[i].push_back(Point2D(*x,*y));
