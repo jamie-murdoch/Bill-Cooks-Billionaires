@@ -34,6 +34,7 @@ struct Graph {
     void get_bounding_box(double &minX, double &minY, double &maxX, double &maxY) const;
 
     void save_edges(string fname, bool output_useless = true);
+    void save_useless(string fname);
 
     vector<Point2D> points;
     vector<Edge> edges;

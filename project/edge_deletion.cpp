@@ -116,13 +116,16 @@ int main(int argc, char* argv[]) {
 
     //Save files
     string pruned_fnam = string(input_file) + "-pruned.edg";
+    string useless_fnam = string(input_file) + "-useless.edg";
     string orig_fnam = string(input_file) + "-orig.edg";
     //strip path
     pruned_fnam = pruned_fnam.substr(pruned_fnam.find_last_of("\\/") + 1, pruned_fnam.size());
     orig_fnam = orig_fnam.substr(orig_fnam.find_last_of("\\/") + 1, orig_fnam.size());
+    useless_fnam = useless_fnam.substr(useless_fnam.find_last_of("\\/") + 1, useless_fnam.size());
 
     graph.save_edges(pruned_fnam, false);
     graph.save_edges(orig_fnam, true);
+    graph.save_useless(useless_fnam);
 
     cout << "Saved edge files to " << pruned_fnam << " and " << orig_fnam << endl;
 
