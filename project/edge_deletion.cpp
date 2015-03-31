@@ -273,6 +273,7 @@ static int delete_edges(Graph &g)
 
 
 static int delete_edges2(Graph &g){
+
   int num_points = min(50, g.node_count() - 2);
 
 #pragma omp parallel for schedule(dynamic)
@@ -300,7 +301,7 @@ static int delete_edges2(Graph &g){
 
       vector<int> compatible_points;
       for(int x = 0; x < g.node_count(); x++)
-	if(x != p && x != q && is_edge(r, x, g) && are_compatible(p, q, r, x, g)) compatible_points.push_back(x);
+	if(is_edge(r, x, g) && are_compatible(p, q, r, x, g)) compatible_points.push_back(x);
       
       for(vector<int>::iterator x = compatible_points.begin(); x != compatible_points.end(); ++x){
 	for(vector<int>::iterator y = x; y != compatible_points.end(); ++y){
