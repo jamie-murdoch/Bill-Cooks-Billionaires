@@ -227,8 +227,14 @@ static int delete_edges(Graph &g)
 
 	  for(int j = 0; j < i; j++){
 	    int s = potential_points[j];
-	    if(g.int_lengths[p][q] - g.int_lengths[r][s] + eq_19[j] + eq_20[i] > 0
-	       && g.int_lengths[p][q] - g.int_lengths[r][s] + eq_19[i] + eq_20[j] > 0){
+
+	    // each of these clauses corresponds to the main EE conditions under some re-ordering of (S_1, S_2), (R_1, R_2). 
+	    if((g.int_lengths[p][q] - g.int_lengths[r][s] + eq_19[j] + eq_20[i] > 0
+		&& g.int_lengths[p][q] - g.int_lengths[r][s] + eq_19[i] + eq_20[j] > 0) ||
+	       (g.int_lengths[p][q] - g.int_lengths[r][s] + eq_20[j] + eq_20[i] > 0
+	       && g.int_lengths[p][q] - g.int_lengths[r][s] + eq_19[i] + eq_19[j] > 0) ||
+	       (g.int_lengths[p][q] - g.int_lengths[r][s] + eq_20[j] + eq_19[i] > 0
+	       && g.int_lengths[p][q] - g.int_lengths[r][s] + eq_20[i] + eq_19[j] > 0)){
 	      double l_p_s = delta_r[s] + g.int_lengths[p][q] - g.int_lengths[q][s] - 1, l_q_s = delta_r[s] + g.int_lengths[p][q] - g.int_lengths[p][s] - 1; // we could probably cache these 
 	      double l_p_r = delta_r[r] + g.int_lengths[p][q] - g.int_lengths[q][r] - 1, l_q_r = delta_r[r] + g.int_lengths[p][q] - g.int_lengths[p][r] - 1; // we could probably cache these
 	      
