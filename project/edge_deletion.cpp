@@ -159,12 +159,12 @@ double compute_lemma_8(int p, int q, int r, double deltar, double lp, double lq,
   return deltar - 1 - sqrt(g.lengths[p][q] * g.lengths[p][q] + lq * lq - 2 * g.lengths[p][q]  * lq * (cos_eps_q * cos_theta_q - sqrt(1 - cos_eps_q * cos_eps_q) * sqrt(1 - cos_theta_q * cos_theta_q)));
 }
 
-int find_potential(Graph &g, int p, int q, const vector<double> &delta_r, int &i, double &last_dist) {
+int find_potential(Graph &g, int p, int q, const vector<double> &delta_r, int &i, double &last_dist, const int num_points) {
     const Point2D &pnt_p = g.points[p];
     const Point2D &pnt_q = g.points[q];
     Point2D midpoint((pnt_p + pnt_q) / 2.0);
 
-    for(int k = i; k < 10; i++, k++){    
+    for(int k = i; k < num_points; i++, k++){    
         double dist_to_midpoint;
 
         int r = g.kd_tree->find_closest_point(midpoint, dist_to_midpoint, last_dist);
@@ -196,23 +196,24 @@ static int delete_edges(Graph &g)
         delta_r.push_back(0.5 + *min_element(g.int_lengths[i].begin(), g.int_lengths[i].end()) - 1);
     }
 
-    #pragma omp parallel for schedule(dynamic)
+    const int num_points = 10;
+    //#pragma omp parallel for schedule(dynamic)
     for(int h = 0; h < g.edges.size(); h++){
         Edge *pq = &g.edges[h];
         int p = pq->end[0];
         int q = pq->end[1];
         
         vector<int> potential_points;
-        potential_points.reserve(10);
+        potential_points.reserve(num_points);
 
 	vector<double> eq_19, eq_20;
-    	eq_19.reserve(10);
-        eq_20.reserve(10);
+    	eq_19.reserve(num_points);
+        eq_20.reserve(num_points);
 	
-	int i = 0;
+	int i = -1;
 	double last_dist = 0.0;
-	for(int u = 0; u < 10; u++){
-	  int r = find_potential(g, p, q, delta_r, u, last_dist);
+	for(int u = 0; u < num_points; u++){
+	  int r = find_potential(g, p, q, delta_r, u, last_dist, num_points);
 	  // cout << "i = " << i << " r = " << new_r << " last_dist = " << last_dist << " potential points size = " << potential_points.size() << endl;
 	  if(r != -1) {potential_points.push_back(r); i++;}
 	  else break; 
