@@ -14,7 +14,7 @@
 #include "Graph.h"
 #include "TSP_Solver.h"
 
-#define USE_GRAPHICS false
+#define USE_GRAPHICS true
 
 
 #if USE_GRAPHICS
@@ -107,26 +107,26 @@ int main(int argc, char* argv[]) {
 
     fout.close();
 
-    // string pruned_fnam = string(input_file) + "-pruned.edg";
-    // string useless_fnam = string(input_file) + "-useless.edg";
-    // string orig_fnam = string(input_file) + "-orig.edg";
+    string pruned_fnam = string(input_file) + "-pruned1+2.edg";
+    string useless_fnam = string(input_file) + "-useless1+2.edg";
+    string orig_fnam = string(input_file) + "-orig1+2.edg";
 
-    // pruned_fnam = pruned_fnam.substr(pruned_fnam.find_last_of("\\/") + 1, pruned_fnam.size());
-    // orig_fnam = orig_fnam.substr(orig_fnam.find_last_of("\\/") + 1, orig_fnam.size());
-    // useless_fnam = useless_fnam.substr(useless_fnam.find_last_of("\\/") + 1, useless_fnam.size());
+    pruned_fnam = pruned_fnam.substr(pruned_fnam.find_last_of("\\/") + 1, pruned_fnam.size());
+    orig_fnam = orig_fnam.substr(orig_fnam.find_last_of("\\/") + 1, orig_fnam.size());
+    useless_fnam = useless_fnam.substr(useless_fnam.find_last_of("\\/") + 1, useless_fnam.size());
 
-    // cout << "Saving output..." << flush;
-    // graph.save_edges(pruned_fnam, false);
-    // graph.save_edges(orig_fnam, true);
-    // graph.save_useless(useless_fnam);
-    // cout << "Done." << endl;
+    cout << "Saving output..." << flush;
+    graph.save_edges(pruned_fnam, false);
+    graph.save_edges(orig_fnam, true);
+    graph.save_useless(useless_fnam);
+    cout << "Done." << endl;
 
     //Visualizations
     #if USE_GRAPHICS
         setup_sdl(graph);
         draw_points(graph.points, 0, 0, 255, true);
-       // draw_edges(graph, 0, 0, 0, true);
-       // draw_edges(graph, 0, 255, 0, false);
+        draw_edges(graph, 0, 0, 0, true);
+        draw_edges(graph, 0, 255, 0, false);
        // draw_edges(graph, 255, 0, 0, false, &tour_indices);
         //draw_tree(graph.kd_tree->mRoot);
         SDL_RenderPresent(renderer);
@@ -279,7 +279,7 @@ static int delete_edges(Graph &g)
 
 static int delete_edges2(Graph &g){
 
-  int num_points = min(10, g.node_count() - 2);
+  int num_points = min(35, g.node_count() - 2);
 
 #pragma omp parallel for schedule(dynamic)
   for(int h = 0; h < g.edges.size(); h++){
