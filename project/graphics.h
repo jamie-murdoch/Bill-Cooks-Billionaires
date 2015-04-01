@@ -91,8 +91,8 @@ inline void draw_fill_circle(int cx, int cy, int radius)
  
         for (; x <= cx + dx; x++)
         {
-        	SDL_RenderDrawPoint(renderer, x, (int)(cy + r - dy));
-        	SDL_RenderDrawPoint(renderer, x, (int)(cy - r + dy));
+            SDL_RenderDrawPoint(renderer, x, (int)(cy + r - dy));
+            SDL_RenderDrawPoint(renderer, x, (int)(cy - r + dy));
             // *(Uint32 *)target_pixel_a = pixel;
             // *(Uint32 *)target_pixel_b = pixel;
             // target_pixel_a += BPP;
@@ -132,56 +132,85 @@ inline void setup_sdl(const Graph &graph) {
 }
 
 inline int to_screen(double v) {
-	return nint((v - minOffset)*width/scale);
+    return nint((v - minOffset)*width/scale);
 }
 inline SDL_Point to_sdl_point(const Point2D &point) {
-	SDL_Point sdl_p = {to_screen(point.x()), to_screen(point.y())};
-	return sdl_p; 
+    SDL_Point sdl_p = {to_screen(point.x()), to_screen(point.y())};
+    return sdl_p; 
 }
 
 
 inline void draw_points(const vector<Point2D> &points, int r, int g, int b, bool use_labels = true) {
-	int radius = 3;
-	char label[100];
-	SDL_SetRenderDrawColor(renderer, r, g, b, 255);
-	for(int i = 0; i < (int)points.size(); i++) {
-		SDL_Point p = to_sdl_point(points[i]);
-		draw_circle(p.x, p.y, radius);
+    int radius = 3;
+    char label[100];
+    SDL_SetRenderDrawColor(renderer, r, g, b, 255);
+    for(int i = 0; i < (int)points.size(); i++) {
+        SDL_Point p = to_sdl_point(points[i]);
+        draw_circle(p.x, p.y, radius);
 
-	}
+    }
 
-	if(use_labels) {
-		for(int i = 0; i < (int)points.size(); i++) {
-			SDL_Point p = to_sdl_point(points[i]);
-			sprintf(label,"%d",i);
-			SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
-			SDLTest_DrawString(renderer, p.x + radius, p.y - radius*4, label);
-		}
-	}
+    if(use_labels) {
+        for(int i = 0; i < (int)points.size(); i++) {
+            SDL_Point p = to_sdl_point(points[i]);
+            sprintf(label,"%d",i);
+            SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
+            SDLTest_DrawString(renderer, p.x + radius, p.y - radius*4, label);
+        }
+    }
 }
 
 inline void draw_tree(KdNode *node, int minX = 0, int minY = 0, int maxX = width, int maxY = height) {
-	if(!node->loson) return;
+    if(!node->loson) return;
 
- 	//x draw vertical
- 	if(node->cutdim == 0) {
- 		int x = to_screen(node->cutval);
+    //x draw vertical
+    if(node->cutdim == 0) {
+        int x = to_screen(node->cutval);
 
- 		SDL_RenderDrawLine(renderer, x, minY, x, maxY);
+        SDL_RenderDrawLine(renderer, x, minY, x, maxY);
 
- 		draw_tree(node->loson, minX, minY, x, maxY);
- 		draw_tree(node->hison, x, minY, maxX, maxY);
- 	}
+        draw_tree(node->loson, minX, minY, x, maxY);
+        draw_tree(node->hison, x, minY, maxX, maxY);
+    }
 
- 	//y horiz
- 	if(node->cutdim == 1) {
- 		int y = to_screen(node->cutval);
+    //y horiz
+    if(node->cutdim == 1) {
+        int y = to_screen(node->cutval);
 
- 		SDL_RenderDrawLine(renderer, minX, y, maxX, y);
+        SDL_RenderDrawLine(renderer, minX, y, maxX, y);
 
- 		draw_tree(node->loson, minX, minY, maxX, y);
- 		draw_tree(node->hison, minX, y, maxX, maxY);
- 	}
+        draw_tree(node->loson, minX, minY, maxX, y);
+        draw_tree(node->hison, minX, y, maxX, maxY);
+    }
+}
+
+inline void draw_edges(const Graph &graph, int r, int g, int b, bool show_useless, vector<int> *indices = NULL) {
+    SDL_SetRenderDrawColor(renderer, r, g, b, 255);
+
+    int n;
+    if(indices) {
+        n = (*indices).size();
+    } else {
+        n = graph.edge_count();
+    }
+
+    for(int i = 0; i < n; i++) {
+        int index;
+        if(indices) {
+            index = (*indices)[i];
+        } else {
+            index = i;
+        }
+
+        const Edge &e = graph.edges[index];
+
+        if(!e.useless || show_useless) {
+            SDL_Point p1 = to_sdl_point(graph.points[e.end[0]]);
+            SDL_Point p2 = to_sdl_point(graph.points[e.end[1]]);
+
+            SDL_RenderDrawLine(renderer, p1.x, p1.y, p2.x, p2.y);
+        }
+    }
 }
 
 #endif

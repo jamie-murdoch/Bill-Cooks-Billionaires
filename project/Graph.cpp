@@ -63,7 +63,7 @@ Graph::Graph(const char *tsp_file) : kd_tree(NULL) {
     for(int i = 0; i < num_points; i++) {
         int_lengths[i].resize(num_points,  numeric_limits<int>::max());
         lengths[i].resize(num_points, numeric_limits<double>::infinity());
-	useless[i].resize(num_points, false);
+	    useless[i].resize(num_points, false);
     }
 
     for(int i = 0; i < num_points; i++) {

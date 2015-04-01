@@ -18,6 +18,19 @@ struct Edge {
     bool useless;
 };
 
+struct EdgeSet {
+    Edge& operator[](size_t idx) 
+    {
+        return edges[idx];
+    }
+
+    int edge_count() const {
+        return edges.size() * edges.size();
+    }
+
+    vector<vector<Edge> > edges;
+};
+
 struct Graph {
     Graph() : kd_tree(NULL) {}
     Graph(const char *tsp_file);
@@ -43,7 +56,6 @@ struct Graph {
     vector<vector<bool> > useless;
 
     KdTree *kd_tree;
-
 };
 
 

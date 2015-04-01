@@ -30,7 +30,6 @@ bool are_compatible(int p, int q, int x, int y, Graph &g);
 bool is_edge(int p, int q, Graph &g);
 bool set_contains(int r, int s, int q, int p, double lq, double lp, Graph & g, double deltar);
 
-bool compare_results = false;
 
 // //Test code for Kd_tree
 // for(int j = 0; j < 1000; j++) {
@@ -66,58 +65,36 @@ int main(int argc, char* argv[]) {
     Graph graph(input_file);
     cout << "done." << endl;
 
-    #if USE_GRAPHICS
-        setup_sdl(graph);
-        draw_points(graph.points, 0, 0, 255, true);
-        //draw_tree(graph.kd_tree->mRoot);
-        SDL_RenderPresent(renderer);
-    #endif
-
-    cout << "Entering delete graph" << endl;
-
+    //Run Step 1
+    cout << "Running Step 1..." << flush;
     double running_time = CO759_zeit();
     delete_edges(graph);
     running_time = CO759_zeit() - running_time;
+    cout << "done." << endl;
 
-    cout << "Removed " << graph.count_useless() << " out of " << graph.edges.size() << " edges in " << running_time << "s" << endl;
-    cout << "Now there are " << graph.edges.size() - graph.count_useless() << " edges left." << endl;
+    int step1_removed = graph.count_useless();
+    cout << "Removed " << step1_removed << " out of " << graph.edges.size() << " edges in " << running_time << "s" << endl;
+    cout << "Now there are " << graph.edges.size() - step1_removed << " edges left." << endl;
 
-    cout << "Let's try step 2... WARNING: CURRENTLY REMOVING INCORRECT EDGES" << endl;
+    cout << endl;
+
+    //Run Step 2
+    cout << "Running Step 2..." << flush;
     running_time = CO759_zeit();
-    delete_edges2(graph);
+    //delete_edges2(graph);
     running_time = CO759_zeit() - running_time;
+    cout << "done." << endl;
 
-    cout << "Removed " << graph.count_useless() << " out of " << graph.edges.size() << " edges in " << running_time << "s" << endl;
-    cout << "Now there are " << graph.edges.size() - graph.count_useless() << " edges left." << endl;
+    int step2_removed = graph.count_useless() - step1_removed;
+    cout << "Removed " << step2_removed << " out of " << graph.edges.size() - step1_removed << " edges in " << running_time << "s" << endl;
+    cout << "Now there are " << graph.edges.size() - (step2_removed + step1_removed) << " edges left." << endl << endl;
     
-    //Run a test by comparing the removed edges to the ones in the optimal tour
-    if(compare_results) {
-        cout << "Running the TSP solver to compare results." << endl;
-        TSP_Solver solver(graph);
-        vector<int> tour_indices;
-        solver.find_min_tour(tour_indices);
-
-        //N^2 check for now
-        bool pass = true;
-        for(int j = 0; j < (int)tour_indices.size(); j++) {
-            Edge *tour_edge = &graph.edges[tour_indices[j]];
-
-            if(tour_edge->useless) {
-                cout << "***Failed test! Deleted edge " << tour_edge->end[0] << " " << tour_edge->end[1] << " that was in the optimal tour!" << endl;
-                pass = false;
-            }
-        }
-
-        if(pass) {
-            cout << "Passed the test. Optimal tour contains none of the removed edges." << endl;
-        }
-    }
 
     //Save files
     string pruned_fnam = string(input_file) + "-pruned.edg";
     string useless_fnam = string(input_file) + "-useless.edg";
     string orig_fnam = string(input_file) + "-orig.edg";
-    //strip path
+
     pruned_fnam = pruned_fnam.substr(pruned_fnam.find_last_of("\\/") + 1, pruned_fnam.size());
     orig_fnam = orig_fnam.substr(orig_fnam.find_last_of("\\/") + 1, orig_fnam.size());
     useless_fnam = useless_fnam.substr(useless_fnam.find_last_of("\\/") + 1, useless_fnam.size());
@@ -128,7 +105,15 @@ int main(int argc, char* argv[]) {
 
     cout << "Saved edge files to " << pruned_fnam << " and " << orig_fnam << endl;
 
+    //Visualizations
     #if USE_GRAPHICS
+        setup_sdl(graph);
+        draw_points(graph.points, 0, 0, 255, false);
+        draw_edges(graph, 0, 0, 0, true);
+        draw_edges(graph, 0, 255, 0, false);
+        draw_edges(graph, 255, 0, 0, false, &tour_indices);
+        //draw_tree(graph.kd_tree->mRoot);
+        SDL_RenderPresent(renderer);
         getchar();
         SDL_Quit();
     #endif
