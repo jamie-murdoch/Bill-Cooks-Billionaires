@@ -152,10 +152,12 @@ inline void draw_points(const vector<Point2D> &points, int r, int g, int b, bool
 
     if(use_labels) {
         for(int i = 0; i < (int)points.size(); i++) {
+            if(i == 0 || i == 1 || i == 2389 || i == 2390){
             SDL_Point p = to_sdl_point(points[i]);
             sprintf(label,"%d",i);
             SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
             SDLTest_DrawString(renderer, p.x + radius, p.y - radius*4, label);
+        }
         }
     }
 }
@@ -184,7 +186,7 @@ inline void draw_tree(KdNode *node, int minX = 0, int minY = 0, int maxX = width
     }
 }
 
-inline void draw_edges(const Graph &graph, int r, int g, int b, bool show_useless, vector<int> *indices = NULL) {
+inline void draw_edges(Graph &graph, int r, int g, int b, bool show_useless, vector<int> *indices = NULL) {
     SDL_SetRenderDrawColor(renderer, r, g, b, 255);
 
     int n;

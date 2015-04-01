@@ -1,7 +1,9 @@
 #include <iostream>
+#include <fstream>
 #include <vector>
 #include <limits>
 #include <algorithm>
+#include <ctime>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -67,56 +69,72 @@ int main(int argc, char* argv[]) {
 
     //Run Step 1
     cout << "Running Step 1..." << flush;
-    double running_time = CO759_zeit();
+
+    double step1_runtime = CO759_zeit();
     delete_edges(graph);
-    running_time = CO759_zeit() - running_time;
+    step1_runtime = CO759_zeit() - step1_runtime;
     cout << "done." << endl;
 
     int step1_removed = graph.count_useless();
-    cout << "Removed " << step1_removed << " out of " << graph.edges.size() << " edges in " << running_time << "s" << endl;
+    cout << "Removed " << step1_removed << " out of " << graph.edges.size() << " edges in " << step1_runtime << "s" << endl;
     cout << "Now there are " << graph.edges.size() - step1_removed << " edges left." << endl;
 
     cout << endl;
 
     //Run Step 2
     cout << "Running Step 2..." << flush;
-    running_time = CO759_zeit();
-    //delete_edges2(graph);
-    running_time = CO759_zeit() - running_time;
+    double step2_runtime = CO759_zeit();
+    delete_edges2(graph);
+    step2_runtime = CO759_zeit() - step2_runtime;
     cout << "done." << endl;
 
     int step2_removed = graph.count_useless() - step1_removed;
-    cout << "Removed " << step2_removed << " out of " << graph.edges.size() - step1_removed << " edges in " << running_time << "s" << endl;
+    cout << "Removed " << step2_removed << " out of " << graph.edges.size() - step1_removed << " edges in " << step2_runtime << "s" << endl;
     cout << "Now there are " << graph.edges.size() - (step2_removed + step1_removed) << " edges left." << endl << endl;
     
 
-    //Save files
-    string pruned_fnam = string(input_file) + "-pruned.edg";
-    string useless_fnam = string(input_file) + "-useless.edg";
-    string orig_fnam = string(input_file) + "-orig.edg";
+    // //Save files
+    ofstream fout;
+    string output_file = string(input_file) + "-results.txt";
+    output_file = output_file.substr(output_file.find_last_of("\\/") + 1, output_file.size());
+    fout.open(output_file.c_str());
 
-    pruned_fnam = pruned_fnam.substr(pruned_fnam.find_last_of("\\/") + 1, pruned_fnam.size());
-    orig_fnam = orig_fnam.substr(orig_fnam.find_last_of("\\/") + 1, orig_fnam.size());
-    useless_fnam = useless_fnam.substr(useless_fnam.find_last_of("\\/") + 1, useless_fnam.size());
+    fout << "total_edge_count " << graph.edge_count() << endl;
+    fout << "step1_removed " << step1_removed << endl;
+    fout << "step1_time " << step1_runtime << endl;
+    fout << "step2_removed " << step2_removed << endl;
+    fout << "step2_time " << step2_runtime << endl;
 
-    graph.save_edges(pruned_fnam, false);
-    graph.save_edges(orig_fnam, true);
-    graph.save_useless(useless_fnam);
+    fout.close();
 
-    cout << "Saved edge files to " << pruned_fnam << " and " << orig_fnam << endl;
+    // string pruned_fnam = string(input_file) + "-pruned.edg";
+    // string useless_fnam = string(input_file) + "-useless.edg";
+    // string orig_fnam = string(input_file) + "-orig.edg";
+
+    // pruned_fnam = pruned_fnam.substr(pruned_fnam.find_last_of("\\/") + 1, pruned_fnam.size());
+    // orig_fnam = orig_fnam.substr(orig_fnam.find_last_of("\\/") + 1, orig_fnam.size());
+    // useless_fnam = useless_fnam.substr(useless_fnam.find_last_of("\\/") + 1, useless_fnam.size());
+
+    // cout << "Saving output..." << flush;
+    // graph.save_edges(pruned_fnam, false);
+    // graph.save_edges(orig_fnam, true);
+    // graph.save_useless(useless_fnam);
+    // cout << "Done." << endl;
 
     //Visualizations
     #if USE_GRAPHICS
         setup_sdl(graph);
-        draw_points(graph.points, 0, 0, 255, false);
-        draw_edges(graph, 0, 0, 0, true);
-        draw_edges(graph, 0, 255, 0, false);
-        draw_edges(graph, 255, 0, 0, false, &tour_indices);
+        draw_points(graph.points, 0, 0, 255, true);
+       // draw_edges(graph, 0, 0, 0, true);
+       // draw_edges(graph, 0, 255, 0, false);
+       // draw_edges(graph, 255, 0, 0, false, &tour_indices);
         //draw_tree(graph.kd_tree->mRoot);
         SDL_RenderPresent(renderer);
         getchar();
         SDL_Quit();
     #endif
+
+    //cout << "Saved edge files to " << pruned_fnam << " and " << orig_fnam << endl;
 
     return 0;
 }
@@ -196,7 +214,7 @@ static int delete_edges(Graph &g)
     }
 
     const int num_points = 10;
-    //#pragma omp parallel for schedule(dynamic)
+    #pragma omp parallel for schedule(dynamic)
     for(int h = 0; h < g.edges.size(); h++){
         Edge *pq = &g.edges[h];
         int p = pq->end[0];
@@ -261,7 +279,7 @@ static int delete_edges(Graph &g)
 
 static int delete_edges2(Graph &g){
 
-  int num_points = min(50, g.node_count() - 2);
+  int num_points = min(10, g.node_count() - 2);
 
 #pragma omp parallel for schedule(dynamic)
   for(int h = 0; h < g.edges.size(); h++){

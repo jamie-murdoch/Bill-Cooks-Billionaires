@@ -11,7 +11,7 @@ def main():
 	
 	solution_edges, node_count, node_count = load_edges("out.sol")
 	useless_edges, node_count, useless_edge_count = load_edges(useless_fname)
-	total_edge_count = node_count * node_count
+	total_edge_count = node_count * (node_count - 1) / 2
 
 	print
 	conflict = check_for_conflicts(solution_edges, useless_edges)
