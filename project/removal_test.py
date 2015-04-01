@@ -1,12 +1,13 @@
 import subprocess
 import sys, os
 import ntpath
+from time import time
 
 def main():
 	problem_file = sys.argv[1]
 	node_count = 0
 
-	useless_fname = run_solvers(problem_file)
+	useless_fname, pruned_time, orig_time = run_solvers(problem_file)
 	
 	solution_edges, node_count, node_count = load_edges("out.sol")
 	useless_edges, node_count, useless_edge_count = load_edges(useless_fname)
@@ -18,11 +19,15 @@ def main():
 	if not conflict:
 		print "Test passed! No Conflicts found."
 	else:
-		print "Try again!"
+		print "Try again!!!!!"
 
 	print
 	print "Removed a total of %d edges out of %d. (%f%%)" % (useless_edge_count, total_edge_count, useless_edge_count/float(total_edge_count) * 100)
 	print "There are %d edges remaining." % (total_edge_count - useless_edge_count, )
+
+	print "Finished testing problem " + ntpath.basename(problem_file)
+	print "Pruned TSP took %fs" % pruned_time
+	print "Original TSP took %fs" % orig_time 
 
 def run_solvers(problem_file):
 	prob_name = ntpath.basename(problem_file)
@@ -34,12 +39,16 @@ def run_solvers(problem_file):
 	orig_fname = prob_name + "-orig.edg"
 
 	subprocess.call(["./test/prob2tsp", pruned_fname])
+	start_time = time()
 	subprocess.call(["./test/concorde", "out.tsp"])
+	pruned_time = time() - start_time
 
 	subprocess.call(["./test/prob2tsp", orig_fname])
+	start_time = time()
 	subprocess.call(["./test/concorde", "-f", "out.tsp"]) #-f save as edge file "out.sol"
+	orig_time = time() - start_time
 
-	return useless_fname
+	return useless_fname, pruned_time, orig_time
 
 def load_edges(fname):
 	edges = {}

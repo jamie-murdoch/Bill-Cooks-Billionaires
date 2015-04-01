@@ -19,7 +19,7 @@ struct Edge {
 };
 
 struct EdgeSet {
-    Edge& operator[](size_t idx) 
+    vector<Edge>& operator[](size_t idx) 
     {
         return edges[idx];
     }
