@@ -28,10 +28,35 @@ static int delete_edges(Graph &g);
 static int delete_edges2(Graph &g);
 bool are_compatible(int p, int q, int x, int y, Graph &g);
 bool is_edge(int p, int q, Graph &g);
-//bool set_contains(int s, vector<int> R1, vector<int> R2);
 bool set_contains(int r, int s, int q, int p, double lq, double lp, Graph & g, double deltar);
 
 bool compare_results = false;
+
+// //Test code for Kd_tree
+// for(int j = 0; j < 1000; j++) {
+//     Point2D p(1000 + rand() %4000, 1000 + rand() % 4000);
+//     double dist;
+//     double min_dist = rand() % 1000;
+//     int close = graph.kd_tree->find_closest_point(p, dist, min_dist);
+
+//     vector<double> dists(graph.node_count());
+//     for(int i = 0; i < graph.node_count(); i++) {
+//         dists[i] = (p - graph.points[i]).length();
+//     }
+
+//     sort(dists.begin(), dists.end());
+//     int index = 0;
+//     while(index < graph.node_count()) {
+//         if(dists[index] >= min_dist) break;
+//         index++;
+//     }
+//     cout << close << endl;
+//     cout << "actual: " << dists[index] << " nn: " << dist << endl;
+//     if(dists[index] != dist) {
+//         cout << "FAILED! " << endl;
+//         break;
+//     }
+// }
 
 int main(int argc, char* argv[]) {
     //Initialize the problem
@@ -47,32 +72,6 @@ int main(int argc, char* argv[]) {
         //draw_tree(graph.kd_tree->mRoot);
         SDL_RenderPresent(renderer);
     #endif
-
-    // //Test code for Kd_tree
-    // for(int j = 0; j < 1000; j++) {
-    //     Point2D p(1000 + rand() %4000, 1000 + rand() % 4000);
-    //     double dist;
-    //     double min_dist = rand() % 1000;
-    //     int close = graph.kd_tree->find_closest_point(p, dist, min_dist);
-
-    //     vector<double> dists(graph.node_count());
-    //     for(int i = 0; i < graph.node_count(); i++) {
-    //         dists[i] = (p - graph.points[i]).length();
-    //     }
-
-    //     sort(dists.begin(), dists.end());
-    //     int index = 0;
-    //     while(index < graph.node_count()) {
-    //         if(dists[index] >= min_dist) break;
-    //         index++;
-    //     }
-    //     cout << close << endl;
-    //     cout << "actual: " << dists[index] << " nn: " << dist << endl;
-    //     if(dists[index] != dist) {
-    //         cout << "FAILED! " << endl;
-    //         break;
-    //     }
-    // }
 
     cout << "Entering delete graph" << endl;
 
