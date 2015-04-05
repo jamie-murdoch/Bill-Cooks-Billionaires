@@ -1,0 +1,201 @@
+\documentclass{article} \usepackage[left=2cm,top=1.5cm,right=2cm,
+nofoot]{geometry} \usepackage{textcomp}
+%\usepackage[scaled=0.92]{helvet} \renewcommand{\rmdefault}{ptm}
+\usepackage{amsmath,graphicx,amsthm, amssymb, enumerate, mathtools}
+%\usepackage[lite,subscriptcorrection,slantedGreek,nofontinfo]{mtpro2}
+\usepackage{enumerate} \pagestyle{empty}
+
+\DeclareRobustCommand\{{\ifmmode\lbrace\else\textbraceleft\fi}
+\DeclareRobustCommand\}{\ifmmode\rbrace\else\textbraceright\fi}
+
+\setlength{\parskip}{0.15in} \setlength{\parindent}{0in}
+
+\newcommand{\conj}[1]{\ensuremath{\overline{#1}}}
+\newcommand{\Span}[1]{\ensuremath{\operatorname{span}\left\{{#1}\right\}}}
+\newcommand{\norm}[1]{\left|\left|#1\right|\right|}
+\newcommand{\Norm}{\norm{\,\cdot\,}} \newcommand{\inv}[1]{{#1}^{-1}}
+\newcommand{\abs}[1]{\left|#1\right|}
+\newcommand{\de}[2]{\ensuremath{\frac{\mr d {#1}}{\mr d {#2}}}}
+\newcommand{\parens}[1]{\ensuremath{\left({#1}\right)}}
+\newcommand{\brax}[1]{\ensuremath{\left[{#1}\right]}}
+\newcommand{\set}[1]{\ensuremath{\left\lbrace{#1}\right\rbrace}}
+\newcommand{\ball}[2]{\ensuremath{B\parens{{#1};{#2}}}}
+\newcommand{\dist}{\operatorname{dist}} \newcommand{\nin}{\not\in}
+\newcommand{\ip}[2]{\left\langle{#1}, {#2}\right\rangle}
+\newcommand{\cupdot}{\mathbin{\mathaccent\cdot\cup}}
+\renewcommand{\emptyset}{\varnothing}
+\newcommand{\gl}[1]{\operatorname{GL}\parens{#1}}
+\renewcommand{\sp}[2]{\sigma_{\operatorname{#2}} \parens{#1}}
+\newcommand{\ran}[1]{\operatorname{ran}\parens{#1}}
+\newcommand{\mr}[1]{\mathrm{#1}}
+
+
+\newcommand\TombStone{\rule{.7ex}{2ex}}
+\renewenvironment{proof}{\textit{Proof. }}{\; \TombStone}
+\newenvironment{sol}{\textit{Solution. }}{\; \textbf{//}}
+
+\let\epsilon\varepsilon \let \drop \setminus
+
+\newcommand{\A}{\mathbf{A}} \newcommand{\C}{\mathbf{C}}
+\newcommand{\D}{\mathbf{D}} \newcommand{\K}{\mathbf{K}}
+\newcommand{\N}{\mathbf{N}} \newcommand{\R}{\mathbf{R}}
+\newcommand{\T}{\mathbf{T}} \newcommand{\Z}{\mathbf{Z}}
+
+
+\newcommand{\cA}{\mathcal{A}} \newcommand{\cB}{\mathcal{B}}
+\newcommand{\cC}{\mathcal{C}} \newcommand{\cD}{\mathcal{D}}
+\newcommand{\cE}{\mathcal{E}} \newcommand{\cF}{\mathcal{F}}
+\newcommand{\cG}{\mathcal{G}} \newcommand{\cH}{\mathcal{H}}
+\newcommand{\cI}{\mathcal{I}} \newcommand{\cJ}{\mathcal{J}}
+\newcommand{\cK}{\mathcal{K}} \newcommand{\cL}{\mathcal{L}}
+\newcommand{\cM}{\mathcal{M}} \newcommand{\cN}{\mathcal{N}}
+\newcommand{\cO}{\mathcal{O}} \newcommand{\cP}{\mathcal{P}}
+\newcommand{\cQ}{\mathcal{Q}} \newcommand{\cR}{\mathcal{R}}
+\newcommand{\cS}{\mathcal{S}} \newcommand{\cT}{\mathcal{T}}
+\newcommand{\cU}{\mathcal{U}} \newcommand{\cV}{\mathcal{V}}
+\newcommand{\cW}{\mathcal{W}} \newcommand{\cX}{\mathcal{X}}
+\newcommand{\cY}{\mathcal{Y}} \newcommand{\cZ}{\mathcal{Z}}
+
+\newcommand{\fA}{\mathfrak{A}} \newcommand{\fX}{\mathfrak{X}}
+\newcommand{\fY}{\mathfrak{Y}} \newcommand{\fZ}{\mathfrak{Z}}
+\let\tss\textsuperscript
+
+\renewcommand{\le}{\leqslant} \renewcommand{\ge}{\geqslant}
+
+
+\begin{document}
+\title{TSP Edge Elimination} \date{6 April, 2015} \author{Lawson
+  Fulton\\ Jamie Murdoch \\ Christos Stratopoulos}
+\maketitle
+
+\newpage
+
+\tableofcontents
+
+\newpage
+
+\section{Introduction}
+
+A Travelling Salesman Problem (TSP) instance shall be specified as a
+complete graph $G=(V, E)$ with a nonnegative, symmetric length
+function $l$ defined on the edges of the graph. Our project is a study
+of the work of Hougardy and Schroeder \cite{paper}. In their paper
+they define a notion of a useless edge in a TSP instance. That is, an
+edge which can appear in no optimal tour. Graph theoretic results are
+used to characterize useless edges, informing the design of an
+algorithm for their
+identification and removal. \\
+The algorithm consists of three steps: Fast Elimination, Direct
+Elimination, and Backtrack Search. Fast Elimination does the brunt of
+the work, removing in the neighbourhood of 99\% of edges from a
+complete graph. Close Point Elimination is then applied to the
+resulting sparse graph to further reduce the number of edges. On a
+complete graph Close Point Elimination removes virtually no edges; on
+the resulting sparse graph it affords good incremental progress in the
+number of edges removed. Backtrack Search uses a modified Held-Karp
+algorithm to remove further edges in a path construction process. We
+consider the implementation of the first two steps of the
+algorithm. What follows is a study of the theoretical and
+computational details of implementing Fast Elimination and Direct
+Elimination. We shall then discuss the running time and performance
+(in terms of number of deleted edges) of each of these steps, and
+consider the relative performance of a TSP solver (read: Concorde) on
+these reduced instances.
+
+\section{Algorithm Implementation}
+
+\subsection{Step 1 - Fast Elimination}
+
+Fast Elimination is the first step of the edge elimination algorithm;
+the key component of this step is the Main Edge Elimination (MEE)
+Theorem. Given an edge $pq$, the MEE Theorem identifies hypotheses
+under which it can be proved that $pq$ is useless. One supposes that
+an optimal tour contains $pq$, and then exhibits 3-opt moves resulting
+in a
+tour of strictly lower cost than the supposed optimal tour. \\
+The statement of the MEE Theorem is centred around the notion of
+potential points; this notion imposes structure that allows us to
+determine the exact cost improvement of a possible 3-opt move. A
+potential point is a vertex specified with respect to an edge and
+covering subsets of $V$. For an edge $pq$, we seek to identify a
+potential point $r$ with respect to subsets $R_1, R_2$ of $V$, and $s$
+with respect to subsets $S_1, S_2$ of $V$. The cost improvements of
+the possible 3-opts are then
+\begin{align*}
+  &l(pq)-l(rs)+\min_{z\in S_1}(l(sz)-l(pz))+\min_{y\in
+    R_2}(l(ry)-l(qy))
+    \intertext{and}
+  &l(pq)-l(rs)+\min_{x\in R_1}(l(rx)-l(px)) + \min_{w\in S_2} (l(sw)-l(qw)).
+\end{align*}
+
+Thus the chief computational task in being able to apply the MEE
+Theorem is the identification of potential points for an edge. The
+approach described in Section 5 of \cite{paper} is twofold. First, a
+more stringent notion of strongly potential points is
+considered. Second, a series of geometric approximations is computed
+that allows for constant-time recognition of these strongly potential
+points. Therefore, our implementation of Step 1 consists of two
+functions for computations and lower bounds described in the lemmas of
+Section 5, plus a function which uses these two to apply the MEE
+Theorem to all edges in the graph.
+
+
+
+\subsection{Step 2 - Direct Elimination}
+
+Section 4 of \cite{paper} describes the Close Point Elimination (CPE)
+Theorem. For an edge $pq$ and a vertex $r$, we consider all possible
+pairs of neighbours $\set{x, y}$ of $r$ in an optimal tour that also
+contains $pq$. If no such pair exists, the CPE Theorem implies $pq$ is
+useless. Thus direct checking and application of the CPE Theorem is
+one component of Step 2. Suppose, however, that we find multiple pairs
+$\set{x, y}$ of the form just described. These are stored, and then we
+attempt to apply the MEE Theorem 3-opts from Step 1. Given edge pairs
+of vertices $\set{rx, ry}$ and $\set{zs, zw}$, the improvements would
+be
+\begin{align*}
+  &l(pq)-l(rs)+l(sz)-l(pz)+l(ry)-l(qy)
+    \intertext{and}
+  &l(pq)-l(rs)+l(rx)-l(px) + l(sw)-l(qw).
+\end{align*}
+Thus the implementation of Step 2 consists of a function which tests
+every edge in the graph against the CPE Theorem, then tests for 3-opt
+moves on edge pairs found while checking the CPE Theorem. 
+
+\section{Optimizations}
+
+Both Steps 1 and 2 involve nearest neighbour-style queries in which we
+perform computations on a fixed number of points nearest to the
+midpoint of a given edge. The running time of these is optimized by
+computing closest points with a 2d-tree as described in
+\cite{kdt}. Moreover, there is some latitude when deciding how many of
+these closest points to compute. (** not clear the exact details **)
+In Step 2 more points computed equals more computation time but also
+more edges deleted. \\
+Steps 1 and 2 also both involve iterating over every single edge of
+the graph; such loops can be parallelized, netting an easy performance
+increase. (**I know nothing about
+parallel computing so you guys may want to add something here. Lawson
+I think you said it's embarrassingly parallel?**)
+
+\section{Discussion of Future Work}
+
+(4-opt/memory usage)
+
+\section{Results}
+
+\subsection{Discussion}
+
+\subsection{Tables}
+
+\begin{thebibliography}{99}
+\bibitem{paper} S. Hougardy, R. Schroeder. Edge Elimination in TSP
+  Instances. Graph-Theoretic Concepts in Computer Science, WG
+  2014. pp. 275-286.
+
+\bibitem{kdt} J.L. Bentley. K-d trees for semidynamic point
+  sets. Proceedings of the Sixth Annual Symposium on Computational
+  Geometry, ACM, 1990. pp. 187-197. 
+\end{thebibliography}
+
+\end{document}
