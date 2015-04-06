@@ -18,18 +18,18 @@ struct Edge {
     bool useless;
 };
 
-struct EdgeSet {
-    vector<Edge>& operator[](size_t idx) 
-    {
-        return edges[idx];
-    }
+// struct EdgeSet {
+//     vector<Edge>& operator[](size_t idx) 
+//     {
+//         return edges[idx];
+//     }
 
-    int edge_count() const {
-        return edges.size() * edges.size();
-    }
+//     int edge_count() const {
+//         return edges.size() * edges.size();
+//     }
 
-    vector<vector<Edge> > edges;
-};
+//     vector<vector<Edge> > edges;
+// };
 
 struct Graph {
     Graph() : kd_tree(NULL) {}
