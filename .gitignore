@@ -14,3 +14,12 @@ subtour.exe
 *.sublime-workspace
 *.sublime-project
 project/Makefile
+project/paper/co759paper.aux
+
+project/paper/co759paper.log
+
+project/paper/co759paper.pdf
+
+project/paper/co759paper.synctex.gz
+
+project/paper/co759paper.toc
