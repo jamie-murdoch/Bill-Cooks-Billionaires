@@ -357,8 +357,8 @@ static int delete_edges2(Graph &g){
 	}
 	if(!all_break){
 	  pq->useless = true;
-	  g.lengths[p][q] = numeric_limits<double>::infinity();
-	  g.lengths[q][p] = numeric_limits<double>::infinity();
+	  g.useless[p][q] = true;
+	  g.useless[q][p] = true;
 	  abort = true; break;
 	}
       }
