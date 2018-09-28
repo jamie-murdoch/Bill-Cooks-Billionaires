@@ -1,0 +1,38 @@
+---------------CO759 Final Project-----------------
+-------------Never Talk To Strangers---------------
+Lawson Fulton, Jamie Murdoch, Christos Stratopoulos
+---------------------------------------------------
+
+The included executable was compiled on OSX
+Yosemite with graphics disabled.
+
+If you would like to build your own exectuable, you
+may have to modify the paths in the makefile.
+
+Running:
+
+$./edge_deletion <'.tsp' problem file>
+
+The following command will run the edge elimination
+algorithm on one of the included datasets.
+
+$./edge_deletion data/pr1002.tsp
+
+NOTE: The tsp file must have edge weight type EUC_2D
+
+
+              ---Map of the Code---
+
+edge_deletion.cpp: Entry point and main algorithm
+
+graph.h/cpp: Graph datastructure, loading code
+
+kdtree.h/cpp: Kd Tree implementation
+
+graphics.h: SDL code for making visualizations
+
+algebra.h: Point2D struct and math helper functions
+
+util.h/cpp: Carried over from A1 and A2
+
+test_scripts/*.py: Timing and testing scripts
